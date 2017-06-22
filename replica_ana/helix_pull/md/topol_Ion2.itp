@@ -1,0 +1,65 @@
+;
+;	File 'topol_Ion2.itp' was generated
+;	By user: onbekend (0)
+;	On host: onbekend
+;	At date: Wed Jun 14 11:15:17 2017
+;
+;	This is a include topology file
+;
+;	It was generated using program:
+;	pdb2gmx - VERSION 4.5.6
+;
+;	Command line was:
+;	pdb2gmx -f pull.pdb 
+;
+;	Force field was read from the standard Gromacs share directory.
+;
+
+[ moleculetype ]
+; Name            nrexcl
+Ion2                3
+
+[ atoms ]
+;   nr       type  resnr residue  atom   cgnr     charge       mass  typeB    chargeB      massB
+; residue 3188 NA  rtp NA   q +1.0
+     1        NA+   3188     NA     NA      1          1    22.9898   ; qtot 1
+; residue 3189 NA  rtp NA   q +1.0
+     2        NA+   3189     NA     NA      2          1    22.9898   ; qtot 2
+; residue 3190 NA  rtp NA   q +1.0
+     3        NA+   3190     NA     NA      3          1    22.9898   ; qtot 3
+; residue 3191 NA  rtp NA   q +1.0
+     4        NA+   3191     NA     NA      4          1    22.9898   ; qtot 4
+; residue 3192 NA  rtp NA   q +1.0
+     5        NA+   3192     NA     NA      5          1    22.9898   ; qtot 5
+; residue 3193 NA  rtp NA   q +1.0
+     6        NA+   3193     NA     NA      6          1    22.9898   ; qtot 6
+; residue 3194 NA  rtp NA   q +1.0
+     7        NA+   3194     NA     NA      7          1    22.9898   ; qtot 7
+; residue 3195 NA  rtp NA   q +1.0
+     8        NA+   3195     NA     NA      8          1    22.9898   ; qtot 8
+; residue 3196 NA  rtp NA   q +1.0
+     9        NA+   3196     NA     NA      9          1    22.9898   ; qtot 9
+; residue 3197 CL  rtp CL   q -1.0
+    10        CL-   3197     CL     CL     10         -1     35.453   ; qtot 8
+; residue 3198 CL  rtp CL   q -1.0
+    11        CL-   3198     CL     CL     11         -1     35.453   ; qtot 7
+; residue 3199 CL  rtp CL   q -1.0
+    12        CL-   3199     CL     CL     12         -1     35.453   ; qtot 6
+; residue 3200 CL  rtp CL   q -1.0
+    13        CL-   3200     CL     CL     13         -1     35.453   ; qtot 5
+; residue 3201 CL  rtp CL   q -1.0
+    14        CL-   3201     CL     CL     14         -1     35.453   ; qtot 4
+; residue 3202 CL  rtp CL   q -1.0
+    15        CL-   3202     CL     CL     15         -1     35.453   ; qtot 3
+; residue 3203 CL  rtp CL   q -1.0
+    16        CL-   3203     CL     CL     16         -1     35.453   ; qtot 2
+; residue 3204 CL  rtp CL   q -1.0
+    17        CL-   3204     CL     CL     17         -1     35.453   ; qtot 1
+; residue 3205 CL  rtp CL   q -1.0
+    18        CL-   3205     CL     CL     18         -1     35.453   ; qtot 0
+
+; Include Position restraint file
+#ifdef POSRES
+#include "posre_Ion2.itp"
+#endif
+

@@ -1,0 +1,10 @@
+     0.000     0.142      -nan      -nan     0.066      -nan     0.340      -nan    -0.717     0.786
+     0.142     0.000      -nan      -nan     0.990      -nan    -0.685      -nan     1.117     1.839
+      -nan      -nan     0.000      -nan      -nan      -nan      -nan      -nan      -nan      -nan
+      -nan      -nan      -nan     0.000      -nan      -nan      -nan      -nan      -nan      -nan
+     0.066     0.990      -nan      -nan     0.000      -nan    -0.713      -nan    -0.330     0.195
+      -nan      -nan      -nan      -nan      -nan     0.000      -nan      -nan      -nan      -nan
+     0.340    -0.685      -nan      -nan    -0.713      -nan     0.000      -nan    -0.696     1.165
+      -nan      -nan      -nan      -nan      -nan      -nan      -nan     0.000      -nan      -nan
+    -0.717     1.117      -nan      -nan    -0.330      -nan    -0.696      -nan     0.000    -0.160
+     0.786     1.839      -nan      -nan     0.195      -nan     1.165      -nan    -0.160     0.000

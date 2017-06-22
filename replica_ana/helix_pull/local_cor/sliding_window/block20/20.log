@@ -1,0 +1,11 @@
+Time:      0.000	RMSD(LF):   0.155	encoding: KVUUUUUUUU
+Time:      2.000	RMSD(LF):   0.119	encoding: KVUUUUUUUW
+Time:      4.000	RMSD(LF):   0.146	encoding: KVUUUUWUUU
+Time:      6.000	RMSD(LF):   0.119	encoding: KUUUUUUUUV
+Time:      8.000	RMSD(LF):   0.158	encoding: KUUUUUUUWV
+Time:     10.000	RMSD(LF):   0.187	encoding: FUUUWUUUUV
+Time:     12.000	RMSD(LF):   0.157	encoding: HVUUUUUUUT
+Time:     14.000	RMSD(LF):   0.177	encoding: FVUUUUVUUT
+Time:     16.000	RMSD(LF):   0.170	encoding: FVUUUUVUUT
+Time:     18.000	RMSD(LF):   0.151	encoding: JUUUUUVUUT
+Time:     20.000	RMSD(LF):   0.121	encoding: JUUUUUUUUT
