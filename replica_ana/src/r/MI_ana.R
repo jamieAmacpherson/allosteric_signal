@@ -5,6 +5,10 @@ library(fields)
 library(TTR)
 library(gplots)
 
+
+# define the number of modes for use in calculations
+nmodes <<- 30
+
 # create list for all files ending with *.out
 plot.matrices = function(){
 	
@@ -90,16 +94,13 @@ eigen.cosine = function(matrix.a, matrix.b){
 	# The subspace overlap (d.ab) ranges from 0, when the eigenvector
 	# subsets are orthogonal, to 1 when they are identical
 	
-	# Number of eigenmodes to be included in the calculation
-	nmodes = 6 
-        
-	cosine.out = c()
-	
+        	
 	# loop through eigenmodes and determine the cosine content between eigenvector
 	# matrices 
-	cosine.out = t( t(eigen.a$vectors[,c(1:nmodes)]) * t(eigen.b$vectors[,c(1:nmodes)]))
-	cosinesum = sum(colSums(cosine.out))
-	d.ab = cosinesum/nmodes
+	cosine.out = eigen.a$vectors[,1:nmodes] * eigen.b$vectors[,1:nmodes]
+	cosinesum = (apply(cosine.out, 2, sum))^2
+	d.ab = sum(cosinesum) / nmodes
+
 #	for (i in 1:nmodes){
 #		tmp = sum(eigen.a$vectors[,c(i)] * eigen.b$vectors[,c(i)])^2
 #		cosine.out = append(cosine.out, tmp)
@@ -127,16 +128,15 @@ covariance.overlap = function(matrix.a, matrix.b){
 	# Compute the upper term of equation (3) from Faraldo-Gomez, et al. Proteins
 	# 2004 (Sampling in simulations of membrane proteins)
 	
-	# Number of eigenmodes to be included in the calculation
-        nmodes = 6	
 
 	# Sum over all eigenvalues of matrices and A and B
 	omega.values = sum(eigen.a$values[c(1:nmodes)] + eigen.b$values[c(1:nmodes)])	
 	
+	cosine.out = eigen.a$vectors[,1:nmodes] * eigen.b$vectors[,1:nmodes]
+        cosinesum = (apply(cosine.out, 2, sum))^2
+
 	upper.omega.vec = 2 * sum((sqrt(eigen.a$values[c(1:nmodes)] * eigen.b$values[c(1:nmodes)])) *
-				(eigen.a$vectors[c(1:nmodes) ,c(1:nmodes)] %*%
-					eigen.b$vectors[c(1:nmodes) ,c(1:nmodes)])^2)
- 
+					cosinesum) 
 	omega.ab = 1 - (((omega.values - upper.omega.vec)/
 			omega.values)^0.5)
 
@@ -346,7 +346,7 @@ calc.covariance.overlap = function(matrix.list){
 
 
 
-#calc.covariance.overlap(matrices)
+calc.covariance.overlap(matrices)
 
 
 
