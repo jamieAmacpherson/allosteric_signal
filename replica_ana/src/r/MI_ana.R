@@ -7,7 +7,7 @@ library(gplots)
 
 
 # define the number of modes for use in calculations
-nmodes <<- 30
+nmodes <<- 5
 
 # create list for all files ending with *.out
 plot.matrices = function(){
@@ -348,5 +348,39 @@ calc.covariance.overlap = function(matrix.list){
 
 calc.covariance.overlap(matrices)
 
+## Plot the covariance overlap and cosine matrices
+plot.matrices = function(covarmat, cosinemat){
+	
+	# read data	
+	covarmat = read.table(covarmat)
+	cosinemat = read.table(cosinemat)
 
+	pdf("covarmat_matrix.pdf")
 
+	# Jet colour palette 
+	jet.colours <-
+		colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+                     "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
+
+	heatmap.2(as.matrix(covarmat), trace="none",
+			col=jet.colours,
+			xlab = "Blocks",
+			ylab = "Blocks")	
+	
+	dev.off()
+	
+	pdf("cosine_matrix.pdf")
+
+	heatmap.2(as.matrix(cosinemat), trace="none",
+			col=jet.colours,
+			xlab = "Blocks",
+			ylab = "Blocks")	
+	
+	dev.off()
+	
+}
+
+#covarfile = "covar_overlap_matrix.dat"
+#cosinefile = "cosine_matrix.dat"
+
+#plot.matrices(covarfile, cosinefile)
