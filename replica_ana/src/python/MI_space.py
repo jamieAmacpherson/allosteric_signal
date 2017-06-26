@@ -29,7 +29,7 @@ import math
 import time
 import progressbar
 import matplotlib.pyplot as plt
-
+plt.style.use('seaborn-ticks')
 
 #____________________________________________________________________________
 # Parse the number of eigenmodes to be used in the calculation.
@@ -145,7 +145,7 @@ def covaroverlap(matA, matB):
 #
 	scaledcossum = sum(scaledcos)
 #
-	omegain = round(valsum - (2 * scaledcossum), 6)
+	omegain = round(valsum - (2 * scaledcossum), 10)
 	omega = 1 - (omegain/valsum)**0.5
 #	
 #
@@ -158,8 +158,8 @@ def calcCC():
 	linveccosine = []	
 
 	for a in data:
-		b = a+1
-		linveccosine.append(cosinecontent(a,b))
+		#b = a+1
+		linveccosine.append(cosinecontent(data[0],a))
 	np.savetxt('time_CosCont.dat', linveccosine)	
 
 	# plot linear cosine content
@@ -180,6 +180,10 @@ def calcCCmat():
 	cosinemat = np.reshape(veccosine, (len(data), len(data)))
 	np.savetxt('cosine_matrix.dat', cosinemat)	
 	
+	imgplot = plt.imshow(cosinemat)
+	plt.colorbar()
+	plt.savefig('cosineconent_mat.pdf')
+	
 calcCC()
 
 # compute the covariance overlap for the cartesian product of all MI matrices
@@ -187,8 +191,8 @@ def calcCO():
 	overlap = []
 
 	for a in data:
-		b = a+1
-		overlap.append(covaroverlap(a,b))
+		#b = a+1
+		overlap.append(covaroverlap(data[0],a))
 	np.savetxt('time_CovOverlap.dat', overlap)	
 	
 	# plot linear covariance overlap
