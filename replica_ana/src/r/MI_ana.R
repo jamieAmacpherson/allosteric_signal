@@ -7,7 +7,7 @@ library(gplots)
 
 
 # define the number of modes for use in calculations
-nmodes <<- 5
+nmodes <<- 2 
 
 # create list for all files ending with *.out
 plot.matrices = function(){
