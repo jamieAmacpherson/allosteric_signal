@@ -158,8 +158,8 @@ def calcCC():
 	linveccosine = []	
 
 	for a in data:
-		#b = a+1
-		linveccosine.append(cosinecontent(data[0],a))
+		b = a+1
+		linveccosine.append(cosinecontent(a, b))
 	np.savetxt('time_CosCont.dat', linveccosine)	
 
 	# plot linear cosine content
@@ -179,11 +179,13 @@ def calcCCmat():
 	# reshape np array into matrix format
 	cosinemat = np.reshape(veccosine, (len(data), len(data)))
 	np.savetxt('cosine_matrix.dat', cosinemat)	
-	
-	imgplot = plt.imshow(cosinemat)
+
+	plt.imshow(cosinemat, cmap='jet')
 	plt.colorbar()
+	plt.clim(0,1)
 	plt.savefig('cosineconent_mat.pdf')
-	
+
+plt.figure()	
 calcCC()
 
 # compute the covariance overlap for the cartesian product of all MI matrices
@@ -191,8 +193,8 @@ def calcCO():
 	overlap = []
 
 	for a in data:
-		#b = a+1
-		overlap.append(covaroverlap(data[0],a))
+		b = a+1
+		overlap.append(covaroverlap(a, b))
 	np.savetxt('time_CovOverlap.dat', overlap)	
 	
 	# plot linear covariance overlap
@@ -215,3 +217,5 @@ def calcCOmat():
 
 calcCO()
 
+plt.figure()
+calcCCmat()

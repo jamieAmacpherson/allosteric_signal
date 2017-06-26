@@ -7,7 +7,7 @@ library(gplots)
 
 
 # define the number of modes for use in calculations
-nmodes <<- 2 
+nmodes <<- 10 
 
 # create list for all files ending with *.out
 plot.matrices = function(){
@@ -67,7 +67,7 @@ eigen.matrix = function(){
 	# Calculate eigenvalues and eigenvectors for the mutual information
 	# matrices	
 	for (x in 1:length(matrices)){
-		matrices.eigen <<- eigen(matrices[[x]])
+		matrices.eigen.val <<- eigen(matrices[[x]])
 	}
 }
 

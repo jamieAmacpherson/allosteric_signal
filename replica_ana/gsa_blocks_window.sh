@@ -35,23 +35,25 @@ $SRCDIR/g_sa_encode -f $1\
                       -xpmlf $OUTDIR/$k.lf.xpm\
                       -fasta -xpm -log $OUTDIR/$k.log  
 
-#mpirun -np 12\
+mpirun -np 6\
                 $SRCDIR/g_sa_analyze -sa $OUTDIR/$k.lf_str.out\
                        -MImat $OUTDIR/$k.lf_MImat.out\
                        -eeMImat $OUTDIR/$k.lf_eeMImat.out\
                        -jHmat $OUTDIR/$k.lf_jHmat.out\
                        -nMImat $k.lf_nMImat.out\
-                       -nSample 50\
-                       -ZMImat $OUTDIR/$k.lf_ZImat.out\
-                       -meanMImat $OUTDIR/$k.lf_meanMImat.out\
-                       -stdMImat $OUTDIR/$k.lf_stdMImat.out\
-		       -pvalueMImat $OUTDIR/$k.lf_pvalueMImat.out\
+#                       -nSample 50\
+#                       -ZMImat $OUTDIR/$k.lf_ZImat.out\
+#                       -meanMImat $OUTDIR/$k.lf_meanMImat.out\
+#                       -stdMImat $OUTDIR/$k.lf_stdMImat.out\
+#		       -pvalueMImat $OUTDIR/$k.lf_pvalueMImat.out\
                        -MImatrix -verbose 
 sleep 3
 
 let k=k+$3
 done
 
-Rscript MI_ana.R 
+python /home/macphej/jm.software/development/allosteric_signal/replica_ana/src/python/MI_space.py 10
+
+Rscript /home/macphej/jm.software/development/allosteric_signal/replica_ana/src/r/MI_ana.R
 
 exit
