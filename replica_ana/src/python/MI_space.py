@@ -105,50 +105,49 @@ def cosinecontent(matA, matB):
 # eigenvalues.
 #____________________________________________________________________________
 def covaroverlap(matA, matB):
-#
-	# kill if dimensions are different 
+
+       # kill if dimensions are different 
         if np.shape(matA) != np.shape(matB):
                 print "matrices must be of equal dimensions"
         else:
                 print "Computing covariance overlap"
-#
-        # compute the eigenvalues and eigenvectors of matrix A
+
+       # compute the eigenvalues and eigenvectors of matrix A
         eigvalA, eigvecA = LA.eig(matA)          
-#
-        # compute the eigenvalues and eigenvectors of matrix B
+
+       # compute the eigenvalues and eigenvectors of matrix B
         eigvalB, eigvecB = LA.eig(matB)
-#
-	# initialize empty arrays to accept terms of covariance overlap measure
-	valsum = []
-	geomean = []
-	geomeansum = []
-	vecmult = []
-	vecsum = []
+
+       # initialize empty arrays to accept terms of covariance overlap measure
+        valsum = []
+        geomean = []
+        geomeansum = []
+        vecmult = []
+        vecsum = []
 	scaledcos=[]
-#
-# compute the sum of eigenvalues
+
+ 	#compute the sum of eigenvalues
 	valsum = sum(eigvalA[0:nmodes] + eigvalB[0:nmodes])
-#
 	for i in range(nmodes):
-#
-		# compute the sum of eigenvalues
-		# compute the geometric mean about two sets of eigenvalues
-		geomean.append(math.sqrt(eigvalA[i] * eigvalA[i]))
-		# determine the inner product of two eigenvector matrices
-		vecmult.append(eigvecA[:,i] * eigvecB[:,i])
-		vecsum.append(sum(vecmult[i])**2)
-#
-	# compute the vector scaled by the geometric mean of the 
-	# eigenvalues	
+
+      	# compute the sum of eigenvalues
+      	# compute the geometric mean about two sets of eigenvalues
+      		geomean.append(math.sqrt(eigvalA[i] * eigvalA[i]))
+      	# determine the inner product of two eigenvector matrices
+      		vecmult.append(eigvecA[:,i] * eigvecB[:,i])
+      		vecsum.append(sum(vecmult[i])**2)
+
+      # compute the vector scaled by the geometric mean of the 
+      # eigenvalues	
 	for x in range(nmodes):
 		scaledcos.append(geomean[x] * vecsum[x])
-#
+	
 	scaledcossum = sum(scaledcos)
-#
-	omegain = round(valsum - (2 * scaledcossum), 10)
-	omega = 1 - (omegain/valsum)**0.5
-#	
-#
+
+        omegain = round(valsum - (2 * scaledcossum), 10)
+        omega = 1 - (omegain/valsum)**0.5
+      
+
 	return omega
 
 
