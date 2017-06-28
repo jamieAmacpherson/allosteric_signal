@@ -29,13 +29,14 @@ import math
 import time
 import progressbar
 import matplotlib.pyplot as plt
+from matplotlib import rcParams as pltparam
+
 plt.style.use('seaborn-ticks')
-
+pltparam.update({'font.size': 20})
 
 
 #____________________________________________________________________________
-# Parse the number of eigenmodes to be used in the calculation.
-#____________________________________________________________________________
+# Parse command line arguments____________________________________________________________________________
 parser = argparse.ArgumentParser(description='Calculate the covariance overlap and cosine content of Mutual information matrices.')
 
 parser.add_argument('nmodes', type=int, nargs=1, 
@@ -181,9 +182,10 @@ def calcCC():
 	plt.plot(range(len(linveccosine)), linveccosine, color='black')	
     	plt.grid()
     	axes = plt.gca()
+	plt.ylim(0,1)
     	plt.ylabel(r'Cosine content, $\Psi_(A,B)$')
     	plt.xlabel(r'Simulation block')
-    	plt.savefig('time_CosCont.pdf')
+    	plt.savefig('time_CosCont.pdf', bbox_inches='tight')
 	
 def calcCCmat():
 	veccosine = []	
@@ -222,9 +224,10 @@ def calcCO():
 	plt.plot(range(len(overlap)), overlap, color='red')	
     	plt.grid()
     	axes = plt.gca()
+	plt.ylim(0,1)
     	plt.ylabel(r'Covariance overlap, $\Omega_(A,B)$')
     	plt.xlabel(r'Simulation block')
-    	plt.savefig('time_CovOver.pdf')
+    	plt.savefig('time_CovOver.pdf', bbox_inches='tight')
 
 def calcCOmat():
 	overlap = []

@@ -1,5 +1,9 @@
 \documentclass[11pt]{article}
 
+\usepackage{graphicx}
+\usepackage{subcaption}
+\graphicspath{ {/home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figures/} }
+
 \begin{document}
 \section*{Analysis of allosteric signals from MD simulations}
 It has long been known that molecular dynamics is subject to statistical erorrs introduced by temporal and physical approximations associated with the simulation. While empirical force-fields represent the best approximation of molecular interactions within a protein, a pressing issue which faces the simulation community are questions of (1) reproducibility and (2) convergence.
@@ -34,5 +38,82 @@ where $\lambda^{A}$ and $\lambda^{B}$ denote the eigenvalues of the mutual infor
 \\
 The covariance overlap between two mutual information matrices
 \subsection*{Test case 1: 10 ns MD simulation of deca-alanine in vacuum}
+A 10 $ns$ simulation of a deca-alanine peptide in vacuum was used as a test system for examining the behaviour of the time-evolution of mutual information matrices derived from a structural-alphabet representation of the trajectory. In particular, we wanted to test the numerical behviour of the cosine content and covariance overlap with different eigenmodes used in the calculation. 
+\begin{figure}[hbt]
+\centering
+\begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CosCont_n1.pdf}
+    \caption{$E$ = 1}\label{fig:1a}
+  \end{subfigure}%   
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CovOver_n1.pdf}
+    \caption{$E$ = 1}\label{fig:1b}
+  \end{subfigure}%  
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CosCont_n2.pdf}
+    \caption{$E$ = 2}\label{fig:1c}
+  \end{subfigure}%  
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CovOver_n2.pdf}
+    \caption{$E$ = 2}\label{fig:1d}
+  \end{subfigure}\\%   
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CosCont_n3.pdf}
+    \caption{$E$ = 3}\label{fig:1e}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CovOver_n3.pdf}
+    \caption{$E$ = 3}\label{fig:1f}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CosCont_n4.pdf}
+    \caption{$E$ = 4}\label{fig:1g}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CovOver_n4.pdf}
+    \caption{$E$ = 4}\label{fig:1h}
+  \end{subfigure}\\%     
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CosCont_n5.pdf}
+    \caption{$E$ = 5}\label{fig:1i}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CovOver_n5.pdf}
+    \caption{$E$ = 5}\label{fig:1j}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CosCont_n6.pdf}
+    \caption{$E$ = 6}\label{fig:1k}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CovOver_n6.pdf}
+    \caption{$E$ = 6}\label{fig:1l}
+  \end{subfigure}\\%   
+\caption{The numerical behaviour of spectral subspace overlap with different eigenmodes}\label{fig:1}
+\end{figure}
+The time evolution of both the cosine content and the covairance overlap decreases with increased numbers of eigenmodes included in the calculation. This is because a higher spectral variance is explicitly considered when more eigenmodes are summed over in equations (2) and (3). Also of note, the decreased subspace overlap converged after the first three eigenmodes. This convergent behaviour is consistent with the rapid decay in the eigenvalues, shown below.
+\begin{figure}[!ht]
+\centering
+\includegraphics[scale=0.4]{eigenvariance.pdf}
+\caption{Scree plot of eigenvalue distribution of mutual information matrix}\label{fig:2} 
+\end{figure}
+In this particular example of deca-alanine in vacuum for 10 $ns$ at 300 $K$ there is very little conformational motion in the peptide. This is reflected by the high degree of overlap between the trajectory blocks, shown in figure 1. Furthermore, figure 2 indicates that the first eigenmode represents a significant amount of the positional variance in the trajectory and that subsequent eigenmodes contain negligable variance. To this point, the convergence in the subspace overlap measures $\omega$ and $\Psi$ result from increased variance included in the measure. This raises an important statistical question: which eigenmodes are statistically signficant?
+\\
+\\
+Going back to the initial problem of detecting subspace sampling of MD trajectories it became obvious that the deca peptide, which a good test case for assessing the numerical behaviour of $\omega$ and $\Psi$, was not very useful for interrogating whether or not the mutual information was sensitive to global conformational changes. To investigate this problem, we measured the subspace overlap of a more complex system - monomeric PKM2 bound to Tepp-46.
+\subsection*{Test case 2: 1 $\mu s$ MD simulation of monomeric PKM2 bound to Tepp-46}
+We have seen that monomeric PKM2 undergoes a significant ligand-dependent conformational rearrangement upon binding Tepp-46. Particularly, the B-domain cap closes over the catalytic pocket when the allosteric activator is bound and remains in an 'open' conformation when in the 'apo' state. When Tepp-46 is bound, the B-domain cap closes at around 150 $ns$ (not shown). Here, given that the protien undergoes a significant conformational rearrangement during the simulation we hypothesised that it would be a good test system to determine whether global conformational changes were accounted for my local correlations in the fragment scheme.
 
 \end{document}
