@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.5.9)  28 JUN 2017 16:17
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.5.9)  28 JUN 2017 19:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -76,7 +76,86 @@ Package caption3 Info: TeX engine: e-TeX on input line 67.
 )
 \c@subfigure=\count89
 \c@subtable=\count90
-) (./rep_ana.aux)
+) (./rep_ana.aux
+
+LaTeX Warning: Label `fig:1a' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1a' multiply defined.
+
+
+LaTeX Warning: Label `fig:1b' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1b' multiply defined.
+
+
+LaTeX Warning: Label `fig:1c' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1c' multiply defined.
+
+
+LaTeX Warning: Label `fig:1d' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1d' multiply defined.
+
+
+LaTeX Warning: Label `fig:1e' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1e' multiply defined.
+
+
+LaTeX Warning: Label `fig:1f' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1f' multiply defined.
+
+
+LaTeX Warning: Label `fig:1g' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1g' multiply defined.
+
+
+LaTeX Warning: Label `fig:1h' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1h' multiply defined.
+
+
+LaTeX Warning: Label `fig:1i' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1i' multiply defined.
+
+
+LaTeX Warning: Label `fig:1j' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1j' multiply defined.
+
+
+LaTeX Warning: Label `fig:1k' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1k' multiply defined.
+
+
+LaTeX Warning: Label `fig:1l' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1l' multiply defined.
+
+
+LaTeX Warning: Label `fig:1' multiply defined.
+
+
+LaTeX Warning: Label `fig:2' multiply defined.
+
+)
 \openout1 = `rep_ana.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 7.
@@ -416,34 +495,255 @@ pdfs with page group included in a single page
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <12> on input line 116.
 
-Overfull \hbox (6.61249pt too wide) in paragraph at lines 117--118
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/time_CosCont_E1.pdf, id=563, 443.57005pt x 338.99724pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/time_CosCont_E1.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/time_CosCont_E1.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/time_CosCont_E1.pdf used on input line 125.
+(pdftex.def)             Requested size: 85.53842pt x 65.37225pt.
+
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/time_CovOver_E1.pdf, id=564, 443.57005pt x 338.99724pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/time_CovOver_E1.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/time_CovOver_E1.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/time_CovOver_E1.pdf used on input line 130.
+(pdftex.def)             Requested size: 85.53842pt x 65.37225pt.
+
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/time_CosCont_E2.pdf, id=565, 443.57005pt x 338.99724pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/time_CosCont_E2.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/time_CosCont_E2.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/time_CosCont_E2.pdf used on input line 135.
+(pdftex.def)             Requested size: 85.53842pt x 65.37225pt.
+
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/time_CovOver_E2.pdf, id=566, 443.57005pt x 338.99724pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/time_CovOver_E2.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/time_CovOver_E2.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/time_CovOver_E2.pdf used on input line 140.
+(pdftex.def)             Requested size: 85.53842pt x 65.37225pt.
+
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/time_CosCont_E3.pdf, id=567, 443.57005pt x 338.99724pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/time_CosCont_E3.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/time_CosCont_E3.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/time_CosCont_E3.pdf used on input line 145.
+(pdftex.def)             Requested size: 85.53842pt x 65.37225pt.
+
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/time_CovOver_E3.pdf, id=568, 443.57005pt x 338.99724pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/time_CovOver_E3.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/time_CovOver_E3.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/time_CovOver_E3.pdf used on input line 150.
+(pdftex.def)             Requested size: 85.53842pt x 65.37225pt.
+
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/time_CosCont_E4.pdf, id=569, 443.57005pt x 338.99724pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/time_CosCont_E4.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/time_CosCont_E4.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/time_CosCont_E4.pdf used on input line 155.
+(pdftex.def)             Requested size: 85.53842pt x 65.37225pt.
+
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/time_CovOver_E4.pdf, id=570, 443.57005pt x 338.99724pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/time_CovOver_E4.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/time_CovOver_E4.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/time_CovOver_E4.pdf used on input line 160.
+(pdftex.def)             Requested size: 85.53842pt x 65.37225pt.
+
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/time_CosCont_E5.pdf, id=571, 443.57005pt x 338.99724pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/time_CosCont_E5.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/time_CosCont_E5.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/time_CosCont_E5.pdf used on input line 165.
+(pdftex.def)             Requested size: 85.53842pt x 65.37225pt.
+
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/time_CovOver_E5.pdf, id=572, 443.57005pt x 338.99724pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/time_CovOver_E5.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/time_CovOver_E5.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/time_CovOver_E5.pdf used on input line 170.
+(pdftex.def)             Requested size: 85.53842pt x 65.37225pt.
+
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/time_CosCont_E6.pdf, id=573, 443.57005pt x 338.99724pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/time_CosCont_E6.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/time_CosCont_E6.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/time_CosCont_E6.pdf used on input line 175.
+(pdftex.def)             Requested size: 85.53842pt x 65.37225pt.
+
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/time_CovOver_E6.pdf, id=574, 443.57005pt x 338.99724pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/time_CovOver_E6.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/time_CovOver_E6.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/time_CovOver_E6.pdf used on input line 180.
+(pdftex.def)             Requested size: 85.53842pt x 65.37225pt.
+
+</home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figur
+es/distance.pdf, id=575, 433.62pt x 289.08pt>
+File: /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/
+figures/distance.pdf Graphic file (type pdf)
+
+<use /home/macphej/jm.software/development/allosteric_signal/replica_ana/text/f
+igures/distance.pdf>
+Package pdftex.def Info: /home/macphej/jm.software/development/allosteric_signa
+l/replica_ana/text/figures/distance.pdf used on input line 188.
+(pdftex.def)             Requested size: 346.89647pt x 231.2643pt.
+
+Overfull \hbox (6.61249pt too wide) in paragraph at lines 117--191
 \OT1/cmr/m/n/10.95 We have seen that monomeric PKM2 un-der-goes a sig-nif-i-can
 t ligand-dependent
  []
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 117--191
+
+ []
+
 [4 </home/macphej/jm.software/development/allosteric_signal/replica_ana/text/fi
-gures/eigenvariance.pdf>] [5] (./rep_ana.aux) ) 
+gures/eigenvariance.pdf>] [5 </home/macphej/jm.software/development/allosteric_
+signal/replica_ana/text/figures/time_CosCont_E1.pdf> </home/macphej/jm.software
+/development/allosteric_signal/replica_ana/text/figures/time_CovOver_E1.pdf
+
+pdfTeX warning: pdflatex (file /home/macphej/jm.software/development/allosteric
+_signal/replica_ana/text/figures/time_CovOver_E1.pdf): PDF inclusion: multiple 
+pdfs with page group included in a single page
+> </home/macphej/jm.software/development/allosteric_signal/replica_ana/text/fig
+ures/time_CosCont_E2.pdf
+
+pdfTeX warning: pdflatex (file /home/macphej/jm.software/development/allosteric
+_signal/replica_ana/text/figures/time_CosCont_E2.pdf): PDF inclusion: multiple 
+pdfs with page group included in a single page
+> </home/macphej/jm.software/development/allosteric_signal/replica_ana/text/fig
+ures/time_CovOver_E2.pdf
+
+pdfTeX warning: pdflatex (file /home/macphej/jm.software/development/allosteric
+_signal/replica_ana/text/figures/time_CovOver_E2.pdf): PDF inclusion: multiple 
+pdfs with page group included in a single page
+> </home/macphej/jm.software/development/allosteric_signal/replica_ana/text/fig
+ures/time_CosCont_E3.pdf
+
+pdfTeX warning: pdflatex (file /home/macphej/jm.software/development/allosteric
+_signal/replica_ana/text/figures/time_CosCont_E3.pdf): PDF inclusion: multiple 
+pdfs with page group included in a single page
+> </home/macphej/jm.software/development/allosteric_signal/replica_ana/text/fig
+ures/time_CovOver_E3.pdf
+
+pdfTeX warning: pdflatex (file /home/macphej/jm.software/development/allosteric
+_signal/replica_ana/text/figures/time_CovOver_E3.pdf): PDF inclusion: multiple 
+pdfs with page group included in a single page
+> </home/macphej/jm.software/development/allosteric_signal/replica_ana/text/fig
+ures/time_CosCont_E4.pdf
+
+pdfTeX warning: pdflatex (file /home/macphej/jm.software/development/allosteric
+_signal/replica_ana/text/figures/time_CosCont_E4.pdf): PDF inclusion: multiple 
+pdfs with page group included in a single page
+> </home/macphej/jm.software/development/allosteric_signal/replica_ana/text/fig
+ures/time_CovOver_E4.pdf
+
+pdfTeX warning: pdflatex (file /home/macphej/jm.software/development/allosteric
+_signal/replica_ana/text/figures/time_CovOver_E4.pdf): PDF inclusion: multiple 
+pdfs with page group included in a single page
+> </home/macphej/jm.software/development/allosteric_signal/replica_ana/text/fig
+ures/time_CosCont_E5.pdf
+
+pdfTeX warning: pdflatex (file /home/macphej/jm.software/development/allosteric
+_signal/replica_ana/text/figures/time_CosCont_E5.pdf): PDF inclusion: multiple 
+pdfs with page group included in a single page
+> </home/macphej/jm.software/development/allosteric_signal/replica_ana/text/fig
+ures/time_CovOver_E5.pdf
+
+pdfTeX warning: pdflatex (file /home/macphej/jm.software/development/allosteric
+_signal/replica_ana/text/figures/time_CovOver_E5.pdf): PDF inclusion: multiple 
+pdfs with page group included in a single page
+> </home/macphej/jm.software/development/allosteric_signal/replica_ana/text/fig
+ures/time_CosCont_E6.pdf
+
+pdfTeX warning: pdflatex (file /home/macphej/jm.software/development/allosteric
+_signal/replica_ana/text/figures/time_CosCont_E6.pdf): PDF inclusion: multiple 
+pdfs with page group included in a single page
+> </home/macphej/jm.software/development/allosteric_signal/replica_ana/text/fig
+ures/time_CovOver_E6.pdf
+
+pdfTeX warning: pdflatex (file /home/macphej/jm.software/development/allosteric
+_signal/replica_ana/text/figures/time_CovOver_E6.pdf): PDF inclusion: multiple 
+pdfs with page group included in a single page
+>] [6 </home/macphej/jm.software/development/allosteric_signal/replica_ana/text
+/figures/distance.pdf>] (./rep_ana.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
 Here is how much of TeX's memory you used:
- 2704 strings out of 494910
- 47424 string characters out of 6179837
- 107028 words of memory out of 5000000
- 5985 multiletter control sequences out of 15000+600000
+ 2769 strings out of 494910
+ 53083 string characters out of 6179837
+ 107067 words of memory out of 5000000
+ 6037 multiletter control sequences out of 15000+600000
  8512 words of font info for 30 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  42i,8n,40p,846b,490s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
-amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.p
-fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on rep_ana.pdf (5 pages, 237571 bytes).
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/font
+s/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmsy8.pfb>
+Output written on rep_ana.pdf (6 pages, 446941 bytes).
 PDF statistics:
- 606 PDF objects out of 1000 (max. 8388607)
- 201 compressed objects within 3 object streams
+ 1185 PDF objects out of 1200 (max. 8388607)
+ 367 compressed objects within 4 object streams
  0 named destinations out of 1000 (max. 500000)
- 66 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 131 words of extra memory for PDF output out of 10000 (max. 10000000)
 

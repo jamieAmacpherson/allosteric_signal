@@ -115,5 +115,78 @@ In this particular example of deca-alanine in vacuum for 10 $ns$ at 300 $K$ ther
 Going back to the initial problem of detecting subspace sampling of MD trajectories it became obvious that the deca peptide, which a good test case for assessing the numerical behaviour of $\omega$ and $\Psi$, was not very useful for interrogating whether or not the mutual information was sensitive to global conformational changes. To investigate this problem, we measured the subspace overlap of a more complex system - monomeric PKM2 bound to Tepp-46.
 \subsection*{Test case 2: 1 $\mu s$ MD simulation of monomeric PKM2 bound to Tepp-46}
 We have seen that monomeric PKM2 undergoes a significant ligand-dependent conformational rearrangement upon binding Tepp-46. Particularly, the B-domain cap closes over the catalytic pocket when the allosteric activator is bound and remains in an 'open' conformation when in the 'apo' state. When Tepp-46 is bound, the B-domain cap closes at around 150 $ns$ (not shown). Here, given that the protien undergoes a significant conformational rearrangement during the simulation we hypothesised that it would be a good test system to determine whether global conformational changes were accounted for my local correlations in the fragment scheme.
+\\
+\\
+We started by measuring the subspace overlap for different numbers of eigenmodes, to investigate whether local correlations are sensitive to global conformational changes. 
+\begin{figure}[hbt]
+\centering
+\begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CosCont_E1.pdf}
+    \caption{$E$ = 1}\label{fig:1a}
+  \end{subfigure}%   
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CovOver_E1.pdf}
+    \caption{$E$ = 1}\label{fig:1b}
+  \end{subfigure}%  
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CosCont_E2.pdf}
+    \caption{$E$ = 2}\label{fig:1c}
+  \end{subfigure}%  
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CovOver_E2.pdf}
+    \caption{$E$ = 2}\label{fig:1d}
+  \end{subfigure}\\%   
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CosCont_E3.pdf}
+    \caption{$E$ = 3}\label{fig:1e}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CovOver_E3.pdf}
+    \caption{$E$ = 3}\label{fig:1f}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CosCont_E4.pdf}
+    \caption{$E$ = 4}\label{fig:1g}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CovOver_E4.pdf}
+    \caption{$E$ = 4}\label{fig:1h}
+  \end{subfigure}\\%     
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CosCont_E5.pdf}
+    \caption{$E$ = 5}\label{fig:1i}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CovOver_E5.pdf}
+    \caption{$E$ = 5}\label{fig:1j}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CosCont_E6.pdf}
+    \caption{$E$ = 6}\label{fig:1k}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.24\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{time_CovOver_E6.pdf}
+    \caption{$E$ = 6}\label{fig:1l}
+  \end{subfigure}\\%   
+\caption{The numerical behaviour of spectral subspace overlap with different eigenmodes for monomeric PKM2 + Tepp-46. The MD trajectory was split into 100 blocks of 10 $ns$. The subspace overlap was calculated for each blocks $i_{n}$ and $i_{n-1}$}\label{fig:1}
+\end{figure}
+Similar to the deca-alanine peptide, the subspace overlap explored by the mutual information matrices of monomeric PKM2 + Tepp-46 was normally distributed about an average values of $ \Omega_{A:B} $ and $ \Psi_{A:B} $ and did not deviate as a result of the closure of the B-domain cap (shown below). Similarly, $\mu \omega_{A:B} $ and $\mu \psi_{A:B} $ decay to a convergent value, with increasing number of eigenmodes.
+\begin{figure}[!ht]
+\centering
+\includegraphics[scale=0.8]{distance.pdf}
+\caption{The B-domain closed over the catalytic pocket of monomeric PKM2 when Tepp-46 is bound to its N-terminal allosteric pocket.}\label{fig:2} 
+\end{figure}
 
 \end{document}

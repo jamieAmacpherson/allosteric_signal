@@ -164,3 +164,23 @@ def covaroverlap(matA, matB):
 
 covaroverlap(args.mat1, args.mat2)
 
+
+def marcenkopastur(x, c):
+	# Marchenko Pastur density function for c > 1
+	ub = (1 + sqrt(c))**2
+	lb = (1 - sqrt(c))**2 
+	mp = np.zeros(len(x))
+#
+	# Figure out indices where mp is to be calculated
+	lbidx = where(x > lb)
+	ubidx = where(x < ub)  
+	a = lbidx[0][0]
+	b = ubidx[-1][-1]
+	xh = x[a:b+1]
+#
+	# MP distribution
+	mp[a:b+1] = math.sqrt((xh - lb)*(ub - xh))/(2 * math.pi*c*xh)              
+	return (lb, ub, mp)
+
+
+def plotmmpdf(mat):
