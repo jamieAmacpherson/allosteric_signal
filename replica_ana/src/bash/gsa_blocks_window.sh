@@ -27,6 +27,14 @@ let b=k-$3
 
 echo $b
 echo $k
+gmx trjconv -f $1\
+              -s $2\
+	      -b $b -e $b\
+	      -o struct_$b.pdb <<EOF
+3
+3
+EOF
+
 $SRCDIR/g_sa_encode -f $1\
                       -s $2\
 		      -b $b -e $k\
@@ -35,7 +43,7 @@ $SRCDIR/g_sa_encode -f $1\
                       -xpmlf $OUTDIR/$k.lf.xpm\
                       -fasta -xpm -log $OUTDIR/$k.log  
 
-#mpirun -np 12\
+mpirun -np 6\
                 $SRCDIR/g_sa_analyze -sa $OUTDIR/$k.lf_str.out\
                        -MImat $OUTDIR/$k.lf_MImat.out\
                        -eeMImat $OUTDIR/$k.lf_eeMImat.out\
@@ -52,6 +60,5 @@ sleep 3
 let k=k+$3
 done
 
-Rscript MI_ana.R 
 
 exit

@@ -29,7 +29,11 @@ import math
 import time
 import progressbar
 import matplotlib.pyplot as plt
+from matplotlib import rcParams as pltparam
+import sklearn.preprocessing as sk
+
 plt.style.use('seaborn-ticks')
+pltparam.update({'font.size': 20})
 
 #____________________________________________________________________________
 # Parse the number of eigenmodes to be used in the calculation.
@@ -44,6 +48,9 @@ parser = argparse.ArgumentParser(description='Calculate the covariance overlap a
 
 parser.add_argument('nmodes', type=int, nargs=1, 
                      help='the number of eigenmodes used for the calculation')
+
+parser.add_argument('-c', type=float, nargs=1, 
+                     help='Fixed value for the MP distribution')
 
 # the first argument is the trajectory file (.dcd) supplied after the -t flag
 # the trajectory file is saved as an object with the variable args.dcdfile
@@ -102,7 +109,7 @@ def cosinecontent(matA, matB):
 	print dab
 
 
-cosinecontent(args.mat1, args.mat2)
+#cosinecontent(args.mat1, args.mat2)
 
 #____________________________________________________________________________
 # Compute the covariance overlap:  
@@ -162,25 +169,54 @@ def covaroverlap(matA, matB):
 	print omega
 
 
-covaroverlap(args.mat1, args.mat2)
+#covaroverlap(args.mat1, args.mat2)
 
 
-def marcenkopastur(x, c):
+def marcenkopasturpdf(x, c):
 	# Marchenko Pastur density function for c > 1
-	ub = (1 + sqrt(c))**2
-	lb = (1 - sqrt(c))**2 
+	ub = (1 + math.sqrt(c))**2
+	lb = (1 - math.sqrt(c))**2 
 	mp = np.zeros(len(x))
 #
 	# Figure out indices where mp is to be calculated
-	lbidx = where(x > lb)
-	ubidx = where(x < ub)  
+	lbidx = np.where(x > lb)
+	ubidx = np.where(x < ub)  
 	a = lbidx[0][0]
 	b = ubidx[-1][-1]
 	xh = x[a:b+1]
 #
 	# MP distribution
-	mp[a:b+1] = math.sqrt((xh - lb)*(ub - xh))/(2 * math.pi*c*xh)              
+	mp[a:b+1] = (((xh - lb)*(ub - xh))**0.5)/(2 * math.pi*c*xh)              
 	return (lb, ub, mp)
 
 
-def plotmmpdf(mat):
+def plotmmpdf(mat, c):
+
+	print 'Computing the Marcenko Pastur distribution function for %s' %mat
+	matA = np.loadtxt(mat)
+	
+	nrow, ncol = np.shape(matA)
+	N = nrow
+	L = (N/c) 	
+
+	# Scale matrix so that it has a zero mean and unit standard deviation
+	#smatA = sk.scale(matA)	
+	eigval,_ = LA.eig(matA) 
+ 	
+	realeigval = np.array(eigval, dtype=float)
+
+	weights = np.ones_like(realeigval)/float(len(realeigval))
+	plt.hist(realeigval, bins=1000, normed=True, align='right', color='black')
+
+	ln, un, mp = marcenkopasturpdf(np.arange(0, 20, 0.01), c)
+	plt.plot(np.arange(0, 20, 0.01), mp, linewidth = 1, color='red')
+	plt.xlim(0,20)
+	plt.ylim(-0.2,4) 
+	plt.ylabel(r'P($\lambda$)')
+	plt.xlabel(r'Eigenvalue, $\lambda$')
+	plt.savefig('MMpdf.pdf', bbox_inches='tight')
+
+
+
+plotmmpdf(args.mat1, args.c[0])
+

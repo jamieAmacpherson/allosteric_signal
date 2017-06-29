@@ -1,10 +1,10 @@
-# This file was created Fri Jun 16 16:57:32 2017
+# This file was created Thu Jun 29 17:50:17 2017
 # by the following command:
 # /home/macphej/jm.software/apps/gsatools-4.5.x-1.00/src/g_sa_encode -f ../md/md1_rottrans.xtc -s ../md/md1.pdb -b 2600 -e 2800 -strlf block2800/2800.lf_str.out -rmsdlf block2800/2800.lf_rmsd.xvg -xpmlf block2800/2800.lf.xpm -fasta -xpm -log block2800/2800.log 
 #
 # g_sa_encode is part of G R O M A C S:
 #
-# ¸’œŒß­Š‘Œß°‘ß²Œ‹ß™ß¾““ß¼’Š‹šß¬†Œ‹š’Œ
+# ¸š‹ß­š›ß°†Œ‹–œ—ß²”šŒß¾““ß¼—š’–Œ‹Œß¬‘š
 #
 @    title "local fit RMSD"
 @    xaxis  label "Fragment"
