@@ -41,11 +41,17 @@ pltparam.update({'font.size': 20})
 parser = argparse.ArgumentParser(description='Calculate the covariance overlap and cosine content of Mutual information matrices.')
 
 parser.add_argument('nmodes', type=int, nargs=1, 
-                     help='the number of eigenmodes used for the calculation')
+                     help='the number of eigenmodes used for the calculation.')
 
-parser.add_argument('--CCmat', choices=['yes', 'no'], default='no', help='(no/yes) Calculate the cosine content matrix')
+parser.add_argument('--COsum', choices=['yes', 'no'], default='no', help='(no/yes) Calculate the cumulative sum of the covariance overlap.')
 
-parser.add_argument('--COmat', choices=['yes', 'no'], default='no', help='(no/yes) Calculate the covariance overlap matrix')
+parser.add_argument('--CO', choices=['yes', 'no'], default='no', help='(no/yes) Calculate the covariance overlap.')
+
+parser.add_argument('--CCmat', choices=['yes', 'no'], default='no', help='(no/yes) Calculate the cosine content matrix.')
+
+parser.add_argument('--COmat', choices=['yes', 'no'], default='no', help='(no/yes) Calculate the covariance overlap matrix.')
+
+parser.add_argument('--PDBload', choices=['yes', 'no'], default='no', help='(no/yes) Parse PDB files.')
 
 args = parser.parse_args()
 
@@ -74,17 +80,18 @@ for i in data:
 del i
 
 # Read in PDB coordinates corresponding to the mutual information matrices
-pathpdb = '*.pdb'
-file_list = glob.glob(pathpdb)
-pdbdata = []
-for pdbfile_path in file_list:
-	print "reading PDB coordinates"
-	# read coordinates
-	pdb = parsePDB(pdbfile_path)
+if args.PDBload == 'yes':
+	pathpdb = '*.pdb'
+	file_list = glob.glob(pathpdb)
+	pdbdata = []
+	for pdbfile_path in file_list:
+		print "reading PDB coordinates"
+		# read coordinates
+		pdb = parsePDB(pdbfile_path)
 
-	# remove the last three C $\alpha$ atoms
-	#pdb = pdb[0:(len(pdb)-3)].getCoords()
-	pdbdata.append(pdb)
+		# remove the last three C $\alpha$ atoms
+		pdb = pdb[0:(len(pdb)-3)].getCoords()
+		pdbdata.append(pdb)
 
 
 #____________________________________________________________________________
@@ -134,10 +141,12 @@ def cosinecontent(matA, matB):
 # cosine between eigenvectors A and B by the geometric mean of the respective
 # eigenvalues.
 #____________________________________________________________________________
+
+
 def covaroverlap(matA, matB):
 #
        # kill if dimensions are different 
-        if np.shape(matA) != np.shape(matB):
+	if np.shape(matA) != np.shape(matB):
                 print "matrices must be of equal dimensions"
         else:
                 print "Computing covariance overlap"
@@ -145,43 +154,91 @@ def covaroverlap(matA, matB):
        # compute the eigenvalues and eigenvectors of matrix A
         eigvalA, eigvecA = LA.eig(matA)          
 #
+       # include the desired number of eigenmodes for matrix A
+	eigvalA = eigvalA[0:nmodes]
+	eigvecA = eigvecA[:,0:nmodes]
+#
        # compute the eigenvalues and eigenvectors of matrix B
         eigvalB, eigvecB = LA.eig(matB)
 #
-       # initialize empty arrays to accept terms of covariance overlap measure
-        valsum = []
-        geomean = []
-        geomeansum = []
-        vecmult = []
-        vecsum = []
-	scaledcos=[]
+       # include the desired number of eigenmodes for matrix B
+	eigvalB = eigvalB[0:nmodes]
+	eigvecB = eigvecB[:,0:nmodes]
 #
- 	#compute the sum of eigenvalues
-	valsum = sum(eigvalA[0:nmodes] + eigvalB[0:nmodes])
-	for i in range(nmodes):
 #
-      	# compute the sum of eigenvalues
-      	# compute the geometric mean about two sets of eigenvalues
-      		geomean.append(math.sqrt(eigvalA[i] * eigvalA[i]))
-      	# determine the inner product of two eigenvector matrices
-      		vecmult.append(eigvecA[:,i] * eigvecB[:,i])
-      		vecsum.append(sum(vecmult[i])**2)
+	dotAB = np.dot(eigvecA.T, eigvecB)**2
 #
-        # compute the vector scaled by the geometric mean of the 
-        # eigenvalues	
-	for x in range(nmodes):
-		scaledcos.append(geomean[x] * vecsum[x])
+	outerAB = np.outer(eigvalA**0.5, eigvalB**0.5)
 #	
-	scaledcossum = sum(scaledcos)
+	diff = (np.sum(eigvalA.sum() + eigvalB.sum()) - 2 * np.sum(outerAB * dotAB))
 #
-        omegain = valsum - round((2 * scaledcossum), 20)
-        omega = 1 - (omegain/valsum)**0.5
-#      
+	if diff < 0:
+		diff = 0
+	else:
+		diff = diff**0.5 
+	omega = 1 - diff / np.sqrt(eigvalA.sum() + eigvalB.sum())
 #
 	return omega
 
 
-# compute the cosine content for the cartesian product of all MI matrices
+
+
+
+
+
+
+
+
+#def covaroverlap(matA, matB):
+#
+       # kill if dimensions are different 
+#        if np.shape(matA) != np.shape(matB):
+#                print "matrices must be of equal dimensions"
+#        else:
+#                print "Computing covariance overlap"
+#
+       # compute the eigenvalues and eigenvectors of matrix A
+#        eigvalA, eigvecA = LA.eig(matA)          
+#
+       # compute the eigenvalues and eigenvectors of matrix B
+#        eigvalB, eigvecB = LA.eig(matB)
+#
+       # initialize empty arrays to accept terms of covariance overlap measure
+#        valsum = []
+#        geomean = []
+#        geomeansum = []
+#        vecmult = []
+#        vecsum = []
+#	scaledcos=[]
+#
+ 	#compute the sum of eigenvalues
+#	valsum = sum(eigvalA[0:nmodes] + eigvalB[0:nmodes])
+#	for i in range(nmodes):
+#
+      	# compute the sum of eigenvalues
+      	# compute the geometric mean about two sets of eigenvalues
+#      		geomean.append(math.sqrt(eigvalA[i] * eigvalA[i]))
+      	# determine the inner product of two eigenvector matrices
+#      		vecmult.append(eigvecA[:,i] * eigvecB[:,i])
+#      		vecsum.append(sum(vecmult[i])**2)
+#
+        # compute the vector scaled by the geometric mean of the 
+        # eigenvalues	
+#	for x in range(nmodes):
+#		scaledcos.append(geomean[x] * vecsum[x])
+#	
+#	scaledcossum = sum(scaledcos)
+#
+#        omegain = valsum - round((2 * scaledcossum), 20)
+#        omega = 1 - (omegain/valsum)**0.5
+#      
+#
+#	return omega
+
+#____________________________________________________________________________
+# Plotting functions 
+#____________________________________________________________________________
+
 def calcCC():
 	veccosine = []
 	linveccosine = []	
@@ -229,11 +286,12 @@ def calcCCmat():
 def calcCO():
 	overlap = []
 	
+	last = len(data)-1	
 	for a in range(len(data)-1):
 		b = a + 1
 		print 'Calculating cosine content between blocks, using %s eigenmode(s):' %nmodes
 		print a, b
-		overlap.append(covaroverlap(data[a], data[b]))
+		overlap.append(covaroverlap(data[last], data[b]))
 	np.savetxt('time_CovOverlap.dat', overlap)	
 
 	# plot linear covariance overlap
@@ -244,6 +302,27 @@ def calcCO():
     	plt.ylabel(r'Covariance overlap, $\Omega_(A,B)$')
     	plt.xlabel(r'Simulation block')
     	plt.savefig('time_CovOver.pdf', bbox_inches='tight')
+
+def calcCOsum():
+	overlap = []
+	
+	for a in range(len(data)-1):
+		b = a + 1
+		print 'Calculating cosine content between blocks, using %s eigenmode(s):' %nmodes
+		print a, b
+		noverlap = 1-covaroverlap(data[a], data[b])
+		overlap.append(noverlap)
+
+	np.savetxt('time_CovOverlap.dat', overlap)	
+
+	# plot linear covariance overlap
+	plt.plot(range(len(overlap)), np.cumsum(overlap)**0.5, color='red')	
+    	plt.grid()
+    	axes = plt.gca()
+	#plt.ylim(0,1)
+    	plt.ylabel(r'Cumulative covariance overlap, $\Omega_(A,B)$')
+    	plt.xlabel(r'Simulation block')
+    	plt.savefig('time_CovOver_cum.pdf', bbox_inches='tight')
 
 def calcCOmat():
 	overlap = []
@@ -264,8 +343,43 @@ def calcCOmat():
 	plt.savefig('covoverlap_mat.pdf')
 
 
-#plt.figure()
-#calcCO()
+
+## Calculate the first eigenvalue over time
+def eigvalt():
+	eigenproj = []
+	
+	for a in range(len(data)-1):
+		print 'Calculating the first eigenvalue [%s]' %a
+		eigenval, eigenvec = LA.eig(data[a])
+		proj = np.dot(eigenvec[:,0], pdbdata[a])
+		eigenproj.append(proj)
+
+	# plot linear covariance overlap
+	plt.plot(range(len(eigenproj)), eigenproj, color='black')	
+    	plt.grid()
+    	axes = plt.gca()
+	#plt.ylim(0,1)
+    	#plt.ylabel(r'Covariance overlap, $\Omega_(A,B)$')
+    	#plt.xlabel(r'Simulation block')
+    	plt.savefig('ev1_time.pdf', bbox_inches='tight')
+#plt.figure()	
+#eigvalt()
+
+
+#____________________________________________________________________________
+# Plot computed results
+#____________________________________________________________________________
+
+## SWITCH: if user selects, calculate covariance overlap
+if args.CO == 'yes':
+	plt.figure()
+	calcCO()
+
+## SWITCH: if user selects, calculate the cummulative sum of the covariance overlap
+if args.COsum == 'yes':
+	plt.figure()
+	calcCOsum()
+
 
 
 ## SWITCH: if user selects matrix, compute cosine content matrix
@@ -278,25 +392,3 @@ if args.CCmat == 'yes':
 if args.COmat == 'yes':
 	plt.figure()
 	calcCOmat()
-
-
-## Calculate the first eigenvalue over time
-def eigvalt():
-	eigenproj = []
-	
-	for a in range(len(data)-1):
-		print 'Calculating the first eigenvalue [%s]' %a
-		eigenval, eigenvec = LA.eig(data[a])
-		proj = np.sum(eigenvec[:,0])
-		eigenproj.append(proj)
-
-	# plot linear covariance overlap
-	plt.plot(range(len(eigenproj)), eigenproj, color='black')	
-    	plt.grid()
-    	axes = plt.gca()
-	#plt.ylim(0,1)
-    	#plt.ylabel(r'Covariance overlap, $\Omega_(A,B)$')
-    	#plt.xlabel(r'Simulation block')
-    	plt.savefig('ev1_time.pdf', bbox_inches='tight')
-plt.figure()	
-eigvalt()

@@ -81,7 +81,7 @@ def rmrt(topology, trajectory):
 #    
     # fit the trajectory to the topology, removing rotational-translational motions
     # and save the resulting trajectory.
-    rms_fit_trj(traj, ref, filename='rmsfit_traj.dcd')
+    #rms_fit_trj(traj, ref, filename='rmsfit_traj.dcd')
 
 rmrt(args.pdbfile, args.dcdfile)
 
@@ -100,5 +100,5 @@ def covar(topology, trajectory, block):
     mat = ensemble.getCovariance()
     np.savetxt('%s.out' % block, mat)
 
-covar(args.pdbfile, 'rmsfit_traj.dcd', args.block)
+covar(args.pdbfile, args.dcdfile, args.block)
 

@@ -2,6 +2,7 @@
 
 \usepackage{graphicx}
 \usepackage{subcaption}
+\usepackage{subfig}
 \graphicspath{ {/home/macphej/jm.software/development/allosteric_signal/replica_ana/text/figures/} }
 
 \begin{document}
@@ -188,5 +189,27 @@ Similar to the deca-alanine peptide, the subspace overlap explored by the mutual
 \includegraphics[scale=0.8]{distance.pdf}
 \caption{The B-domain closed over the catalytic pocket of monomeric PKM2 when Tepp-46 is bound to its N-terminal allosteric pocket.}\label{fig:2} 
 \end{figure}
-From this, it appeared that the time evolution of backbone correlations calculated using the structural alphabet approach was not sensitive enough to pick up global structural changes. This is perhaps to be expected, because the mutual information matrices are a statistical measure of distal local correlations. Although an eigenvalue transformation of the mutual information matrices did not explicitly give information on global structural changes, we returned to the original problem of extracting meaningful correlations from the mutual information matrices. A critical question regarding the use of correlation signals is whether the signal strength observed. To filter out residual couplings from those reflecting an allosteric signal we used a random matrix theoretical framework. The fundamental aim is to detect those fragment couplings, which represents a true allosteric signal (ie. non-random). 
+From this, it appeared that the time evolution of backbone correlations calculated using the structural alphabet approach was not sensitive enough to pick up global structural changes. This is perhaps to be expected, because the mutual information matrices are a statistical measure of distal local correlations. Although an eigenvalue transformation of the mutual information matrices did not explicitly give information on global structural changes, we returned to the original problem of extracting meaningful correlations from the mutual information matrices. A critical question regarding the use of correlation signals is whether the signal strength observed. To filter out residual couplings from those reflecting an allosteric signal we used a random matrix theoretical framework. The fundamental aim is to detect those fragment couplings, which represents a true allosteric signal (ie. non-random). There is significant noise in the fragment couplings, because only some of the couplings are truely informative in terms of their contribution to allosteric signal transmission. A fundamental result from random matrix theory describes the eigenvalue distribution of a correlation matrix analytically - under certain assumptions, if entries are drawn from a Gaussian distribution with zero mean and unit variance, the probability of having an eigenvalue $\lambda$ is given by the canonical Marcenko-Pastur distribution:
+\begin{equation} 
+P(\lambda) = \frac{\sqrt{((1 + \sqrt{\gamma})^2 - \lambda)(\lambda - (1 - \sqrt{\gamma})^2)}}{2 \pi \gamma \lambda}
+\end{equation}
+
+where $\gamma$ describes how well-sampled the dataset is. The probability that a random matrix has eigenvalues larger than $1 + \sqrt{\gamma}^2$ in the absence of any signal is very low. As a result, those eigenvalues above $1 + \sqrt{\gamma}^2$ correspond to statistically significant signals.
+\begin{figure}
+\begin{minipage}{.5\linewidth}
+\centering
+\subfloat[]{\label{main:a}\includegraphics[scale=.4]{Tepp1_MMpdf.pdf}}
+\end{minipage}%
+\begin{minipage}{.5\linewidth}
+\centering
+\subfloat[]{\label{main:b}\includegraphics[scale=.4]{Tepp2_MMpdf.pdf}}
+\end{minipage}\par\medskip
+\centering
+\subfloat[]{\label{main:c}\includegraphics[scale=.4]{Tepp3_MMpdf.pdf}}
+
+\caption{Marcenko-Pastur distribution plots for spectral decompositions of mutual information signals for three independent MD trajectories of monomeric PKM2 + Tepp-46.}
+\label{fig:main}
+\end{figure}
+
 \end{document}
+

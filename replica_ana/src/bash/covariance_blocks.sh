@@ -11,6 +11,13 @@ mdconvert='/home/macphej/jm.software/development/allosteric_signal/replica_ana/s
 covarmat='/home/macphej/jm.software/development/allosteric_signal/replica_ana/src/python/covar_mat.py'
 overlap='/home/macphej/jm.software/development/allosteric_signal/replica_ana/src/python/MI_space.py'
 
+gmx trjconv -f $1\
+             -s $2 -n $6\
+             -b 0 -e 0\
+	     -o topol.pdb <<EOF
+3
+3
+EOF
 
 ## Split trajectory into blocks
 let k=$3
@@ -27,25 +34,17 @@ gmx trjconv -f $1\
 3
 EOF
 
-gmx trjconv -f $1\
-             -s $2 -n $6\
-             -b $k -e $k\
-	     -o $k.pdb <<EOF
-3
-3
-EOF
-
 
 python $mdconvert $k.xtc -o $k.dcd
 
 
-python $covarmat -t $k.dcd -s $k.pdb -b $k 
+python $covarmat -t $k.dcd -s topol.pdb -b $k 
 
+rm *.dcd *.xtc
 
 let k=k+$3
 done
 
-rm *.dcd
 
-#python $overlap $5 --matrix yes
+python $overlap $5 --COsum yes
 exit
