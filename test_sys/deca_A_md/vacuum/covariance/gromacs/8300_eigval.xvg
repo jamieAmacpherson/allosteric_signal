@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:41 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 8300.xtc -s 8300.pdb -ascii 8300_covar.dat -o 8300_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# Great Red Owns Many ACres of Sand 
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.138294
+         2 0.0837871
+         3 0.0380832
+         4 0.0232979
+         5 0.0129793
+         6 0.0101442
+         7 0.00661111
+         8 0.00587144
+         9 0.0049065
+        10 0.00247735
+        11 0.00199233
+        12 0.00185714
+        13 0.00159192
+        14 0.0014063
+        15 0.00125117
+        16 0.00104294
+        17 0.000927191
+        18 0.000686868
+        19 0.000557736
+        20 0.000487256
+        21 0.000318033
+        22 0.000256189
+        23 0.000151186
+        24 0.000124044
+        25 3.46826e-09
+        26 -1.64722e-09
+        27 -2.67541e-09
+        28 -7.4775e-09
+        29 -9.80402e-09
+        30 -2.58073e-08

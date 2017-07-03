@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:41 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 8200.xtc -s 8200.pdb -ascii 8200_covar.dat -o 8200_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# Giant Rising Ordinary Mutants for A Clerical Setup
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.14489
+         2 0.0689699
+         3 0.0360188
+         4 0.0237939
+         5 0.015431
+         6 0.010588
+         7 0.00674746
+         8 0.00598887
+         9 0.00512531
+        10 0.00312609
+        11 0.002202
+        12 0.00197321
+        13 0.00172607
+        14 0.00145713
+        15 0.00113338
+        16 0.00104098
+        17 0.000868109
+        18 0.000808867
+        19 0.000604036
+        20 0.000460514
+        21 0.000320546
+        22 0.000259698
+        23 0.000178164
+        24 0.000117572
+        25 8.4624e-09
+        26 7.56633e-09
+        27 -1.94678e-09
+        28 -6.63963e-09
+        29 -7.62481e-09
+        30 -2.69396e-08

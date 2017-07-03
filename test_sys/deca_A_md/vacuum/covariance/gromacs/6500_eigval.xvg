@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:38 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 6500.xtc -s 6500.pdb -ascii 6500_covar.dat -o 6500_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# GROningen Mixture of Alchemy and Childrens' Stories
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.127143
+         2 0.060107
+         3 0.0245381
+         4 0.0164979
+         5 0.0115562
+         6 0.0086524
+         7 0.00708293
+         8 0.00545463
+         9 0.00315894
+        10 0.00221237
+        11 0.00200439
+        12 0.00162961
+        13 0.00146667
+        14 0.0012173
+        15 0.000964975
+        16 0.000807044
+        17 0.000657641
+        18 0.000477947
+        19 0.000395986
+        20 0.00032557
+        21 0.000253796
+        22 0.000202274
+        23 0.000134744
+        24 0.000100678
+        25 2.65598e-08
+        26 -6.50031e-12
+        27 -1.15026e-09
+        28 -1.99012e-09
+        29 -5.14814e-09
+        30 -1.5567e-08

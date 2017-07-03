@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:34 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 3600.xtc -s 3600.pdb -ascii 3600_covar.dat -o 3600_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# Good ROcking Metal Altar for Chronical Sinners
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.174488
+         2 0.0514165
+         3 0.0310912
+         4 0.0134037
+         5 0.0116416
+         6 0.00734633
+         7 0.00493343
+         8 0.00318672
+         9 0.00231515
+        10 0.00182225
+        11 0.00146933
+        12 0.00137385
+        13 0.00113595
+        14 0.00104121
+        15 0.000938635
+        16 0.000789937
+        17 0.000509953
+        18 0.000443016
+        19 0.000300002
+        20 0.00022452
+        21 0.000168585
+        22 0.000149973
+        23 0.00013586
+        24 0.000109114
+        25 2.38553e-08
+        26 2.45086e-09
+        27 -4.40456e-10
+        28 -2.2107e-09
+        29 -8.60328e-09
+        30 -1.57573e-08

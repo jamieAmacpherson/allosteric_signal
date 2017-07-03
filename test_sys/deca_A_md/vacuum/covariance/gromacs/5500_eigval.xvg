@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:36 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 5500.xtc -s 5500.pdb -ascii 5500_covar.dat -o 5500_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# Georgetown Riga Oslo Madrid Amsterdam Chisinau Stockholm
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.139965
+         2 0.0431963
+         3 0.0278659
+         4 0.015235
+         5 0.0128791
+         6 0.0079821
+         7 0.00621184
+         8 0.00382829
+         9 0.00252217
+        10 0.00245651
+        11 0.00163784
+        12 0.0013853
+        13 0.00121699
+        14 0.00116939
+        15 0.000959538
+        16 0.000735216
+        17 0.000602709
+        18 0.000468192
+        19 0.000425642
+        20 0.000262644
+        21 0.000205721
+        22 0.000163848
+        23 0.000128178
+        24 0.000101601
+        25 2.68416e-08
+        26 2.9069e-09
+        27 3.43134e-10
+        28 -5.6344e-10
+        29 -2.3181e-09
+        30 -2.47462e-09

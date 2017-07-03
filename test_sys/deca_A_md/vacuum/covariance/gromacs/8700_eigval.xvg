@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:42 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 8700.xtc -s 8700.pdb -ascii 8700_covar.dat -o 8700_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# GRowing Old MAkes el Chrono Sweat
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.142779
+         2 0.0836018
+         3 0.0392702
+         4 0.0239824
+         5 0.013724
+         6 0.00992378
+         7 0.00633639
+         8 0.00548385
+         9 0.0048095
+        10 0.00263469
+        11 0.00214282
+        12 0.00182662
+        13 0.00160381
+        14 0.00146572
+        15 0.00120611
+        16 0.00105457
+        17 0.000948522
+        18 0.000669693
+        19 0.000501284
+        20 0.000467747
+        21 0.000303566
+        22 0.000256528
+        23 0.000143663
+        24 0.000118512
+        25 8.02179e-08
+        26 2.84663e-08
+        27 -2.88768e-09
+        28 -3.59287e-09
+        29 -5.30634e-09
+        30 -6.76204e-09

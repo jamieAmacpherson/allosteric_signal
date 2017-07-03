@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:38 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 6800.xtc -s 6800.pdb -ascii 6800_covar.dat -o 6800_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# GRoups of Organic Molecules in ACtion for Science
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.124278
+         2 0.0584603
+         3 0.0233517
+         4 0.0158648
+         5 0.0114163
+         6 0.00855016
+         7 0.00692755
+         8 0.00532769
+         9 0.00299892
+        10 0.00221277
+        11 0.00189708
+        12 0.00149528
+        13 0.00144153
+        14 0.00120316
+        15 0.000919533
+        16 0.000787923
+        17 0.000645757
+        18 0.000472463
+        19 0.000398222
+        20 0.000329439
+        21 0.000245558
+        22 0.000198215
+        23 0.000129753
+        24 0.000101793
+        25 4.95587e-09
+        26 -8.33742e-10
+        27 -1.95194e-09
+        28 -2.73586e-09
+        29 -4.37876e-09
+        30 -1.14875e-08

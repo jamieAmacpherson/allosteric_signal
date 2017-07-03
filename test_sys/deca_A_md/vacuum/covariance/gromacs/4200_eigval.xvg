@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:35 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 4200.xtc -s 4200.pdb -ascii 4200_covar.dat -o 4200_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# Green Red Orange Magenta Azure Cyan Skyblue
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.157602
+         2 0.0493115
+         3 0.0272625
+         4 0.0144275
+         5 0.0101796
+         6 0.00740234
+         7 0.00525438
+         8 0.00280357
+         9 0.00212868
+        10 0.00194298
+        11 0.00139698
+        12 0.00132214
+        13 0.0010922
+        14 0.0010774
+        15 0.000869422
+        16 0.000809213
+        17 0.000535619
+        18 0.000415166
+        19 0.000392984
+        20 0.000241705
+        21 0.000211017
+        22 0.000154398
+        23 0.000136402
+        24 0.000105556
+        25 6.8801e-09
+        26 2.07867e-09
+        27 1.40656e-09
+        28 -1.50469e-09
+        29 -2.26498e-09
+        30 -9.56351e-09

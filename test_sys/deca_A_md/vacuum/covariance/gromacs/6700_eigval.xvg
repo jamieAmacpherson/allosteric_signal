@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:38 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 6700.xtc -s 6700.pdb -ascii 6700_covar.dat -o 6700_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# Glycine aRginine prOline Methionine Alanine Cystine Serine
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.127323
+         2 0.0586878
+         3 0.0238183
+         4 0.0161217
+         5 0.0114078
+         6 0.00862559
+         7 0.00707981
+         8 0.0053203
+         9 0.00308179
+        10 0.00229925
+        11 0.00213621
+        12 0.00169682
+        13 0.00145981
+        14 0.00123411
+        15 0.00101303
+        16 0.000775276
+        17 0.00063897
+        18 0.000482404
+        19 0.000394037
+        20 0.000314205
+        21 0.00024676
+        22 0.000190686
+        23 0.00013488
+        24 9.96477e-05
+        25 1.51963e-08
+        26 4.61062e-09
+        27 1.92002e-09
+        28 -3.76699e-09
+        29 -8.43619e-09
+        30 -3.31619e-08

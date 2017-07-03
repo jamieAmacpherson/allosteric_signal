@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:32 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 300.xtc -s 300.pdb -ascii 300_covar.dat -o 300_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# Gravel Rubs Often Many Awfully Cauterized Sores
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.179136
+         2 0.0485266
+         3 0.025832
+         4 0.0133241
+         5 0.00955187
+         6 0.00438607
+         7 0.00332298
+         8 0.0026161
+         9 0.00239298
+        10 0.00150316
+        11 0.00128327
+        12 0.0011988
+        13 0.000841749
+        14 0.000793305
+        15 0.00048767
+        16 0.000452581
+        17 0.000358493
+        18 0.000294378
+        19 0.00019581
+        20 0.000185588
+        21 0.000130279
+        22 9.75274e-05
+        23 7.62718e-05
+        24 6.84079e-05
+        25 1.08979e-09
+        26 3.23155e-10
+        27 -1.05056e-09
+        28 -1.23657e-09
+        29 -1.31022e-09
+        30 -4.7022e-09

@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:34 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 3200.xtc -s 3200.pdb -ascii 3200_covar.dat -o 3200_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# Guyana Rwanda Oman Macau Angola Cameroon Senegal
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.183122
+         2 0.0520319
+         3 0.0369173
+         4 0.0136169
+         5 0.0122496
+         6 0.00795378
+         7 0.00503578
+         8 0.0035058
+         9 0.00214139
+        10 0.00185674
+        11 0.00151885
+        12 0.00140222
+        13 0.00110788
+        14 0.0010952
+        15 0.000949859
+        16 0.000813988
+        17 0.000532061
+        18 0.000469024
+        19 0.000310219
+        20 0.000236502
+        21 0.000164801
+        22 0.000154288
+        23 0.000127024
+        24 0.000111474
+        25 1.28037e-08
+        26 2.91542e-09
+        27 -1.75661e-09
+        28 -2.69498e-09
+        29 -3.57602e-09
+        30 -3.62007e-09

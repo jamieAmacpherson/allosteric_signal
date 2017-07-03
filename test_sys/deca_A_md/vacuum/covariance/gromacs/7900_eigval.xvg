@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:40 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 7900.xtc -s 7900.pdb -ascii 7900_covar.dat -o 7900_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# Great Red Oystrich Makes All Chemists Sane
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.132653
+         2 0.0728209
+         3 0.0362451
+         4 0.0228846
+         5 0.0139656
+         6 0.0107928
+         7 0.0061964
+         8 0.00589977
+         9 0.00488675
+        10 0.00254005
+        11 0.00186073
+        12 0.0017559
+        13 0.00153671
+        14 0.00148436
+        15 0.00120515
+        16 0.000963225
+        17 0.000911035
+        18 0.000729007
+        19 0.00053449
+        20 0.000437065
+        21 0.000310043
+        22 0.000255716
+        23 0.000125198
+        24 0.000118005
+        25 1.52212e-08
+        26 4.29259e-10
+        27 -3.73896e-09
+        28 -6.58232e-09
+        29 -6.63989e-09
+        30 -1.05781e-08

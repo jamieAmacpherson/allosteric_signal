@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:42 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 9000.xtc -s 9000.pdb -ascii 9000_covar.dat -o 9000_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# Gallium Rubidium Oxygen Manganese Argon Carbon Silicon
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.152575
+         2 0.0681858
+         3 0.0352548
+         4 0.0228858
+         5 0.0122177
+         6 0.00984467
+         7 0.00594975
+         8 0.00575069
+         9 0.00477641
+        10 0.00248773
+        11 0.00198566
+        12 0.00170993
+        13 0.00161546
+        14 0.00141096
+        15 0.00122379
+        16 0.000983598
+        17 0.000853947
+        18 0.000688342
+        19 0.00053686
+        20 0.000469577
+        21 0.000312494
+        22 0.000242166
+        23 0.000129772
+        24 0.00011243
+        25 2.93571e-08
+        26 2.29964e-09
+        27 1.30751e-09
+        28 3.05562e-10
+        29 -3.16354e-09
+        30 -1.76244e-08

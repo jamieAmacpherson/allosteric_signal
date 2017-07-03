@@ -1,0 +1,46 @@
+# This file was created Fri Jun 30 14:12:34 2017
+# Created by:
+#                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
+# 
+# Executable:   /usr/bin/gmx
+# Data prefix:  /usr
+# Command line:
+#   gmx covar -f 3900.xtc -s 3900.pdb -ascii 3900_covar.dat -o 3900_eigval.xvg
+# gmx covar is part of G R O M A C S:
+#
+# God Rules Over Mankind, Animals, Cosmos and Such
+#
+@    title "Eigenvalues of the covariance matrix"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "(nm\S2\N)"
+@TYPE xy
+         1 0.164061
+         2 0.0519835
+         3 0.0273486
+         4 0.0137102
+         5 0.0108162
+         6 0.00751649
+         7 0.0050911
+         8 0.00300121
+         9 0.00205631
+        10 0.00196315
+        11 0.00144459
+        12 0.00128888
+        13 0.00109942
+        14 0.00099933
+        15 0.000904254
+        16 0.000844879
+        17 0.000530692
+        18 0.000422598
+        19 0.00037174
+        20 0.000239512
+        21 0.000205158
+        22 0.000150655
+        23 0.00014371
+        24 0.000104291
+        25 1.43406e-08
+        26 5.46385e-09
+        27 2.30423e-09
+        28 -1.79597e-09
+        29 -7.95458e-09
+        30 -9.01248e-09
