@@ -38,7 +38,7 @@ psiAB = function(esA, irange, esB, jrange) {
 
 	psiSum = sum(sapply(c(1:length(irange)), function(x) {
 	  	esA$vectors[ , irange[x]] %*% esB$vectors[ , jrange[x]];
-	  }))
+	}))
   return(psiSum / length(irange));
 }
 
@@ -74,6 +74,51 @@ omegaAB = function(esA, irange, esB, jrange) {
 omegaAB(eigA, irange0, eigA, jrange0);
 ## should be close to 1
 omegaAB(eigA, irange1, eigA, jrange1);
+
+#______________________________________________________________________________
+## some toy data: 3 Hydrogen atoms (H1, H2, H3) with 3 trajectories:
+##   H1 moves along the room diagonal of Catesian x,y,z
+##   H2 does the same, but returns after half of the distance
+##   H3 flies along x, then along y, then along z
+## trajectory length: 120 steps
+
+H1.x = seq(from = 1, to = 120, by = 1);
+H1.y = seq(from = 1, to = 120, by = 1);
+H1.z = seq(from = 1, to = 120, by = 1);
+H1 = cbind(H1.x, H1.y, H1.z);
+covH1 = cov(H1);
+eigH1 = eigen(covH1);
+
+H2.x = c(seq(from = 1, to = 60, by = 1), seq(from = 60, to = 1, by = -1));
+H2.y = c(seq(from = 1, to = 60, by = 1), seq(from = 60, to = 1, by = -1));
+H2.z = c(seq(from = 1, to = 60, by = 1), seq(from = 60, to = 1, by = -1));
+H2 = cbind(H2.x, H2.y, H2.z);
+covH2 = cov(H2);
+eigH2 = eigen(covH2);
+
+H3.x = c(seq(from = 1, to = 40, by = 1), rep(40, 80));
+H3.y = c(rep(1, 40), seq(from = 1, to = 40, by = 1), rep(40, 40));
+H3.z = c(rep(1, 80), seq(from = 1, to = 40, by = 1));
+H3 = cbind(H3.x, H3.y, H3.z);
+covH3 = cov(H3);
+eigH3 = eigen(covH3);
+
+irange3 = c(1:3);
+jrange3 = c(1:3);
+
+#______________________________________________________________________________
+## H1 H2
+psiAB(eigH1, irange3, eigH2, jrange3);
+omegaAB(eigH1, irange3, eigH2, jrange3);
+
+## H1 H3
+psiAB(eigH1, irange3, eigH3, jrange3);
+omegaAB(eigH1, irange3, eigH3, jrange3);
+
+## H2 H3
+psiAB(eigH2, irange3, eigH3, jrange3);
+omegaAB(eigH2, irange3, eigH3, jrange3);
+
 
 
 #===============================================================================
