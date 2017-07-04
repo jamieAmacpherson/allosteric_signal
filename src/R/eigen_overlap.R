@@ -48,6 +48,33 @@ psiAB(eigA, irange0, eigA, jrange0);
 psiAB(eigA, irange1, eigA, jrange1);
 
 #______________________________________________________________________________
-## covariance overlap 'omega', equation (3)
-omegaAB = function(covmat, i);
+## covariance overlap 'omega'; equation (3)
+omegaAB = function(esA, irange, esB, jrange) {
+	## assert index range is within matrix dimension	
+	stopifnot(dim(esA$vectors[2]) >= range(irange)[2]);
+	stopifnot(dim(esB$vectors[2]) >= range(jrange)[2]);
+	## assert index ranges are equally long
+	stopifnot(length(irange) == length(jrange));
+
+	# sum terms of the equation are called here 'ta' and 'tb' */
+	ta = sum(sapply(c(1:length(irange)), function(x) {
+		esA$values[irange[x]] + esB$values[jrange[x]]; 
+	}))
+
+	tb = sum(sapply(c(1:length(irange)), function(x) {
+		sqrt(esA$values[irange[x]] * esB$values[jrange[x]]) *
+	  	esA$vectors[ , irange[x]] %*% esB$vectors[ , jrange[x]];		
+	}))
+
+	## using the 'abs' function to avoid negatives (from rounding errors)
+	return (1 - sqrt(abs((ta - (2 * tb))) / ta));
+}
+
+## should be close to 0
+omegaAB(eigA, irange0, eigA, jrange0);
+## should be close to 1
+omegaAB(eigA, irange1, eigA, jrange1);
+
+
+#===============================================================================
 
