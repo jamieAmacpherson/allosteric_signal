@@ -1,14 +1,14 @@
-# This file was created Fri Jun 30 14:12:33 2017
+# This file was created Mon Jul  3 16:38:38 2017
 # Created by:
 #                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
 # 
 # Executable:   /usr/bin/gmx
 # Data prefix:  /usr
 # Command line:
-#   gmx covar -f 2100.xtc -s 2100.pdb -ascii 2100_covar.dat -o 2100_eigval.xvg
+#   gmx covar -f 2100.xtc -s 2100.pdb -ascii 2100_covar.dat -o 2100_eigval.xvg -v 2100_eigvec.trr
 # gmx covar is part of G R O M A C S:
 #
-# Georgetown Riga Oslo Madrid Amsterdam Chisinau Stockholm
+# Gromacs Runs One Microsecond At Cannonball Speeds
 #
 @    title "Eigenvalues of the covariance matrix"
 @    xaxis  label "Eigenvector index"

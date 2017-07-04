@@ -7,9 +7,9 @@ then
         exit 1
 fi
 
-mdconvert='/home/macphej/jm.software/development/allosteric_signal/replica_ana/src/python/mdconvert.py'
-covarmat='/home/macphej/jm.software/development/allosteric_signal/replica_ana/src/python/covar_mat.py'
-overlap='/home/macphej/jm.software/development/allosteric_signal/replica_ana/src/python/MI_space.py'
+mdconvert='/home/macphej/jm.software/development/allosteric_signal/src/python/mdconvert.py'
+covarmat='/home/macphej/jm.software/development/allosteric_signal/src/python/covar_mat.py'
+overlap='/home/macphej/jm.software/development/allosteric_signal/src/python/MI_space.py'
 
 gmx trjconv -f $1\
              -s $2 -n $6\
@@ -46,5 +46,5 @@ let k=k+$3
 done
 
 
-python $overlap $5 --COsum yes
+python $overlap $5 --TRol yes
 exit

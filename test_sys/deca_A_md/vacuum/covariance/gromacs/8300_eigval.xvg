@@ -1,14 +1,14 @@
-# This file was created Fri Jun 30 14:12:41 2017
+# This file was created Mon Jul  3 16:38:47 2017
 # Created by:
 #                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
 # 
 # Executable:   /usr/bin/gmx
 # Data prefix:  /usr
 # Command line:
-#   gmx covar -f 8300.xtc -s 8300.pdb -ascii 8300_covar.dat -o 8300_eigval.xvg
+#   gmx covar -f 8300.xtc -s 8300.pdb -ascii 8300_covar.dat -o 8300_eigval.xvg -v 8300_eigvec.trr
 # gmx covar is part of G R O M A C S:
 #
-# Great Red Owns Many ACres of Sand 
+# Great Red Oystrich Makes All Chemists Sane
 #
 @    title "Eigenvalues of the covariance matrix"
 @    xaxis  label "Eigenvector index"

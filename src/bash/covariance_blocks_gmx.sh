@@ -12,12 +12,13 @@ covarmat='/home/macphej/jm.software/development/allosteric_signal/replica_ana/sr
 overlap='/home/macphej/jm.software/development/allosteric_signal/replica_ana/src/python/MI_space.py'
 
 
-## Split trajectory into blocks
+## Split trajectory into sliding windows 
 let k=$3
 let nst=$4
 
 while [ $k -le $nst ]
 do
+let b=k-$3
 
 gmx trjconv -f $1\
              -s $2 -n $6\
@@ -36,28 +37,24 @@ gmx trjconv -f $1\
 EOF
 
 gmx covar -f $k.xtc -s $k.pdb\
-	  -ascii ${k}_covar.dat -o ${k}_eigval.xvg <<EOF
+	  -ascii ${k}_covar.dat -o ${k}_eigval.xvg -v ${k}_eigvec.trr <<EOF
 3
 3
 EOF
+
 
 gmx anaeig -f $k.pdb -s $k.pdb\
-	   -proj ${k}_proj.xvg -first 1 -last 1 <<EOF
-3
-3
-EOF
+	   -v ${k}_eigvec.trr -v2 ${b}_eigvec.trr\
+	   -eig ${k}_eigval.xvg -eig2 ${b}_eigval.xvg -over ${k}_overlap.xvg >& overlap_${k}.dat
 
-rm $k.xtc eigenvec.trr average.pdb covar.log
-#python $mdconvert $k.xtc -o $k.dcd
+#rm $k.xtc  average.pdb covar.log
 
-
-#python $covarmat -t $k.dcd -s $k.pdb -b $k 
-
+sed '61q;d' overlap_${k}.dat >> covar_overlap.dat
 
 let k=k+$3
 done
 
-#rm *.dcd
+rm *.trr
 
 #python $overlap $5 --matrix yes
 exit

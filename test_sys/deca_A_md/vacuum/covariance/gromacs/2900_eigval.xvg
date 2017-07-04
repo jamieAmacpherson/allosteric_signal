@@ -1,14 +1,14 @@
-# This file was created Fri Jun 30 14:12:33 2017
+# This file was created Mon Jul  3 16:38:39 2017
 # Created by:
 #                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
 # 
 # Executable:   /usr/bin/gmx
 # Data prefix:  /usr
 # Command line:
-#   gmx covar -f 2900.xtc -s 2900.pdb -ascii 2900_covar.dat -o 2900_eigval.xvg
+#   gmx covar -f 2900.xtc -s 2900.pdb -ascii 2900_covar.dat -o 2900_eigval.xvg -v 2900_eigvec.trr
 # gmx covar is part of G R O M A C S:
 #
-# Gyas ROwers Mature At Cryogenic Speed
+# Good gRace! Old Maple Actually Chews Slate
 #
 @    title "Eigenvalues of the covariance matrix"
 @    xaxis  label "Eigenvector index"
