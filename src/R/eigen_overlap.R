@@ -86,39 +86,62 @@ H1.x = seq(from = 1, to = 120, by = 1);
 H1.y = seq(from = 1, to = 120, by = 1);
 H1.z = seq(from = 1, to = 120, by = 1);
 H1 = cbind(H1.x, H1.y, H1.z);
-covH1 = cov(H1);
-eigH1 = eigen(covH1);
 
 H2.x = c(seq(from = 1, to = 60, by = 1), seq(from = 60, to = 1, by = -1));
 H2.y = c(seq(from = 1, to = 60, by = 1), seq(from = 60, to = 1, by = -1));
 H2.z = c(seq(from = 1, to = 60, by = 1), seq(from = 60, to = 1, by = -1));
 H2 = cbind(H2.x, H2.y, H2.z);
-covH2 = cov(H2);
-eigH2 = eigen(covH2);
 
 H3.x = c(seq(from = 1, to = 40, by = 1), rep(40, 80));
 H3.y = c(rep(1, 40), seq(from = 1, to = 40, by = 1), rep(40, 40));
 H3.z = c(rep(1, 80), seq(from = 1, to = 40, by = 1));
 H3 = cbind(H3.x, H3.y, H3.z);
-covH3 = cov(H3);
-eigH3 = eigen(covH3);
-
-irange3 = c(1:3);
-jrange3 = c(1:3);
 
 #______________________________________________________________________________
-## H1 H2
-psiAB(eigH1, irange3, eigH2, jrange3);
-omegaAB(eigH1, irange3, eigH2, jrange3);
+## total trajectory
+H = cbind(H1, H2, H3);
 
-## H1 H3
-psiAB(eigH1, irange3, eigH3, jrange3);
-omegaAB(eigH1, irange3, eigH3, jrange3);
+## trajectory split into 2 parts 
+H_t2_1 = H[1:40, ];
+covH_t2_1 = cov(H_t2_1);
+eigH_t2_1 = eigen(covH_t2_1);
 
-## H2 H3
-psiAB(eigH2, irange3, eigH3, jrange3);
-omegaAB(eigH2, irange3, eigH3, jrange3);
+H_t2_2 = H[41:80, ];
+covH_t2_2 = cov(H_t2_2);
+eigH_t2_2 = eigen(covH_t2_2);
 
+## trajectory split into 3 parts
+H_t3_1 = H[1:40, ];
+covH_t3_1 = cov(H_t3_1);
+eigH_t3_1 = eigen(covH_t3_1);
+
+H_t3_2 = H[41:80, ];
+covH_t3_2 = cov(H_t3_2);
+eigH_t3_2 = eigen(covH_t3_2);
+
+H_t3_3 = H[81:120, ];
+covH_t3_3 = cov(H_t3_3);
+eigH_t3_3 = eigen(covH_t3_3);
+
+#______________________________________________________________________________
+iranget = c(1:2);
+jranget = c(1:2);
+
+## t2_1 t2_2
+psiAB(eigH_t2_1, iranget, eigH_t2_2, jranget);
+omegaAB(eigH_t2_1, iranget, eigH_t2_2, jranget);
+
+## t3_1 t3_2
+psiAB(eigH_t3_1, iranget, eigH_t3_2, jranget);
+omegaAB(eigH_t3_1, iranget, eigH_t3_2, jranget);
+
+## t3_1 t3_3
+psiAB(eigH_t3_1, iranget, eigH_t3_3, jranget);
+omegaAB(eigH_t3_1, iranget, eigH_t3_3, jranget);
+
+## t3_2 t3_3
+psiAB(eigH_t3_2, iranget, eigH_t3_3, jranget);
+omegaAB(eigH_t3_2, iranget, eigH_t3_3, jranget);
 
 
 #===============================================================================
