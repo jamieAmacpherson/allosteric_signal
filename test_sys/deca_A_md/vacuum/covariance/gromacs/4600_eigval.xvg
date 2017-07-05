@@ -1,14 +1,14 @@
-# This file was created Fri Jun 30 14:12:35 2017
+# This file was created Mon Jul  3 16:38:41 2017
 # Created by:
 #                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
 # 
 # Executable:   /usr/bin/gmx
 # Data prefix:  /usr
 # Command line:
-#   gmx covar -f 4600.xtc -s 4600.pdb -ascii 4600_covar.dat -o 4600_eigval.xvg
+#   gmx covar -f 4600.xtc -s 4600.pdb -ascii 4600_covar.dat -o 4600_eigval.xvg -v 4600_eigvec.trr
 # gmx covar is part of G R O M A C S:
 #
-# Gromacs Runs On Most of All Computer Systems
+# Good ROcking Metal Altar for Chronical Sinners
 #
 @    title "Eigenvalues of the covariance matrix"
 @    xaxis  label "Eigenvector index"

@@ -51,6 +51,8 @@ parser.add_argument('--CCmat', choices=['yes', 'no'], default='no', help='(no/ye
 
 parser.add_argument('--COmat', choices=['yes', 'no'], default='no', help='(no/yes) Calculate the covariance overlap matrix.')
 
+parser.add_argument('--TRol', choices=['yes', 'no'], default='no', help='(no/yes) Calculate the covariance matrix overlap using gromacs formula.')
+
 parser.add_argument('--PDBload', choices=['yes', 'no'], default='no', help='(no/yes) Parse PDB files.')
 
 args = parser.parse_args()
@@ -66,9 +68,12 @@ nmodes = args.nmodes[0]
 # Read in mutual information matrices
 path = '*.out'
 file_list = glob.glob(path)
+
+# sort files by date and time of creation
+file_list.sort(key=lambda x: os.path.getmtime(x))
 data = []
 for file_path in file_list:
-	print "reading mutual information matrix"
+	print "reading %s" %file_path
 	data.append(
 		np.loadtxt(file_path))
 
@@ -153,14 +158,19 @@ def covaroverlap(matA, matB):
 #
        # compute the eigenvalues and eigenvectors of matrix A
         eigvalA, eigvecA = LA.eig(matA)          
-#
+	#eigvalA[eigvalA < 0] = 0
+
+	#eigvecA[eigvecA < 0] = 0
        # include the desired number of eigenmodes for matrix A
 	eigvalA = eigvalA[0:nmodes]
 	eigvecA = eigvecA[:,0:nmodes]
 #
        # compute the eigenvalues and eigenvectors of matrix B
         eigvalB, eigvecB = LA.eig(matB)
-#
+#	eigvalB[eigvalB < 0] = 0
+
+	#eigvecB[eigvecB < 0] = 0
+
        # include the desired number of eigenmodes for matrix B
 	eigvalB = eigvalB[0:nmodes]
 	eigvecB = eigvecB[:,0:nmodes]
@@ -175,15 +185,23 @@ def covaroverlap(matA, matB):
 	if diff < 0:
 		diff = 0
 	else:
-		diff = diff**0.5 
-	omega = 1 - diff / np.sqrt(eigvalA.sum() + eigvalB.sum())
+		diff = diff 
+
+	omega = 1 - np.sqrt(diff / (eigvalA.sum() + eigvalB.sum()))
 #
 	return omega
 
 
 
-
-
+def traceoverlap(matA, matB):
+#
+	from numpy import trace as tr
+	from numpy import sqrt as sqrt
+#
+	difference = sqrt(tr((sqrt(matA) - sqrt(matB))**2))
+	traceover = 1 - difference/sqrt(tr(matA) + tr(matB))
+#
+	return traceover
 
 
 
@@ -286,12 +304,11 @@ def calcCCmat():
 def calcCO():
 	overlap = []
 	
-	last = len(data)-1	
 	for a in range(len(data)-1):
 		b = a + 1
 		print 'Calculating cosine content between blocks, using %s eigenmode(s):' %nmodes
 		print a, b
-		overlap.append(covaroverlap(data[last], data[b]))
+		overlap.append(covaroverlap(data[a], data[b]))
 	np.savetxt('time_CovOverlap.dat', overlap)	
 
 	# plot linear covariance overlap
@@ -302,6 +319,28 @@ def calcCO():
     	plt.ylabel(r'Covariance overlap, $\Omega_(A,B)$')
     	plt.xlabel(r'Simulation block')
     	plt.savefig('time_CovOver.pdf', bbox_inches='tight')
+
+# calculate the covariance matrix overlap ala Gromacs formula
+def calctraceover():
+	overlap = []
+	
+	last = len(data)-1	
+	for a in range(len(data)-1):
+		b = a - 1
+		print 'Calculating cosine content between blocks, using %s eigenmode(s):' %nmodes
+		print a, b
+		overlap.append(traceoverlap(data[a], data[b]))
+	np.savetxt('time_traceoverlap.dat', overlap)	
+
+	# plot linear covariance overlap
+	plt.plot(range(len(overlap)), overlap, color='red')	
+    	plt.grid()
+    	axes = plt.gca()
+	plt.ylim(0,1)
+    	plt.ylabel(r'Covariance overlap, $\Omega_(A,B)$')
+    	plt.xlabel(r'Simulation block')
+    	plt.savefig('time_traceoverlap.pdf', bbox_inches='tight')
+
 
 def calcCOsum():
 	overlap = []
@@ -392,3 +431,9 @@ if args.CCmat == 'yes':
 if args.COmat == 'yes':
 	plt.figure()
 	calcCOmat()
+
+## SWITCH: if user selects matrix, compute covariance overlap using gromacs equation
+if args.TRol == 'yes':
+	plt.figure()
+	calctraceover()
+

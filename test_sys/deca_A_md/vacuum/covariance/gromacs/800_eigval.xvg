@@ -1,14 +1,14 @@
-# This file was created Fri Jun 30 14:12:32 2017
+# This file was created Mon Jul  3 16:38:37 2017
 # Created by:
 #                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
 # 
 # Executable:   /usr/bin/gmx
 # Data prefix:  /usr
 # Command line:
-#   gmx covar -f 800.xtc -s 800.pdb -ascii 800_covar.dat -o 800_eigval.xvg
+#   gmx covar -f 800.xtc -s 800.pdb -ascii 800_covar.dat -o 800_eigval.xvg -v 800_eigvec.trr
 # gmx covar is part of G R O M A C S:
 #
-# GROningen MAchine for Chemical Simulation
+# Getting the Right Output Means no Artefacts in Calculating Stuff
 #
 @    title "Eigenvalues of the covariance matrix"
 @    xaxis  label "Eigenvector index"

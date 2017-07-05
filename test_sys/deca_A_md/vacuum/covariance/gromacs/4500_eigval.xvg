@@ -1,14 +1,14 @@
-# This file was created Fri Jun 30 14:12:35 2017
+# This file was created Mon Jul  3 16:38:41 2017
 # Created by:
 #                   :-) GROMACS - gmx covar, VERSION 5.1.2 (-:
 # 
 # Executable:   /usr/bin/gmx
 # Data prefix:  /usr
 # Command line:
-#   gmx covar -f 4500.xtc -s 4500.pdb -ascii 4500_covar.dat -o 4500_eigval.xvg
+#   gmx covar -f 4500.xtc -s 4500.pdb -ascii 4500_covar.dat -o 4500_eigval.xvg -v 4500_eigvec.trr
 # gmx covar is part of G R O M A C S:
 #
-# Glycine aRginine prOline Methionine Alanine Cystine Serine
+# Georgetown Riga Oslo Madrid Amsterdam Chisinau Stockholm
 #
 @    title "Eigenvalues of the covariance matrix"
 @    xaxis  label "Eigenvector index"
