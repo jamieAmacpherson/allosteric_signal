@@ -55,6 +55,8 @@ parser.add_argument('--TRol', choices=['yes', 'no'], default='no', help='(no/yes
 
 parser.add_argument('--PDBload', choices=['yes', 'no'], default='no', help='(no/yes) Parse PDB files.')
 
+parser.add_argument('--scree', choices=['yes', 'no'], default='no', help='(no/yes) Generate Scree plot of eigenvalue variances.')
+
 args = parser.parse_args()
 
 nmodes = args.nmodes[0]
@@ -71,6 +73,7 @@ file_list = glob.glob(path)
 
 # sort files by date and time of creation
 file_list.sort(key=lambda x: os.path.getmtime(x))
+
 data = []
 for file_path in file_list:
 	print "reading %s" %file_path
@@ -149,114 +152,65 @@ def cosinecontent(matA, matB):
 
 
 def covaroverlap(matA, matB):
-#
+
        # kill if dimensions are different 
 	if np.shape(matA) != np.shape(matB):
                 print "matrices must be of equal dimensions"
         else:
                 print "Computing covariance overlap"
-#
+
        # compute the eigenvalues and eigenvectors of matrix A
         eigvalA, eigvecA = LA.eig(matA)          
-	#eigvalA[eigvalA < 0] = 0
 
-	#eigvecA[eigvecA < 0] = 0
        # include the desired number of eigenmodes for matrix A
 	eigvalA = eigvalA[0:nmodes]
 	eigvecA = eigvecA[:,0:nmodes]
-#
+
        # compute the eigenvalues and eigenvectors of matrix B
         eigvalB, eigvecB = LA.eig(matB)
-#	eigvalB[eigvalB < 0] = 0
-
-	#eigvecB[eigvecB < 0] = 0
 
        # include the desired number of eigenmodes for matrix B
 	eigvalB = eigvalB[0:nmodes]
 	eigvecB = eigvecB[:,0:nmodes]
-#
-#
+
+
 	dotAB = np.dot(eigvecA.T, eigvecB)**2
-#
+
 	outerAB = np.outer(eigvalA**0.5, eigvalB**0.5)
-#	
+	
 	diff = (np.sum(eigvalA.sum() + eigvalB.sum()) - 2 * np.sum(outerAB * dotAB))
-#
+
 	if diff < 0:
 		diff = 0
 	else:
 		diff = diff 
 
 	omega = 1 - np.sqrt(diff / (eigvalA.sum() + eigvalB.sum()))
-#
+
 	return omega
 
 
 
 def traceoverlap(matA, matB):
-#
+
 	from numpy import trace as tr
 	from numpy import sqrt as sqrt
-#
+
 	difference = sqrt(tr((sqrt(matA) - sqrt(matB))**2))
 	traceover = 1 - difference/sqrt(tr(matA) + tr(matB))
-#
+
 	return traceover
 
 
 
 
 
-#def covaroverlap(matA, matB):
-#
-       # kill if dimensions are different 
-#        if np.shape(matA) != np.shape(matB):
-#                print "matrices must be of equal dimensions"
-#        else:
-#                print "Computing covariance overlap"
-#
-       # compute the eigenvalues and eigenvectors of matrix A
-#        eigvalA, eigvecA = LA.eig(matA)          
-#
-       # compute the eigenvalues and eigenvectors of matrix B
-#        eigvalB, eigvecB = LA.eig(matB)
-#
-       # initialize empty arrays to accept terms of covariance overlap measure
-#        valsum = []
-#        geomean = []
-#        geomeansum = []
-#        vecmult = []
-#        vecsum = []
-#	scaledcos=[]
-#
- 	#compute the sum of eigenvalues
-#	valsum = sum(eigvalA[0:nmodes] + eigvalB[0:nmodes])
-#	for i in range(nmodes):
-#
-      	# compute the sum of eigenvalues
-      	# compute the geometric mean about two sets of eigenvalues
-#      		geomean.append(math.sqrt(eigvalA[i] * eigvalA[i]))
-      	# determine the inner product of two eigenvector matrices
-#      		vecmult.append(eigvecA[:,i] * eigvecB[:,i])
-#      		vecsum.append(sum(vecmult[i])**2)
-#
-        # compute the vector scaled by the geometric mean of the 
-        # eigenvalues	
-#	for x in range(nmodes):
-#		scaledcos.append(geomean[x] * vecsum[x])
-#	
-#	scaledcossum = sum(scaledcos)
-#
-#        omegain = valsum - round((2 * scaledcossum), 20)
-#        omega = 1 - (omegain/valsum)**0.5
-#      
-#
-#	return omega
 
 #____________________________________________________________________________
 # Plotting functions 
 #____________________________________________________________________________
 
+# Plot cosine content
 def calcCC():
 	veccosine = []
 	linveccosine = []	
@@ -277,7 +231,9 @@ def calcCC():
     	plt.ylabel(r'Cosine content, $\Psi_(A,B)$')
     	plt.xlabel(r'Simulation block')
     	plt.savefig('time_CosCont.pdf', bbox_inches='tight')
-	
+
+
+# plot cosine content matrix: each block vs. each block	
 def calcCCmat():
 	veccosine = []	
 	for i, j in it.product(data, repeat=2):
@@ -297,8 +253,6 @@ def calcCCmat():
 	#plt.clim(0,1)
 	plt.savefig('cosineconent_mat.pdf')
 
-#plt.figure()	
-#calcCC()
 
 # compute the covariance overlap for the cartesian product of all MI matrices
 def calcCO():
@@ -319,6 +273,7 @@ def calcCO():
     	plt.ylabel(r'Covariance overlap, $\Omega_(A,B)$')
     	plt.xlabel(r'Simulation block')
     	plt.savefig('time_CovOver.pdf', bbox_inches='tight')
+
 
 # calculate the covariance matrix overlap ala Gromacs formula
 def calctraceover():
@@ -342,6 +297,7 @@ def calctraceover():
     	plt.savefig('time_traceoverlap.pdf', bbox_inches='tight')
 
 
+# calculate the cumulative covariance overlap
 def calcCOsum():
 	overlap = []
 	
@@ -363,6 +319,8 @@ def calcCOsum():
     	plt.xlabel(r'Simulation block')
     	plt.savefig('time_CovOver_cum.pdf', bbox_inches='tight')
 
+
+# calculate covariance overlap matrix: each block vs. each block
 def calcCOmat():
 	overlap = []
 	for x, y in it.product(data, repeat=2):
@@ -383,7 +341,7 @@ def calcCOmat():
 
 
 
-## Calculate the first eigenvalue over time
+# Calculate the first eigenvalue over time
 def eigvalt():
 	eigenproj = []
 	
@@ -397,16 +355,32 @@ def eigvalt():
 	plt.plot(range(len(eigenproj)), eigenproj, color='black')	
     	plt.grid()
     	axes = plt.gca()
-	#plt.ylim(0,1)
-    	#plt.ylabel(r'Covariance overlap, $\Omega_(A,B)$')
-    	#plt.xlabel(r'Simulation block')
+    	plt.ylabel(r'Covariance overlap, $\Omega_(A,B)$')
+    	plt.xlabel(r'Simulation block')
     	plt.savefig('ev1_time.pdf', bbox_inches='tight')
-#plt.figure()	
-#eigvalt()
 
+
+# Generate scree plot for largest block
+def screeplt():
+	
+	largest = data[len(data) - 1]
+
+	vals, _ = LA.eig(largest)
+	
+	# cumulative variance
+	cumvar = vals**2 / np.cumsum(vals)[-1]
+	xax = []
+	for i in range(len(vals)):
+		xax.append(i + 1)
+	
+	# plot the result
+	plt.semilogx(xax, cumvar, 'ro-', linewidth=2)
+    	plt.ylabel(r'Variance, $\sigma$')
+	plt.xlabel(r'Eigenvalue, $\lambda$')
+    	plt.savefig('screeplot.pdf', bbox_inches='tight')
 
 #____________________________________________________________________________
-# Plot computed results
+# Plot computed results switches
 #____________________________________________________________________________
 
 ## SWITCH: if user selects, calculate covariance overlap
@@ -437,3 +411,7 @@ if args.TRol == 'yes':
 	plt.figure()
 	calctraceover()
 
+## SWITCH: if user selects, compute scree plot
+if args.scree == 'yes':
+	plt.figure()
+	screeplt()
