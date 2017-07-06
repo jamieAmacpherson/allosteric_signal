@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [ $# -ne 4 ]
+if [ $# -ne 5 ]
 then
         echo "Incorrect number of arguments..."
-        echo "Usage: gsa_sliding_window.sh <trajectory.xtc> <topology> <length of window (ps)> <final timestep (ps)>"
+        echo "Usage: gsa_sliding_window.sh <trajectory.xtc> <topology> <length of window (ps)> <final timestep (ps)> <n eigenmodes>"
         exit 1
 fi
 
@@ -11,6 +11,7 @@ fi
 source /usr/local/gromacs/bin/GMXRC.bash
 
 SRCDIR=/home/macphej/jm.software/apps/gsatools-4.5.x-1.00/src
+overlap='/home/macphej/jm.software/development/allosteric_signal/src/python/MI_space.py'
 
 
 let k=$3
@@ -60,5 +61,6 @@ sleep 3
 let k=k+$3
 done
 
+python $overlap $5 --COmat yes
 
 exit

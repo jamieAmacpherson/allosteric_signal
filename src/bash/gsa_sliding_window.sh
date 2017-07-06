@@ -48,5 +48,6 @@ sleep 3
 let k=k+$3
 done
 
+python $overlap $5 --CO yes
 
 exit
