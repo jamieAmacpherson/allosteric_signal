@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.5.9)  7 JUL 2017 09:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.5.9)  7 JUL 2017 16:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -174,7 +174,25 @@ LaTeX Warning: Label `sub@fig:3b' multiply defined.
 LaTeX Warning: Label `fig:2' multiply defined.
 
 
+LaTeX Warning: Label `fig:4a' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:4a' multiply defined.
+
+
 LaTeX Warning: Label `fig:3b' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:3b' multiply defined.
+
+
+LaTeX Warning: Label `fig:3b' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:3b' multiply defined.
+
+
+LaTeX Warning: Label `fig:2' multiply defined.
 
 )
 \openout1 = `rep_ana.aux'.
@@ -761,7 +779,7 @@ LaTeX Warning: There were multiply-defined labels.
 Here is how much of TeX's memory you used:
  2934 strings out of 494910
  56430 string characters out of 6179837
- 117417 words of memory out of 5000000
+ 117418 words of memory out of 5000000
  6193 multiletter control sequences out of 15000+600000
  7896 words of font info for 28 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
@@ -775,7 +793,7 @@ fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/t
 ype1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
 lic/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
 onts/cm/cmsy8.pfb>
-Output written on rep_ana.pdf (7 pages, 337281 bytes).
+Output written on rep_ana.pdf (7 pages, 342454 bytes).
 PDF statistics:
  668 PDF objects out of 1000 (max. 8388607)
  258 compressed objects within 3 object streams

@@ -27,10 +27,10 @@ import itertools as it
 from numpy import linalg as LA
 import math
 import time
-import progressbar
+#import progressbar
 import matplotlib.pyplot as plt
 from matplotlib import rcParams as pltparam
-from prody import *
+#from prody import *
 
 plt.style.use('seaborn-ticks')
 pltparam.update({'font.size': 20})
