@@ -198,7 +198,30 @@ mPKM2 + L-Phe   & Covariance         & 0.038         & 18.41     \\
 \end{table}
 \\
 \\
-From the rate constants derived from time-averaged measurements of the covariance overlap of the $C_\alpha$ covariance matrix and the structural alphabet mutual information matrix, along with the time-averaged configurational entropy, it appears that the separation of distinct timescales of protein dynamics is present in each of the simulated liganded states of PKM2. From these rate constants we can assign a numerical confidence to sampling. Additionally, we  
+From the rate constants derived from time-averaged measurements of the covariance overlap of the $C_\alpha$ covariance matrix and the structural alphabet mutual information matrix, along with the time-averaged configurational entropy, it appears that the separation of distinct timescales of protein dynamics is present in each of the simulated liganded states of PKM2. From these rate constants we can assign a numerical confidence to sampling. Additionally, we are able to assign a numerical rate constant to the relaxation of independent modes of protein dynamics.
+\\
+\\
+\subsection*{Identifying allosteric microstates in MD simulations of PKM2} 
+To extract amino acids for directed mutagenesis it is necessary to average over parts of the MD simulations. Although the simulation may reach convergence with respect to the covariance overlap of the mutual information matrices in a time-averaged way, it was not clear whether the simulation sampled microstates over the course of the simulation. This has the possibility of scewing the signal extracted from the simulation. In order to reliably select sections of the MD trajectories to average over, we computed the covariance overlap of the mutual information matrix of time-averaged blocks of the MD trajectories of PKM2.   
+\begin{figure}[!ht]
+\centering
+\begin{subfigure}[b]{.4\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{covoverlap_mat_window_10E_tepp1.pdf}
+    \caption{Replica 1}\label{fig:4a}
+  \end{subfigure}%   
+  \begin{subfigure}[b]{.4\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{covoverlap_mat_window_10E_tepp2.pdf}
+    \caption{Replica 2}\label{fig:3b}
+  \end{subfigure}%  
+  \begin{subfigure}[b]{.4\linewidth}
+    \centering
+    \includegraphics[width=.99\textwidth]{covoverlap_mat_window_10E_tepp3.pdf}
+    \caption{Replica 3}\label{fig:3b}
+  \end{subfigure}%  
+\caption{Time-averaged covariance overlap of the structural alphabet mutual information for monomeric PKM2 + Tepp-46.}\label{fig:2}
+\end{figure}
 
 \end{document}
  
