@@ -7,6 +7,9 @@
 ##  Faraldo-Gómez, Sansom et al.; DOI: 10.1002/prot.20257
 ##  see equations (2) and (3)
 
+library("bio3d");
+
+#______________________________________________________________________________
 ## dummy matrices
 matA = runif(100);
 dim(matA) = c(10,10);
@@ -76,6 +79,7 @@ omegaAB(eigA, irange0, eigA, jrange0);
 omegaAB(eigA, irange1, eigA, jrange1);
 
 #______________________________________________________________________________
+#______________________________________________________________________________
 ## some toy data: 3 Hydrogen atoms (H1, H2, H3) with 3 trajectories:
 ##   H1 moves along the room diagonal of Catesian x,y,z
 ##   H2 does the same, but returns after half of the distance
@@ -124,6 +128,7 @@ covH_t3_3 = cov(H_t3_3);
 eigH_t3_3 = eigen(covH_t3_3);
 
 #______________________________________________________________________________
+## subspace and covariance overlaps of toy data
 iranget = c(1:2);
 jranget = c(1:2);
 
@@ -142,6 +147,49 @@ omegaAB(eigH_t3_1, iranget, eigH_t3_3, jranget);
 ## t3_2 t3_3
 psiAB(eigH_t3_2, iranget, eigH_t3_3, jranget);
 omegaAB(eigH_t3_2, iranget, eigH_t3_3, jranget);
+
+#______________________________________________________________________________
+#______________________________________________________________________________
+## decapeptide
+## PDB structure
+pdb = read.pdb("../../test_sys/deca_A_md/vacuum/md/md1_ca.pdb");
+print(pdb);
+## DCD trajectory
+dcd = read.dcd("../../test_sys/deca_A_md/vacuum/md/md1_rottrans_ca.dcd");
+print(dcd);
+
+#______________________________________________________________________________
+## trajectory is 10ns, 5001 conformers
+covtraj = list(100);
+eigtraj = list(100);
+
+## create 100 blocks (of 50 conformers) and compute covariance matrices
+##   and derive eigensystems
+#for (i in 1:100) {
+#	inc = (i - 1) * 50;
+#	covtraj[[i]] = cov(dcd[(1 + inc):(50 + inc), ]);
+#	eigtraj[[i]] = eigen(covtraj[[i]]);
+#}
+
+## create  blocks of increasing size (by 50), like 1:50, 1:100, 1:150, ...
+for (i in 1:100) {
+	covtraj[[i]] = cov(dcd[(1:(i*50)), ]);
+	eigtraj[[i]] = eigen(covtraj[[i]]);
+}
+
+## compute overlaps for successive block sizes
+iranged = c(1:2);
+jranged = c(1:2);
+
+psitraj = vector(length = 99);
+omegatraj = vector(length = 99);
+for (i in 1:99) {
+	psitraj[[i]] = psiAB(eigtraj[[i]], iranged, eigtraj[[i+1]], jranged);
+	omegatraj[[i]] = omegaAB(eigtraj[[i]], iranged, eigtraj[[i+1]], jranged);
+}
+
+plot(psitraj, type = "line");
+plot(omegatraj, type = "line");
 
 
 #===============================================================================
