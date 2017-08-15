@@ -1,7 +1,7 @@
-      NA    -nan    -nan    -nan    -nan    -nan    -nan
-    -nan      NA    -nan    -nan    -nan    -nan    -nan
-    -nan    -nan      NA    -nan    -nan    -nan    -nan
-    -nan    -nan    -nan      NA    -nan    -nan    -nan
-    -nan    -nan    -nan    -nan      NA    -nan    -nan
-    -nan    -nan    -nan    -nan    -nan      NA    -nan
-    -nan    -nan    -nan    -nan    -nan    -nan      NA
+      NA   0.040   0.050   0.037   0.024   0.038   0.036
+   0.040      NA   0.054   0.046   0.023   0.038   0.047
+   0.050   0.054      NA   0.060   0.034   0.051   0.051
+   0.037   0.046   0.060      NA   0.025   0.046   0.046
+   0.024   0.023   0.034   0.025      NA   0.031   0.018
+   0.038   0.038   0.051   0.046   0.031      NA   0.036
+   0.036   0.047   0.051   0.046   0.018   0.036      NA
