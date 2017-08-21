@@ -44,7 +44,7 @@ $SRCDIR/g_sa_encode -f $1\
                       -xpmlf $OUTDIR/$k.lf.xpm\
                       -fasta -xpm -log $OUTDIR/$k.log  
 
-mpirun -np 6\
+mpirun -np 8\
                 $SRCDIR/g_sa_analyze -sa $OUTDIR/$k.lf_str.out\
                        -MImat $OUTDIR/$k.lf_MImat.out\
                        -eeMImat $OUTDIR/$k.lf_eeMImat.out\
@@ -61,6 +61,6 @@ sleep 3
 let k=k+$3
 done
 
-python $overlap $5 --COmat yes
+python $overlap $5 --CO yes &
 
 exit

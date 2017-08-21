@@ -60,7 +60,7 @@ parser.add_argument("-a", dest="mat1", required=True,
 
 # the second argument is the topology file (.pdb) supplied after the -s flag
 # this is saved an an obect with the variable args.pdbfile
-parser.add_argument("-b", dest="mat2", required=True,
+parser.add_argument("-b", dest="mat2", required=False,
                     help="Second Hermitian matrix",
                     type=lambda x: is_valid_file(x))
 
@@ -194,6 +194,11 @@ def plotmmpdf(mat, c):
 
 	print 'Computing the Marcenko Pastur distribution function for %s' %mat
 	matA = np.loadtxt(mat)
+	# convert nan to zero values
+	for i in matA:
+		where_are_NaNs = np.isnan(i)
+		i[where_are_NaNs] = 0
+
 	
 	nrow, ncol = np.shape(matA)
 	N = nrow
