@@ -42,13 +42,16 @@ image(c.t.m);
 #_______________________________________________________________________________
 #_______________________________________________________________________________
 ## 50x50 system with positive Gaussian noise
+## insert MI values into given MI matrix
 ## 'mimat' is the MI matrix, 'posvec' the vector of positions to correlate and
 ##   'mival' the MI value to insert
 insert_cor = function(mimat, posvec, mival) {
 	cmb = combn(posvec, 2);
-	for (i in 1:dim(cmb)[2]) {
-		mimat[cmb[1, i], cmb[2, i]] = mimat[cmb[1, i], cmb[2, i]] + mival;
-		mimat[cmb[2, i], cmb[1, i]] = mimat[cmb[2, i], cmb[1, i]] + mival;
+	for (k in 1:dim(cmb)[2]) {
+		i = cmb[1, k];
+		j = cmb[2, k];
+		mimat[i, j] = mimat[i, j] + mival;
+		mimat[j, i] = mimat[j, i] + mival;
 	};
 	return(mimat);
 }
@@ -111,22 +114,40 @@ image(c.gn.m);
 
 #_______________________________________________________________________________
 ## What is the distribution of MI values for a random matrix?
-comp_MI = function(rmat) {
-	stopifnot(dim,...);
-	cmb = combn(posvec, 2);
-	for (i in 1:dim(cmb)[2]) {
-		mimat[cmb[1, i], cmb[2, i]] = mimat[cmb[1, i], cmb[2, i]] + mival;
-		mimat[cmb[2, i], cmb[1, i]] = mimat[cmb[2, i], cmb[1, i]] + mival;
+## compute MI values for given matrix
+comp_MI = function(rmat, mimat) {
+	cmb = combn(c(1:dim(rmat)[2]), 2);
+	for (k in 1:dim(cmb)[2]) {
+		i = cmb[1, k];
+		j = cmb[2, k];
+		x2d = rbind(rmat[ , i], rmat[, j]);
+		mimat[i, j] = mi.empirical(x2d);
+		mimat[j, i] = mimat[i, j];
 	};
 	return(mimat);
 }
 
-r.m = rnorm(10000);
+r = abs(rnorm(10000));
+r = (r - min(r)) / (max(r) - min(r));
+r.m = r;
 dim(r.m) = c(100, 100);
+mi.m = matrix(0, nrow = dim(r.m)[2], ncol = dim(r.m)[2]);
 
+MI.m = comp_MI(r.m, mi.m);
+MI.1.m = MI.m;
+dim(MI.1.m) = c(dim(MI.m)[1] * dim(MI.m)[2], 1);
 
-r.m.MI = mi.empirical(r.m);
+hist(MI.1.m[ ,1]);
 
+mean(MI.1.m[,1]);
+sd(MI.1.m[,1]);
+
+## Observation: The median of the MI values is close to
+##   the median of the random matrix.
+
+## Conclusion: The MI values of a random value matrix are normal distributed
+##   and sd decreases with increasing sample size (matrix dimension).
+##   Therefore we can derive an error model from the MI matrix values.
 
 #===============================================================================
 
