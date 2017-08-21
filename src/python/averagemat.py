@@ -36,7 +36,7 @@ plt.style.use('seaborn-ticks')
 pltparam.update({'font.size': 20})
 
 #____________________________________________________________________________
-# Parse command line arguments
+# Parse command line arguments 
 #____________________________________________________________________________
 def is_valid_file(arg):
     if not os.path.exists(arg):
@@ -44,79 +44,139 @@ def is_valid_file(arg):
     else:
 	return arg
 
-parser = argparse.ArgumentParser(description='Calculate the covariance overlap and cosine content of Mutual information matrices.')
+parser = argparse.ArgumentParser(description='Compute the average difference mutual information matrix.')
 
 
-# the first argument is the trajectory file (.dcd) supplied after the -t flag
-# the trajectory file is saved as an object with the variable args.dcdfile
-parser.add_argument("-a1", dest="mata1", required=True,
-                    help="First Hermitian matrix",
-                    type=lambda x: is_valid_file(x))
+parser.add_argument('-c', type=float, nargs=1, 
+                     help='Fixed value for the MP distribution', required=True)
 
-parser.add_argument("-a2", dest="mata2", required=True,
-                    help="Second Hermitian matrix",
-                    type=lambda x: is_valid_file(x))
+parser.add_argument('-FBPpath', help= 'Path to FBP mutual information matrices (/path/to/directory)', type=str, action="store", required=True)
 
-parser.add_argument("-a3", dest="mata3", required=True,
-                    help="Second Hermitian matrix",
-                    type=lambda x: is_valid_file(x))
-
-parser.add_argument("-b1", dest="matb1", required=True,
-                    help="Second Hermitian matrix",
-                    type=lambda x: is_valid_file(x))
-
-parser.add_argument("-b2", dest="matb2", required=True,
-                    help="Second Hermitian matrix",
-                    type=lambda x: is_valid_file(x))
-
-parser.add_argument("-b3", dest="matb3", required=True,
-                    help="Second Hermitian matrix",
-                    type=lambda x: is_valid_file(x))
+parser.add_argument('-APOpath', help= 'Path to Apo mutual information matrices (/path/to/directory)', type=str, action="store", required=True)
 
 args = parser.parse_args()
-
-
 #____________________________________________________________________________
 # Compute the average MI matrices and take the difference matrix
 #____________________________________________________________________________
 
-def avdiff(mat1, mat2, mat3, mat4, mat5, mat6):
-	mat1 = np.loadtxt(mat1)
-	mat2 = np.loadtxt(mat2)
-	mat3 = np.loadtxt(mat3)
+def fbpmat(fbppath):
+
+	path = fbppath + '/*.out'
+	file_list = glob.glob(path)
+
+	# sort files by date and time of creation
+	file_list.sort(key=lambda x: os.path.getmtime(x))
+
+	data = []
+	for file_path in file_list:
+		print "reading %s" %file_path
+		data.append(
+			np.loadtxt(file_path))
 	
-	mat4 = np.loadtxt(mat4)
-	mat5 = np.loadtxt(mat5)
-	mat6 = np.loadtxt(mat6)
-
-	av1 = (mat1 + mat2 + mat3)/3
-	av2 = (mat4 + mat5 + mat6)/3
-
-	np.savetxt('mat1av.mat', av1)
-	np.savetxt('mat2av.mat', av2)
-#	if np.shape(av1) =! np.shape(av2):
-#		av1row, av1col = np.shape(av1)
-#		av2row, av2col = np.shape(av2)
-#
-#		difrow = av1row - av2row
-#		difcol = av1col - av2col
-#			
-#		if difrow < 0:
-#			difrow = difrow * -1
-#
-#		if difcol < 0:
-#			difcol = difcol * -1
-#
-#		if av1row > av2row:
-#			av1 = np.delete(av1, av1row, 0)
-#		elif av2row > av1row:
-#			av2 = np.
-		
-	diffmat = av1 - av2
-	np.savetxt('difference.mat', diffmat)
+	# convert nan to zero values
+	for i in data:
+		where_are_NaNs = np.isnan(i)
+		i[where_are_NaNs] = 0
+	
+	
+	return(sum(data)/len(data))	
 
 
-avdiff(args.mata1, args.mata2, args.mata3, args.matb1, args.matb2, args.matb3)
+def apomat(apopath):
 
+	path = apopath + '/*.out'
+	file_list = glob.glob(path)
+
+	# sort files by date and time of creation
+	file_list.sort(key=lambda x: os.path.getmtime(x))
+
+	data = []
+	for file_path in file_list:
+		print "reading %s" %file_path
+		data.append(
+			np.loadtxt(file_path))
+	
+	# convert nan to zero values
+	for i in data:
+		where_are_NaNs = np.isnan(i)
+		i[where_are_NaNs] = 0
+	
+	return(sum(data)/len(data))	
+
+
+def marcenkopasturpdf(x, c):
+	# Marchenko Pastur density function for c > 1
+	ub = (1 + math.sqrt(c))**2
+	lb = (1 - math.sqrt(c))**2 
+	mp = np.zeros(len(x))
+
+	# Figure out indices where mp is to be calculated
+	lbidx = np.where(x > lb)
+	ubidx = np.where(x < ub)  
+	a = lbidx[0][0]
+	b = ubidx[-1][-1]
+	xh = x[a:b+1]
+
+	# MP distribution
+	mp[a:b+1] = (((xh - lb)*(ub - xh))**0.5)/(2 * math.pi*c*xh)              
+	return (lb, ub, mp)
+
+
+def difmat(c):
+	print 'Computing the Marcenko Pastur distribution function'
+	
+	# compute the difference matrix
+	fbpmatrix = fbpmat(args.FBPpath)
+	apomatrix = apomat(args.APOpath)
+
+        # if the dimensions of the two matrices are different, resize the larger matrix
+	# to fit the size of the smaller matrix. 
+	if np.shape(fbpmatrix) != np.shape(apomatrix):
+                print """##############################################################################
+             WARNING: matrices are not of equal dimension
+matrices will be resized to match the dimensions of the smallest input matrix.
+This may lead to eraneous results. Proceed with caution.
+##############################################################################"""
+		dif = np.shape(fbpmatrix)[0]- np.shape(apomatrix)[0]
+
+		if dif < 0:
+			dif = dif * -1
+			apomatrix = apomatrix[0:-dif, 0:-dif]
+
+		else:
+			fbpmatrix = fbpmatrix[0:-dif, 0:-dif]
+
+		print "MP distribution with resized matrices"
+
+        else:
+                print "Computing MP distribution"
+
+	matA = fbpmatrix - apomatrix
+	np.savetxt('diff_mat.dat', matA)	
+
+	nrow, ncol = np.shape(matA)
+	N = nrow
+	L = (N/c) 	
+
+	# Scale matrix so that it has a zero mean and unit standard deviation
+	#smatA = sk.scale(matA)	
+	eigval,_ = LA.eig(matA) 
+ 	
+	realeigval = np.array(eigval, dtype=float)
+
+	weights = np.ones_like(realeigval)/float(len(realeigval))
+	plt.hist(realeigval, bins=1000, normed=True, align='right', color='black')
+
+	ln, un, mp = marcenkopasturpdf(np.arange(0, 20, 0.01), c)
+#	plt.plot(np.arange(0, 20, 0.01), mp, linewidth = 1, color='red')
+	#plt.xlim(0,20)
+	plt.ylim(-0.2,4) 
+	plt.ylabel(r'P($\lambda$)')
+	plt.xlabel(r'Eigenvalue, $\lambda$')
+	plt.savefig('MMpdf.pdf', bbox_inches='tight')
+
+difmat(args.c[0])
+	
+	
 
 

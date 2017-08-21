@@ -9,13 +9,22 @@ print(args)
 dat1=read.table(args[1])	#data 1
 dat2=read.table(args[2])	#data 2
 dat3=read.table(args[3])	#data 3
-lastt = as.numeric(args[4])	#length of simulation (ns)
-outprefix = args[5]		#ouput prefix
-plateau = as.numeric(args[6])	#predicted plateau of exponential fit
+dat4=read.table(args[4])	#data 1
+dat5=read.table(args[5])	#data 2
+dat6=read.table(args[6])	#data 3
+lastt = as.numeric(args[7])	#length of simulation (ns)
+outprefix = args[8]		#ouput prefix
+plateau = as.numeric(args[9])	#predicted plateau of exponential fit
 
 
 ## Calculate the mean and sd of the data sets
-dat=as.data.frame(cbind(dat1,dat2,dat3))
+dat=as.data.frame(cbind(
+		dat1,
+		dat2,
+		dat3,
+		dat4,
+		dat5,
+		dat6))
 
 datmeans=apply(dat, 1, mean)
 datsds = apply(dat, 1, sd)
@@ -30,9 +39,9 @@ names(dat)=c("time", "datmeans", "datsds")
 ## Fit the data with a single-exponential regression
 fit.nls = nlsLM(datmeans ~ a + (b-a) * (1-exp(-c*time)),
 	data=dat,
-	start=list(a=datmeans[1], b=plateau, c=0.02),
+	start=list(a=datmeans[1], b=plateau, c=0.002),
 	lower = c(datmeans[1] - 0.01, plateau - (plateau*0.2), 0.001),
-	upper = c(datmeans[1] + 0.01, plateau + (plateau * 0.2), 0.05),
+	upper = c(datmeans[1] + 0.01, plateau + (plateau * 0.2), 0.6),
 	trace = T,
 	algorithm = "port")
 

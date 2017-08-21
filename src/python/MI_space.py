@@ -153,9 +153,23 @@ def cosinecontent(matA, matB):
 
 def covaroverlap(matA, matB):
 
-       # kill if dimensions are different 
+        # if the dimensions of the two matrices are different, resize the larger matrix
+	# to fit the size of the smaller matrix. 
 	if np.shape(matA) != np.shape(matB):
-                print "matrices must be of equal dimensions"
+                print """WARNING: matrices are not of equal dimension
+			matrices will be resized to match the dimensions of the smallest input matrix.
+			This may lead to eraneous results. Proceed with caution."""
+		dif = np.shape(matA)[0]- np.shape(matB)[0]
+
+		if dif < 0:
+			dif = dif * -1
+			matB = matB[0:-dif, 0:-dif]
+
+		else:
+			matA = matA[0:-dif, 0:-dif]
+
+		print "Computing covariance overlap with resized matrices"
+
         else:
                 print "Computing covariance overlap"
 
@@ -336,8 +350,10 @@ def calcCOmat():
 	
 	plt.imshow(covarmat, cmap='jet')
 	plt.colorbar()
-	#plt.clim(0,1)
-	plt.savefig('covoverlap_mat.pdf')
+    	plt.ylabel(r'Simulation block')
+    	plt.xlabel(r'Simulation block')
+	plt.clim(0,1)
+	plt.savefig('covoverlap_mat_E%s.pdf' %nmodes, bbox_inches='tight')
 
 
 
