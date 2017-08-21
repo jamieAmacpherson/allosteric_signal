@@ -3,28 +3,36 @@
 #===============================================================================
 # Methods to compute the overlap of eigenspaces and their sub-spaces
 #===============================================================================
-## Conformational Sampling and Dynamics of Membrane Proteins From 10-Nanosecond Computer Simulations
-##  Faraldo-Gómez, Sansom et al.; DOI: 10.1002/prot.20257
-##  see equations (2) and (3)
+## Conformational Sampling and Dynamics of Membrane Proteins
+##   From 10-Nanosecond Computer Simulations,
+##   Faraldo-Gómez, Sansom et al.; DOI: 10.1002/prot.20257.
+## see equations (2) and (3) therein
 
-## dummy matrices
-matA = runif(100);
-dim(matA) = c(10,10);
-covA  = cov(matA);
-eigA = eigen(covA);
+library("bio3d");
 
-matB = runif(100);
-dim(matB) = c(10,10);
-covB  = cov(matB);
-eigB = eigen(covB);
+#______________________________________________________________________________
+## dummy data matrices mat.A and mat.B
+mat.A = runif(100);
+dim(mat.A) = c(10,10);
+## covariance matrix
+cov.A = cov(mat.A);
+## eigensystem
+eig.A = eigen(cov.A);
 
-## range of vector indices forming vector spaces in eigA (and eigB)
+mat.B = runif(100);
+dim(mat.B) = c(10,10);
+## covariance matrix
+cov.B = cov(mat.B);
+## eigensystem
+eig.B = eigen(cov.B);
+
+## range of vector indices forming vector spaces in eig.A (and eig.B)
 ## no overlap
-irange0 = c(1:5); 
-jrange0 = c(6:10);
+irange.0 = c(1:5); 
+jrange.0 = c(6:10);
 ## complete overlap
 irange1 = c(1:5);
-jrange1 = c(1:5);
+jrange.1 = c(1:5);
 
 #______________________________________________________________________________
 ## subspace overlap 'psi' of eigensystem vector spaces A and B formed by vectors
@@ -43,9 +51,9 @@ psiAB = function(esA, irange, esB, jrange) {
 }
 
 ## should be close to 0
-psiAB(eigA, irange0, eigA, jrange0);
+psiAB(eig.A, irange.0, eig.A, jrange.0);
 ## should be close to 1
-psiAB(eigA, irange1, eigA, jrange1);
+psiAB(eig.A, irange1, eig.A, jrange.1);
 
 #______________________________________________________________________________
 ## covariance overlap 'omega'; equation (3)
@@ -71,77 +79,82 @@ omegaAB = function(esA, irange, esB, jrange) {
 }
 
 ## should be close to 0
-omegaAB(eigA, irange0, eigA, jrange0);
+omegaAB(eig.A, irange.0, eig.A, jrange.0);
 ## should be close to 1
-omegaAB(eigA, irange1, eigA, jrange1);
+omegaAB(eig.A, irange1, eig.A, jrange.1);
 
 #______________________________________________________________________________
-## some toy data: 3 Hydrogen atoms (H1, H2, H3) with 3 trajectories:
-##   H1 moves along the room diagonal of Catesian x,y,z
-##   H2 does the same, but returns after half of the distance
-##   H3 flies along x, then along y, then along z
-## trajectory length: 120 steps
+## test data
+pdb = read.pdb("./md1_ca.pdb");
+print(pdb);
+print(pdb$xyz);
 
-H1.x = seq(from = 1, to = 120, by = 1);
-H1.y = seq(from = 1, to = 120, by = 1);
-H1.z = seq(from = 1, to = 120, by = 1);
-H1 = cbind(H1.x, H1.y, H1.z);
+mat.dcd = read.dcd("./md1_ca.dcd");
+print(mat.dcd);
 
-H2.x = c(seq(from = 1, to = 60, by = 1), seq(from = 60, to = 1, by = -1));
-H2.y = c(seq(from = 1, to = 60, by = 1), seq(from = 60, to = 1, by = -1));
-H2.z = c(seq(from = 1, to = 60, by = 1), seq(from = 60, to = 1, by = -1));
-H2 = cbind(H2.x, H2.y, H2.z);
+## covariance matrix
+cov.dcd = cov(mat.dcd);
+## eigensystem
+eig.dcd = eigen(cov.dcd);
 
-H3.x = c(seq(from = 1, to = 40, by = 1), rep(40, 80));
-H3.y = c(rep(1, 40), seq(from = 1, to = 40, by = 1), rep(40, 40));
-H3.z = c(rep(1, 80), seq(from = 1, to = 40, by = 1));
-H3 = cbind(H3.x, H3.y, H3.z);
+## no overlap
+irange.0 = c(1:15); 
+jrange.0 = c(16:30);
+## complete overlap
+irange.1 = c(1:30);
+jrange.1 = c(1:30);
 
-#______________________________________________________________________________
-## total trajectory
-H = cbind(H1, H2, H3);
+## subspace overlap 'psi'
+psiAB(eig.dcd, irange.0, eig.dcd, jrange.0);
+psiAB(eig.dcd, irange.1, eig.dcd, jrange.1);
 
-## trajectory split into 2 parts 
-H_t2_1 = H[1:40, ];
-covH_t2_1 = cov(H_t2_1);
-eigH_t2_1 = eigen(covH_t2_1);
+## covariance overlap 'omega'
+omegaAB(eig.dcd, irange.0, eig.dcd, jrange.0);
+omegaAB(eig.dcd, irange.1, eig.dcd, jrange.1);
 
-H_t2_2 = H[41:80, ];
-covH_t2_2 = cov(H_t2_2);
-eigH_t2_2 = eigen(covH_t2_2);
-
-## trajectory split into 3 parts
-H_t3_1 = H[1:40, ];
-covH_t3_1 = cov(H_t3_1);
-eigH_t3_1 = eigen(covH_t3_1);
-
-H_t3_2 = H[41:80, ];
-covH_t3_2 = cov(H_t3_2);
-eigH_t3_2 = eigen(covH_t3_2);
-
-H_t3_3 = H[81:120, ];
-covH_t3_3 = cov(H_t3_3);
-eigH_t3_3 = eigen(covH_t3_3);
 
 #______________________________________________________________________________
-iranget = c(1:2);
-jranget = c(1:2);
+#______________________________________________________________________________
+## decapeptide
+## PDB structure
+pdb = read.pdb("../../test_sys/deca_A_md/vacuum/md/md1_ca.pdb");
+print(pdb);
+## DCD trajectory
+dcd = read.dcd("../../test_sys/deca_A_md/vacuum/md/md1_rottrans_ca.dcd");
+print(dcd);
 
-## t2_1 t2_2
-psiAB(eigH_t2_1, iranget, eigH_t2_2, jranget);
-omegaAB(eigH_t2_1, iranget, eigH_t2_2, jranget);
+#______________________________________________________________________________
+## trajectory is 10ns, 5001 conformers
+covtraj = list(100);
+eigtraj = list(100);
 
-## t3_1 t3_2
-psiAB(eigH_t3_1, iranget, eigH_t3_2, jranget);
-omegaAB(eigH_t3_1, iranget, eigH_t3_2, jranget);
+## create 100 blocks (of 50 conformers) and compute covariance matrices
+##   and derive eigensystems
+#for (i in 1:100) {
+#	inc = (i - 1) * 50;
+#	covtraj[[i]] = cov(dcd[(1 + inc):(50 + inc), ]);
+#	eigtraj[[i]] = eigen(covtraj[[i]]);
+#}
 
-## t3_1 t3_3
-psiAB(eigH_t3_1, iranget, eigH_t3_3, jranget);
-omegaAB(eigH_t3_1, iranget, eigH_t3_3, jranget);
+## create  blocks of increasing size (by 50), like 1:50, 1:100, 1:150, ...
+for (i in 1:100) {
+	covtraj[[i]] = cov(dcd[(1:(i*50)), ]);
+	eigtraj[[i]] = eigen(covtraj[[i]]);
+}
 
-## t3_2 t3_3
-psiAB(eigH_t3_2, iranget, eigH_t3_3, jranget);
-omegaAB(eigH_t3_2, iranget, eigH_t3_3, jranget);
+## compute overlaps for successive block sizes
+iranged = c(1:2);
+jranged = c(1:2);
+
+psitraj = vector(length = 99);
+omegatraj = vector(length = 99);
+for (i in 1:99) {
+	psitraj[[i]] = psiAB(eigtraj[[i]], iranged, eigtraj[[i+1]], jranged);
+	omegatraj[[i]] = omegaAB(eigtraj[[i]], iranged, eigtraj[[i+1]], jranged);
+}
+
+plot(psitraj, type = "line");
+plot(omegatraj, type = "line");
 
 
 #===============================================================================
