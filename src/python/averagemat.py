@@ -122,12 +122,17 @@ def marcenkopasturpdf(x, c):
 	return (lb, ub, mp)
 
 
+
 def difmat(c):
 	print 'Computing the Marcenko Pastur distribution function'
 	
-	# compute the difference matrix
+	# compute the average MI matrix for the holo structure
 	fbpmatrix = fbpmat(args.FBPpath)
+	np.savetxt('fbp_nMI.mat', fbpmatrix)
+
+	# compute the average MI matrix for the apo structure
 	apomatrix = apomat(args.APOpath)
+	np.savetxt('apo_nMI.mat', apomatrix)
 
         # if the dimensions of the two matrices are different, resize the larger matrix
 	# to fit the size of the smaller matrix. 
