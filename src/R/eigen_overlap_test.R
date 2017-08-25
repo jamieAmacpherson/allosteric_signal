@@ -11,30 +11,6 @@
 library("bio3d");
 
 #______________________________________________________________________________
-## dummy data matrices mat.A and mat.B
-mat.A = runif(100);
-dim(mat.A) = c(10,10);
-## covariance matrix
-cov.A = cov(mat.A);
-## eigensystem
-eig.A = eigen(cov.A);
-
-mat.B = runif(100);
-dim(mat.B) = c(10,10);
-## covariance matrix
-cov.B = cov(mat.B);
-## eigensystem
-eig.B = eigen(cov.B);
-
-## range of vector indices forming vector spaces in eig.A (and eig.B)
-## no overlap
-irange.0 = c(1:5); 
-jrange.0 = c(6:10);
-## complete overlap
-irange1 = c(1:5);
-jrange.1 = c(1:5);
-
-#______________________________________________________________________________
 ## subspace overlap 'psi' of eigensystem vector spaces A and B formed by vectors
 ##   with index ranges 'irange' and 'jrange';  equation (2)
 psiAB = function(esA, irange, esB, jrange) {
@@ -49,11 +25,6 @@ psiAB = function(esA, irange, esB, jrange) {
 	}))
   return(psiSum / length(irange));
 }
-
-## should be close to 0
-psiAB(eig.A, irange.0, eig.A, jrange.0);
-## should be close to 1
-psiAB(eig.A, irange1, eig.A, jrange.1);
 
 #______________________________________________________________________________
 ## covariance overlap 'omega'; equation (3)
@@ -78,6 +49,36 @@ omegaAB = function(esA, irange, esB, jrange) {
 	return (1 - sqrt(abs((ta - (2 * tb))) / ta));
 }
 
+#______________________________________________________________________________
+#______________________________________________________________________________
+## dummy data matrices mat.A and mat.B
+mat.A = runif(100);
+dim(mat.A) = c(10,10);
+## covariance matrix
+cov.A = cov(mat.A);
+## eigensystem
+eig.A = eigen(cov.A);
+
+mat.B = runif(100);
+dim(mat.B) = c(10,10);
+## covariance matrix
+cov.B = cov(mat.B);
+## eigensystem
+eig.B = eigen(cov.B);
+
+## range of vector indices forming vector spaces in eig.A (and eig.B)
+## no overlap
+irange.0 = c(1:5); 
+jrange.0 = c(6:10);
+## complete overlap
+irange1 = c(1:5);
+jrange.1 = c(1:5);
+
+## should be close to 0
+psiAB(eig.A, irange.0, eig.A, jrange.0);
+## should be close to 1
+psiAB(eig.A, irange1, eig.A, jrange.1);
+
 ## should be close to 0
 omegaAB(eig.A, irange.0, eig.A, jrange.0);
 ## should be close to 1
@@ -89,7 +90,7 @@ pdb = read.pdb("./md1_ca.pdb");
 print(pdb);
 print(pdb$xyz);
 
-mat.dcd = read.dcd("./md1_ca.dcd");
+mat.dcd = read.dcd("./md1_rottrans_ca.dcd");
 print(mat.dcd);
 
 ## covariance matrix
@@ -117,44 +118,56 @@ omegaAB(eig.dcd, irange.1, eig.dcd, jrange.1);
 #______________________________________________________________________________
 ## decapeptide
 ## PDB structure
-pdb = read.pdb("../../test_sys/deca_A_md/vacuum/md/md1_ca.pdb");
+## here CA only
+pdb = read.pdb("./md1_ca.pdb");
 print(pdb);
 ## DCD trajectory
-dcd = read.dcd("../../test_sys/deca_A_md/vacuum/md/md1_rottrans_ca.dcd");
+## here: 10 ns and 5001 conformers
+dcd = read.dcd("./md1_rottrans_ca.dcd");
 print(dcd);
 
 #______________________________________________________________________________
-## trajectory is 10ns, 5001 conformers
+## trajectory
+## lists of 100 covariance matrices and eigensystems
 covtraj = list(100);
 eigtraj = list(100);
 
-## create 100 blocks (of 50 conformers) and compute covariance matrices
-##   and derive eigensystems
-#for (i in 1:100) {
-#	inc = (i - 1) * 50;
-#	covtraj[[i]] = cov(dcd[(1 + inc):(50 + inc), ]);
-#	eigtraj[[i]] = eigen(covtraj[[i]]);
-#}
+## create blocks of constant size 100
+block.startpos = seq(from = 1, to = 5000, by = 100);
+block.endpos = block.startpos + 99;
+block.pos = cbind(block.startpos, block.endpos);
 
-## create  blocks of increasing size (by 50), like 1:50, 1:100, 1:150, ...
-for (i in 1:100) {
-	covtraj[[i]] = cov(dcd[(1:(i*50)), ]);
+nBlock = dim(block.pos)[1];
+for (i in 1:nBlock) {
+	covtraj[[i]] = cov(dcd[(block.pos[i, 1]:block.pos[i, 2]), ]);
 	eigtraj[[i]] = eigen(covtraj[[i]]);
 }
 
-## compute overlaps for successive block sizes
-iranged = c(1:2);
-jranged = c(1:2);
+## compute overlaps between all blocks 
+traj.overlap = matrix(0, nrow = nBlock, ncol = nBlock);
 
-psitraj = vector(length = 99);
-omegatraj = vector(length = 99);
-for (i in 1:99) {
-	psitraj[[i]] = psiAB(eigtraj[[i]], iranged, eigtraj[[i+1]], jranged);
-	omegatraj[[i]] = omegaAB(eigtraj[[i]], iranged, eigtraj[[i+1]], jranged);
+## eigenvalue range to consider
+eigrange.i = 1:10;
+eigrange.j = 1:10;
+
+## upper triangle contains psiAB values
+for (i in 1:(nBlock-1)) {
+	for (j in (i+1):nBlock) {
+		traj.overlap[i, j] = psiAB(eigtraj[[i]], eigrange.i, eigtraj[[j]], eigrange.j);
+	}
 }
 
-plot(psitraj, type = "line");
-plot(omegatraj, type = "line");
+## lower triangle contains omegaAB values
+for (i in 1:(nBlock-1)) {
+	for (j in (i+1):nBlock) {
+		traj.overlap[j, i] = omegaAB(eigtraj[[i]], eigrange.i, eigtraj[[j]], eigrange.j);
+	}
+}
+
+## diagonal is set to '0' (but technically it would be '1')
+
+## show results
+image(traj.overlap);
 
 
 #===============================================================================
