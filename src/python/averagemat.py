@@ -156,7 +156,7 @@ This may lead to eraneous results. Proceed with caution.
         else:
                 print "Computing MP distribution"
 
-	matA = fbpmatrix - apomatrix
+	matA = apomatrix - fbpmatrix
 	np.savetxt('diff_mat.dat', matA)	
 
 	nrow, ncol = np.shape(matA)
