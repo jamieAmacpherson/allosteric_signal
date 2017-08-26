@@ -14,7 +14,7 @@ MIdistribution = function(nmi_matrix, difference){
 	plot(mathist$breaks[-1],
 		mathist$counts,
 		type='h',
-		log='y',
+	#	log='y',
 		xlab = "nMI",
 		ylab = expression(italic(f(nMI))),
 		cex.lab = 2,
@@ -40,11 +40,43 @@ MIdistribution = function(nmi_matrix, difference){
 	}
 }
 
-pdf("nMI_freq_logdist.pdf")
-par(mar=c(5,5,1,1))
-par(mfrow=c(3,1))
-MIdistribution(apo, FALSE)
-MIdistribution(fbp, FALSE)
-MIdistribution(dif, TRUE)
+diflevelplot = function(nmi_matrix, ncutoff, pcutoff){
+	
+	library(lattice)
+
+	cols = colorRampPalette(c("white", "forestgreen"),
+			space = "rgb")
+
+	cutoffs = c(min(nmi_matrix),
+		pcutoff,
+		max(nmi_matrix))
+
+	x.scale <- list(at=seq(1,ncol(nmi_matrix), 20))
+	y.scale <- list(at=seq(1,nrow(nmi_matrix), 100))
+
+	levelplot(dif,
+		xlab="Fragment",
+		ylab="Fragment",
+		col.regions = cols(2),
+		cuts=2,
+		at=cutoffs,
+		cex.lab=2,
+		scales=list(x=x.scale, y=y.scale))	
+}
+
+
+#pdf("nMI_freq_dist.pdf")
+#par(mar=c(5,5,1,1))
+#par(mfrow=c(3,1))
+#MIdistribution(apo, FALSE)
+#MIdistribution(fbp, FALSE)
+#MIdistribution(dif, TRUE)
+
+#dev.off()
+
+
+pdf("nMI_difplot.pdf")
+diflevelplot(dif,-0.02, 0.03)
 
 dev.off()
+
