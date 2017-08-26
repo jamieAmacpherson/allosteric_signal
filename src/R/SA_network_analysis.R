@@ -43,19 +43,19 @@ hSize = 800
 
 # command line flags
 option_list = list(
-	make_option(c("-pdb", "--PDB_file"), type="character", default=NULL, 
+	make_option(c("-p", "--PDB_file"), type="character", default=NULL, 
               help="pdb file name", metavar="character"),
 
-	make_option(c("-mi", "--mutual_information"), type="character", default="NULL", 
+	make_option(c("-m", "--mutual_information"), type="character", default="NULL", 
               help="Mutual information matrix file name", metavar="character"),
 
-	make_option(c("-je", "--joint_entropy"), type="character", default="NULL", 
+	make_option(c("-j", "--joint_entropy"), type="character", default="NULL", 
               help="Joint entropy matrix file name", metavar="character"),
 
-	make_option(c("-err", "--error_est"), type="character", default="NULL", 
+	make_option(c("-e", "--error_est"), type="character", default="NULL", 
               help="Estimated error matrix file name", metavar="character"),
 
-	make_option(c("-pval", "--p_value"), type="character", default="NULL", 
+	make_option(c("-v", "--p_value"), type="character", default="NULL", 
               help="P value matrix file name", metavar="character"),
 	
 	make_option(c("-o", "--output"), type="character", default="NULL", 
@@ -68,7 +68,7 @@ opt_parser = OptionParser(option_list=option_list);
 opt = parse_args(opt_parser);
 
 # exit if PDB file is not supplied
-if (is.null(opt$pdb)){
+if (is.null(opt$PDB_file)){
   print_help(opt_parser)
   stop("Arguments must be supplied.", call.=FALSE)
 }
@@ -160,13 +160,13 @@ system(paste('python /home/macphej/jm.software/apps/gsatools-4.5.x-1.00/Rscripts
 
 # Normalisation function
 normalisedat = function(dat){
+	dat = as.matrix(dat)
 	tmp = (dat - min(dat)) / (max(dat) - min(dat))
 	return(tmp)
 } 
 
 # plot the mutual information dist function
 MIdistribution = function(nmi_matrix, difference){
-	
 	# set infinite entries in the matrix to zero
 	nmi_matrix[is.infinite(nmi_matrix)] <- 0
 	
@@ -174,7 +174,7 @@ MIdistribution = function(nmi_matrix, difference){
 		nmi_matrix = normalisedat(nmi_matrix)
 	}
 	
-	mathist = hist(nmi_matrix, plot=FALSE, breaks=2000)
+	mathist = hist(as.numeric(nmi_matrix), plot=FALSE, breaks=2000)
 	pfdr = mean(nmi_matrix) + (sigmas*sd(nmi_matrix))
 	nfdr = mean(nmi_matrix) - (sigmas*sd(nmi_matrix))
 
@@ -193,7 +193,7 @@ MIdistribution = function(nmi_matrix, difference){
 pdf(paste(outputPrefix, "_nMI_dist.pdf", sep=""))
 par(mar=c(5,5,1,1))
 par(mfrow=c(3,1))
-MIdistribution(MIInputFilename, FALSE)
+MIdistribution(MILF, FALSE)
 MIdistribution(enpdLFMatrix, FALSE)
 dev.off()
 
@@ -203,14 +203,14 @@ dev.off()
 plotevcent = function(evcentdat){
 	evcent = as.numeric(unlist(evcentdat))
         mathist = hist(evcent, plot=FALSE, breaks=2000)
-        pfdr = mean(evcent) + (4*sd(evcent))
+        pfdr = mean(evcent) + (sigmas*sd(evcent))
 
 	pdf("evdist.pdf")
 	par(mar=c(5,5,1,1))
         plot(mathist$breaks[-1],
                 mathist$counts,
                 type='h',
-        #       log='y',
+                log='y',
                 xlab = expression(italic(x[nu])),
                 ylab = expression(italic(f(x[nu]))),
                 cex.lab = 2,
@@ -252,7 +252,7 @@ plotevcent = function(evcentdat){
                 xlab("Fragment") +
                 ylab(expression(italic(x[nu]))) +
 
-            geom_text_repel(subset(dat, V2 > pfdr),
+            	geom_text_repel(subset(dat, V2 > pfdr),
                        mapping = aes(label = V1),
                        size = 3,
                        color = 'black',
@@ -275,7 +275,7 @@ plotevcent = function(evcentdat){
                 col.names=FALSE)
 	
 }
-evcentdat = evcent(LFgs)$vector
+evcentdat = as.data.frame(evcent(LFgs)$vector)
 
 plotevcent(evcentdat)
 #
