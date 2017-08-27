@@ -16,7 +16,6 @@
 ## LIBRARIES and FUNCTIONS
 #______________________________________________________________________________
 
-#______________________________________________________________________________
 library("bio3d");
 
 args = commandArgs(TRUE);
@@ -76,15 +75,20 @@ pdb = read.pdb(args[1]);
 print(pdb);
 
 ## DCD trajectory
-dcd = read.dcd(""), read.dcd(args[2]);
+dcd = read.dcd(args[2]);
 print(dcd);
 
 sBlock = as.numeric(ifelse(is.na(args[3]), 50, args[3]));
 eigfrom = as.numeric(ifelse(is.na(args[4]), 1, args[4]));
 eigto = as.numeric(ifelse(is.na(args[5]), 10, args[5]));
 
+## eigenvalue range to consider; the same range for both blocks to compare
+eigrange = eigfrom:eigto;
+nEig = eigto - eigfrom + 1;
+stopifnot(eigto <= dim(dcd)[2]);
+
 #______________________________________________________________________________
-## block pair comparisons 
+## EIGENSYSTEMS of TRAJECTORY BLOCKS
 #______________________________________________________________________________
 ## original size of trajectory
 sTraj.orig = dim(dcd)[1];
@@ -99,8 +103,8 @@ block.pos = cbind(block.startpos, block.endpos);
 nBlock = dim(block.pos)[1];
 
 ## lists of covariance matrices and eigensystems
-covtraj = list(ceiling(sTraj / sBlock));
-eigtraj = list(ceiling(sTraj / sBlock));
+covtraj = list(nBlock);
+eigtraj = list(nBlock);
 
 ## compute covariance matrix and its eigensystem
 for (i in 1:nBlock) {
@@ -108,12 +112,11 @@ for (i in 1:nBlock) {
 	eigtraj[[i]] = eigen(covtraj[[i]]);
 }
 
+#______________________________________________________________________________
+## BLOCK PAIR OVERLAPS
+#______________________________________________________________________________
 ## matrix to store overlaps between all block pairs
 traj.overlap = matrix(0, nrow = nBlock, ncol = nBlock);
-
-## eigenvalue range to consider; the same range for both blocks to compare
-stopifnot(eigto <= dim(dcd)[2]);
-eigrange = eigfrom:eigto;
 
 ## matrix of omegaAB values of block pairs
 for (i in 1:(nBlock-1)) {
@@ -123,9 +126,12 @@ for (i in 1:(nBlock-1)) {
 	}
 }
 
-## The 'traj.overlap' matrix diagonal is set to '0', although it should be '1'.
-## Setting it to '0' sets the colour range to that of the overlap values.
+## Setting diagonal to '0' sets the colour range to that of the overlap values.
+diag(traj.overlap) = 0;
 
+#______________________________________________________________________________
+## OUTPUT 
+#______________________________________________________________________________
 ## show results as heatmap image
 png("traj_overlap.png");
 image(traj.overlap);
