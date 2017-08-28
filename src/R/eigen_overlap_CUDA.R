@@ -89,7 +89,7 @@ omegaAB_CUDA = function(esA, irange, esB, jrange) {
 
 	tb = sum(sapply(c(1:length(irange)), function(x) {
 		sqrt(esA$values[irange[x]] * esB$values[jrange[x]]) *
-		gpuMatMult(esA$vectors[ , irange[x]], esB$vectors[ , jrange[x]]);
+		gpuMatMult(esA$vectors[ , irange[x]], t(esB$vectors[ , jrange[x]]));
 	}));
 
 	## using the 'abs' function to avoid negatives (from rounding errors)
@@ -100,12 +100,12 @@ omegaAB_CUDA = function(esA, irange, esB, jrange) {
 ## INPUT 
 #______________________________________________________________________________
 ## PDB structure
-args[1] = c("md1_ca.pdb"); 
+#args[1] = c("md1_ca.pdb"); 
 pdb = read.pdb(args[1]);
 print(pdb);
 
 ## DCD trajectory
-args[2] = c("md1_rottrans_ca.dcd"); 
+#args[2] = c("md1_rottrans_ca.dcd"); 
 dcd = read.dcd(args[2]);
 print(dcd);
 
