@@ -25,6 +25,7 @@ library("bio3d");
 library("gputools");
 ## http://www.image.ucar.edu/fields/
 library("fields");
+library("coop");
 
 args = commandArgs(TRUE);
 print("Usage: Rscript eigen_overlap.R <pdb> <dcd> <blocksize> <eigfrom> <eigto>"); 
@@ -135,14 +136,18 @@ block.pos = cbind(block.startpos, block.endpos);
 nBlock = dim(block.pos)[1];
 
 ## lists of covariance matrices and eigensystems
+blocktraj = list(nBlock);
 covtraj = list(nBlock);
 eigtraj = list(nBlock);
 
-## compute covariance matrix and its eigensystem
+## split trajectory into list of blocks
 for (i in 1:nBlock) {
-	covtraj[[i]] = cov(dcd[(block.pos[i, 1]:block.pos[i, 2]), ]);
-	eigtraj[[i]] = eigen(covtraj[[i]]);
+	blocktraj[[i]] = dcd[(block.pos[i, 1]:block.pos[i, 2]), ];
 }
+
+## compute covariance matrix and its eigensystem
+covtraj = lapply(blocktraj, covar);
+eigtraj = lapply(covtraj, eigen);
 
 #______________________________________________________________________________
 ## BLOCK PAIR OVERLAPS
