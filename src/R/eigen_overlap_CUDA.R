@@ -33,7 +33,7 @@ print("<pdb> : molecular structure file in PDB format");
 print("<dcd> : molecular trajectory file in DCD format");
 print("<blocksize> : number of conformers per trajectory block");
 print("<eigfrom> : lowest eigenvector index to take into account (e.g. 1)");
-print("<eigto> : highest eigenvalue index to take into account (e.g. 10)");
+print("<eigto> : highest eigenvector index to take into account (e.g. 10)");
 
 #______________________________________________________________________________
 ## function psi: subspace overlap of eigensystem vector spaces A and B
@@ -144,7 +144,6 @@ eigtraj = list(nBlock);
 for (i in 1:nBlock) {
 	blocktraj[[i]] = dcd[(block.pos[i, 1]:block.pos[i, 2]), ];
 }
-
 ## compute covariance matrix and its eigensystem
 covtraj = lapply(blocktraj, covar);
 eigtraj = lapply(covtraj, eigen);
@@ -184,15 +183,14 @@ diag(traj.overlap) = 0;
 png("traj_overlap.png");
 image(traj.overlap);
 dev.off();
-
 image(traj.overlap);
 
 #______________________________________________________________________________
 ## 2D KERNEL SMOOTHING
 #______________________________________________________________________________
-## matrix values as vector
+## set diagonal to '0' to limit overlap range to observed values
 diag(traj.overlap) = 0;
-
+## matrix values as vector
 traj.overlap.v = as.vector(traj.overlap);
 ## matrix indices of vector values
 nx = dim(traj.overlap)[1];
@@ -203,37 +201,42 @@ grid.xy = as.data.frame(cbind(x,y));
 ## smooth vector values given grid indices, resulting in a list
 traj.overlap.s = smooth.2d(traj.overlap.v, ind = grid.xy, nrow = nx, ncol = ny, theta = 2);
 
-png("traj_overlap_s.png");
-image(traj.overlap.s);
+pdf(paste(args[3], "_cov_overlap_s.pdf", sep = ""));
+image.plot(traj.overlap.s);
 dev.off();
 
-image(traj.overlap.s);
-
 #______________________________________________________________________________
-## SPLIT OVERLAP MATRIX INTO BLOCKS
+## SPLIT OVERLAP MATRIX INTO SECTORS 
 #______________________________________________________________________________
 ## get the diagonal as a proxy for overlap values in the block 
-bloc.v = diag(traj.overlap.s$z);
-plot(bloc.v, type = 's');
+sector.v = diag(traj.overlap.s$z);
+
+pdf(paste(args[3], "_sectors.pdf", sep = ""));
+plot(sector.v, type = 's');
+dev.off()
 
 ## split the diagonal into sectors, here done for each quantile
-bloc.liv = sapply(quantile(bloc.v), function(x) x > bloc.v);
+sector.liv = sapply(quantile(sector.v), function(x) x > sector.v);
 ## the 'FALSE' sectors at 75% should be useful
-bloc.sel.niv = which(! bloc.liv[ ,"75%"]);
-bloc.idx = 1;
-bloc.idx.v = vector(length = length(bloc.sel.niv));
-bloc.idx.v[1] = bloc.idx
+sector.sel.niv = which(! sector.liv[ ,"75%"]);
+sector.idx = 1;
+sector.idx.v = vector(length = length(sector.sel.niv));
+sector.idx.v[1] = sector.idx
 ## count non-index-contiguous blocks
-for (i in 2:length(bloc.sel.niv)) {
-	if (bloc.sel.niv[i-1] != bloc.sel.niv[i] - 1) {
-		bloc.idx = bloc.idx + 1;
+for (i in 2:length(sector.sel.niv)) {
+	if (sector.sel.niv[i-1] != sector.sel.niv[i] - 1) {
+		sector.idx = sector.idx + 1;
 	}
-	bloc.idx.v[i] = bloc.idx;
+	sector.idx.v[i] = sector.idx;
 }
+## translate block index vector into trajectory index vector
+sector.sel.tiv = sector.sel.niv * sBlock;
 
 ## combine block index with trajectory index
-bloc.info = rbind(bloc.idx.v, bloc.sel.niv);
-bloc.info;
+sector.info = rbind(sector.idx.v, sector.sel.niv, sector.sel.tiv);
+rownames(sector.info) = c("sector_ID", "block_idx", "traj_idx");
+sector.info;
+write.table(sector.info, file = paste(args[2], "_sectors.dat"));
 
 #===============================================================================
 
