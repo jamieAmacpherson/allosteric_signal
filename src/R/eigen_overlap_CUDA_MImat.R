@@ -33,7 +33,9 @@ library("gputools");
 library("fields");
 library("coop");
 library("zoo");
-
+library("denstrip");
+library("matrixStats");
+library("data.table");
 
 args = commandArgs(TRUE);
 print("Usage: Rscript eigen_overlap.R <eigfrom> <eigto> <output prefix>"); 
@@ -114,11 +116,11 @@ eigto = as.numeric(ifelse(is.na(args[2]), 10, args[2]));
 ## eigenvalue range; the same range for both blocks to compare
 eigrange = eigfrom:eigto;
 
-# trajectory block size (in ns)
-sBlock = as.numeric(args[3]) / nBlock
-
 # number of trajectory blocks
 nBlock = length(nMImats)
+
+# trajectory block size (in ns)
+sBlock = as.numeric(args[3]) / nBlock
 
 ## lists of covariance matrices and eigensystems
 covtraj = list(nBlock);
@@ -242,6 +244,34 @@ sector.info = rbind(sector.idx.v, sector.sel.niv, sector.sel.tiv);
 rownames(sector.info) = c("sector_ID", "block_idx", "traj_idx");
 sector.info;
 write.table(sector.info, file = paste(args[2], "_sectors.dat"));
+
+#______________________________________________________________________________
+## AVERAGE OVER CONTIGUOUS ERGODIC BLOCKS AND EXTRACT DISCRETE (AVERAGED) BLOCKS
+#______________________________________________________________________________
+extract.sectors = function(){
+	sector.cont.ind = seqToIntervals(sector.info[2,])
+	nSectors.cont = nrow(sector.cont.ind)
+	sector.cont = list(nSectors.cont)
+
+	dimx = nrow(nMImats[[1]])
+	dimy = ncol(nMImats[[1]])
+
+	sectors = list()
+
+	for (i in 1:nSectors.cont){
+		from=sector.cont.ind[i,1]
+		to=sector.cont.ind[i,2]
+		print(from)
+		print(to)
+		submat = nMImats[from:to]
+		Y = do.call(cbind, submat)
+		Y = array(Y, dim=c(dim(submat[[1]]), length(submat)))
+		sectors[[i]] = apply(Y, c(1, 2), mean, na.rm = TRUE)
+	}
+	return(sectors)
+}
+	  
+
 
 #===============================================================================
 
