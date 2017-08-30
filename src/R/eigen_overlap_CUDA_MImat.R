@@ -32,6 +32,8 @@ library("gputools");
 ## http://www.image.ucar.edu/fields/
 library("fields");
 library("coop");
+library("zoo");
+
 
 args = commandArgs(TRUE);
 print("Usage: Rscript eigen_overlap.R <eigfrom> <eigto> <output prefix>"); 
@@ -92,8 +94,8 @@ readfiles = function() {
 	details = file.info(list.files(pattern="*.out", full.names=TRUE))
 	details = details[with(details, order(as.POSIXct(mtime))), ]
 	filenames = rownames(details)
-        datframe = lapply(filenames, read.table)
-	return(lapply(datframe, as.matrix))
+        df = lapply(filenames, read.table)
+	return(lapply(df, as.matrix))
 }
 
 print("READING MUTUAL INFORMATION MATRICES")
@@ -112,6 +114,10 @@ eigto = as.numeric(ifelse(is.na(args[2]), 10, args[2]));
 ## eigenvalue range; the same range for both blocks to compare
 eigrange = eigfrom:eigto;
 
+# trajectory block size (in ns)
+sBlock = as.numeric(args[3]) / nBlock
+
+# number of trajectory blocks
 nBlock = length(nMImats)
 
 ## lists of covariance matrices and eigensystems

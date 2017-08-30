@@ -165,14 +165,14 @@ for (i in 1:(nBlock-1)) {
 )
 
 ## CUDA version: matrix of omegaAB values of block pairs
-system.time(
-for (i in 1:(nBlock-1)) {
-	for (j in (i+1):nBlock) {
-		traj.overlap[i, j] = omegaAB_CUDA(eigtraj[[i]], eigrange, eigtraj[[j]], eigrange);
-		traj.overlap[j, i] = traj.overlap[i, j];
-	}
-}
-)
+#system.time(
+#for (i in 1:(nBlock-1)) {
+#	for (j in (i+1):nBlock) {
+#		traj.overlap[i, j] = omegaAB_CUDA(eigtraj[[i]], eigrange, eigtraj[[j]], eigrange);
+#		traj.overlap[j, i] = traj.overlap[i, j];
+#	}
+#}
+#)
 
 #______________________________________________________________________________
 ## OUTPUT 
@@ -236,7 +236,7 @@ sector.sel.tiv = sector.sel.niv * sBlock;
 sector.info = rbind(sector.idx.v, sector.sel.niv, sector.sel.tiv);
 rownames(sector.info) = c("sector_ID", "block_idx", "traj_idx");
 sector.info;
-write.table(sector.info, file = paste(args[2], "_sectors.dat"));
+write.table(sector.info, file = paste(args[2], "_sectors.dat", sep=""));
 
 #===============================================================================
 
