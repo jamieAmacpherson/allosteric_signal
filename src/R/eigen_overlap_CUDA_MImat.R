@@ -243,7 +243,7 @@ sector.sel.tiv = sector.sel.niv * sBlock;
 sector.info = rbind(sector.idx.v, sector.sel.niv, sector.sel.tiv);
 rownames(sector.info) = c("sector_ID", "block_idx", "traj_idx");
 sector.info;
-write.table(sector.info, file = paste(args[2], "_sectors.dat"));
+write.table(sector.info, file = paste(args[2], "_sectors.dat", sep=""));
 
 #______________________________________________________________________________
 ## AVERAGE OVER CONTIGUOUS ERGODIC BLOCKS AND EXTRACT DISCRETE (AVERAGED) BLOCKS
@@ -257,21 +257,65 @@ extract.sectors = function(){
 	dimy = ncol(nMImats[[1]])
 
 	sectors = list()
-
+	
+	## find contiguous sectors and add them to list "sectors"
 	for (i in 1:nSectors.cont){
 		from=sector.cont.ind[i,1]
 		to=sector.cont.ind[i,2]
 		print(from)
 		print(to)
+	
+		## subset the contiguous sectors and find the element-
+		## wise average of the sector
 		submat = nMImats[from:to]
 		Y = do.call(cbind, submat)
 		Y = array(Y, dim=c(dim(submat[[1]]), length(submat)))
 		sectors[[i]] = apply(Y, c(1, 2), mean, na.rm = TRUE)
+		
+		## write the element-averaged sectors to files	
+		write.table(sectors[[i]],
+			file=paste("ergodic_sector_", i, sep=""),
+			col.names=F, row.names=F,
+			sep=" ")
 	}
-	return(sectors)
+
+	## lists of covariance matrices and eigensystems
+	sector.cov = list(nBlock);
+	sector.eig = list(nBlock);
+
+	## compute covariance matrix and its eigensystem
+	print("COMPUTING COVARIANCE MATRICES OF ERGODIC SECTORS")
+	sector.cov = lapply(sector, covar);
+	print("COMPUTING EIGEN-SYSTEMS OF ERGODIC SECTORS")
+	sector.eig = lapply(sector.cov, eigen);
+	
+	## compute the covariance overlap between the ergodic sectors
+	sector.overlap = matrix(0, nrow = nSectors.cont, ncol = nSectors.cont);
+	
+	print("COMPUTING COVARIANCE OVERLAP OF ERGODIC SECTORS")
+	for (i in 1:(nSectors.cont-1)) {
+		for (j in (i+1):nSectors.cont) {
+			sector.overlap[i, j] = omegaAB(sector.eig[[i]], eigrange, sector.eig[[j]], eigrange);
+			sector.overlap[j, i] = sector.overlap[i, j];
+		}
+	}
+
+	## show results as heatmap image
+	diag(traj.overlap) = 0;
+
+	pdf(paste(args[4], "ergsector_cov_overlap.pdf", sep=""));
+	par(mar = c(5,5,1,2)
+	image.plot(traj.overlap,
+		xlab = "Ergodic sector",
+		ylab = "Ergodic sector",
+		cex.lab = 2,
+		cex.axis = 2);
+	dev.off();
+	
+	
 }
 	  
-
+extract.sectors()
 
 #===============================================================================
 
