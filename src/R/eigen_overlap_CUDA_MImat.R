@@ -32,11 +32,16 @@ library("gputools");
 ## http://www.image.ucar.edu/fields/
 library("fields");
 library("coop");
+library("zoo");
+library("denstrip");
+library("matrixStats");
+library("data.table");
 
 args = commandArgs(TRUE);
 print("Usage: Rscript eigen_overlap.R <eigfrom> <eigto> <output prefix>"); 
 print("<eigfrom> : lowest eigenvector index to take into account (e.g. 1)");
 print("<eigto> : highest eigenvector index to take into account (e.g. 10)");
+print("<block length> : time length of the trajectory, in ns (e.g. 400)");
 print("<output prefix> : output prefix");
 
 #______________________________________________________________________________
@@ -88,12 +93,13 @@ omegaAB_CUDA = function(esA, irange, esB, jrange) {
 ## load Mutual information matrices 
 
 readfiles = function() {
-	details = file.info(list.files(pattern="*.out"))
+	details = file.info(list.files(pattern="*.out", full.names=TRUE))
 	details = details[with(details, order(as.POSIXct(mtime))), ]
 	filenames = rownames(details)
-        datframe = lapply(filenames, read.table)
-	return(lapply(datframe, as.matrix))
+        df = lapply(filenames, read.table)
+	return(lapply(df, as.matrix))
 }
+
 print("READING MUTUAL INFORMATION MATRICES")
 nMImats = readfiles()
 print("FINISHED READING MUTUAL INFORMATION MATRICES")
@@ -110,13 +116,20 @@ eigto = as.numeric(ifelse(is.na(args[2]), 10, args[2]));
 ## eigenvalue range; the same range for both blocks to compare
 eigrange = eigfrom:eigto;
 
+# number of trajectory blocks
 nBlock = length(nMImats)
+
+# trajectory block size (in ns)
+sBlock = as.numeric(args[3]) / nBlock
 
 ## lists of covariance matrices and eigensystems
 covtraj = list(nBlock);
 eigtraj = list(nBlock);
 
 ## compute covariance matrix and its eigensystem
+print("COMPUTING MATRIX INFORMATION CONTENT")
+nMIsum = lapply(nMImats, sum);
+nMIvar = lapply(nMImats, sd);
 print("COMPUTING COVARIANCE MATRICES")
 covtraj = lapply(nMImats, covar);
 print("COMPUTING EIGEN-SYSTEMS")
@@ -158,10 +171,11 @@ for (i in 1:(nBlock-1)) {
 ## OUTPUT 
 #______________________________________________________________________________
 ## show results as heatmap image
+time = seq(from=0, to=args[3], length.out=nBlock)
 diag(traj.overlap) = 0;
 
-pdf(paste(args[3], "_cov_overlap.pdf", sep=""));
-image.plot(traj.overlap);
+pdf(paste(args[4], "_cov_overlap.pdf", sep=""));
+image.plot(time, time, traj.overlap);
 dev.off();
 
 
@@ -181,7 +195,7 @@ grid.xy = as.data.frame(cbind(x,y));
 ## smooth vector values given grid indices, resulting in a list
 traj.overlap.s = smooth.2d(traj.overlap.v, ind = grid.xy, nrow = nx, ncol = ny, theta = 2);
 
-pdf(paste(args[3], "_cov_overlap_s.pdf", sep=""));
+pdf(paste(args[4], "_cov_overlap_s.pdf", sep=""));
 image.plot(traj.overlap.s);
 dev.off();
 
@@ -191,8 +205,20 @@ dev.off();
 #______________________________________________________________________________
 ## get the diagonal as a proxy for overlap values in the block 
 sector.v = diag(traj.overlap.s$z);
-pdf(paste(args[3], "_sectors.pdf", sep=""));
-plot(sector.v, type = 's');
+pdf(paste(args[4], "_sectors.pdf", sep=""));
+par(mfrow=c(3,1))
+plot(time, sector.v,
+	type = 's',
+	xlab = 'Time (ns)',
+	ylab = expression(paste(Omega[ab])))
+plot(time, unlist(nMIsum),
+	type='s',
+	xlab = 'Time (ns)',
+	ylab = 'MI content')
+plot(time, unlist(nMIvar),
+	type='s',
+	xlab = 'Time (ns)',
+	ylab = 'MI variance')
 dev.off()
 
 ## split the diagonal into sectors, here done for each quantile
@@ -223,6 +249,79 @@ write.table(sector.info, file = paste(args[2], "_sectors.dat", sep = ""));
 saveRDS(eigtraj, file = paste(args[2], "_eigtraj.RDS", sep = ""));
 saveRDS(sector.info, file = paste(args[2], "_sectors.RDS", sep = ""));
 saveRDS(eigrange, file = paste(args[2], "-eigrange.RDS", sep = ""));
+write.table(sector.info, file = paste(args[2], "_sectors.dat", sep=""));
+
+#______________________________________________________________________________
+## AVERAGE OVER CONTIGUOUS ERGODIC BLOCKS AND EXTRACT DISCRETE (AVERAGED) BLOCKS
+#______________________________________________________________________________
+extract.sectors = function(){
+	sector.cont.ind = seqToIntervals(sector.info[2,])
+	nSectors.cont = nrow(sector.cont.ind)
+	sector.cont = list(nSectors.cont)
+
+	dimx = nrow(nMImats[[1]])
+	dimy = ncol(nMImats[[1]])
+
+	sectors = list()
+	
+	## find contiguous sectors and add them to list "sectors"
+	for (i in 1:nSectors.cont){
+		from=sector.cont.ind[i,1]
+		to=sector.cont.ind[i,2]
+		print(from)
+		print(to)
+	
+		## subset the contiguous sectors and find the element-
+		## wise average of the sector
+		submat = nMImats[from:to]
+		Y = do.call(cbind, submat)
+		Y = array(Y, dim=c(dim(submat[[1]]), length(submat)))
+		sectors[[i]] = apply(Y, c(1, 2), mean, na.rm = TRUE)
+		
+		## write the element-averaged sectors to files	
+		write.table(sectors[[i]],
+			file=paste("ergodic_sector_", i, sep=""),
+			col.names=F, row.names=F,
+			sep=" ")
+	}
+
+	## lists of covariance matrices and eigensystems
+	sector.cov = list(nBlock);
+	sector.eig = list(nBlock);
+
+	## compute covariance matrix and its eigensystem
+	print("COMPUTING COVARIANCE MATRICES OF ERGODIC SECTORS")
+	sector.cov = lapply(sectors, covar);
+	print("COMPUTING EIGEN-SYSTEMS OF ERGODIC SECTORS")
+	sector.eig = lapply(sector.cov, eigen);
+	
+	## compute the covariance overlap between the ergodic sectors
+	sector.overlap = matrix(0, nrow = nSectors.cont, ncol = nSectors.cont);
+	
+	print("COMPUTING COVARIANCE OVERLAP OF ERGODIC SECTORS")
+	for (i in 1:(nSectors.cont-1)) {
+		for (j in (i+1):nSectors.cont) {
+			sector.overlap[i, j] = omegaAB(sector.eig[[i]], eigrange, sector.eig[[j]], eigrange);
+			sector.overlap[j, i] = sector.overlap[i, j];
+		}
+	}
+
+	## show results as heatmap image
+	diag(sector.overlap) = 1;
+
+	pdf(paste(args[4], "ergsector_cov_overlap.pdf", sep=""));
+	par(mar = c(5,5,1,2))
+	image.plot(sector.overlap,
+		xlab = "Ergodic sector",
+		ylab = "Ergodic sector",
+		cex.lab = 2,
+		cex.axis = 2);
+	dev.off();
+	
+	
+}
+	  
+extract.sectors()
 
 #===============================================================================
 

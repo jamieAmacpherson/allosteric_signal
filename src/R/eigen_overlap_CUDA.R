@@ -165,14 +165,14 @@ for (i in 1:(nBlock-1)) {
 )
 
 ## CUDA version: matrix of omegaAB values of block pairs
-system.time(
-for (i in 1:(nBlock-1)) {
-	for (j in (i+1):nBlock) {
-		traj.overlap[i, j] = omegaAB_CUDA(eigtraj[[i]], eigrange, eigtraj[[j]], eigrange);
-		traj.overlap[j, i] = traj.overlap[i, j];
-	}
-}
-)
+#system.time(
+#for (i in 1:(nBlock-1)) {
+#	for (j in (i+1):nBlock) {
+#		traj.overlap[i, j] = omegaAB_CUDA(eigtraj[[i]], eigrange, eigtraj[[j]], eigrange);
+#		traj.overlap[j, i] = traj.overlap[i, j];
+#	}
+#}
+#)
 
 #______________________________________________________________________________
 ## OUTPUT 
@@ -241,6 +241,7 @@ write.table(sector.info, file = paste(args[2], "-sectors.dat", sep = ""));
 ## save eigensystems and sector information for downstream trajectory comparisons
 saveRDS(eigtraj, file = paste(args[2], "-eigtraj.RDS", sep = ""));
 saveRDS(sector.info, file = paste(args[2], "-sectors.RDS", sep = ""));
+write.table(sector.info, file = paste(args[2], "_sectors.dat", sep=""));
 
 #===============================================================================
 
