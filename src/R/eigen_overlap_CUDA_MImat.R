@@ -285,7 +285,7 @@ extract.sectors = function(){
 
 	## compute covariance matrix and its eigensystem
 	print("COMPUTING COVARIANCE MATRICES OF ERGODIC SECTORS")
-	sector.cov = lapply(sector, covar);
+	sector.cov = lapply(sectors, covar);
 	print("COMPUTING EIGEN-SYSTEMS OF ERGODIC SECTORS")
 	sector.eig = lapply(sector.cov, eigen);
 	
@@ -301,11 +301,11 @@ extract.sectors = function(){
 	}
 
 	## show results as heatmap image
-	diag(traj.overlap) = 0;
+	diag(sector.overlap) = 1;
 
 	pdf(paste(args[4], "ergsector_cov_overlap.pdf", sep=""));
-	par(mar = c(5,5,1,2)
-	image.plot(traj.overlap,
+	par(mar = c(5,5,1,2))
+	image.plot(sector.overlap,
 		xlab = "Ergodic sector",
 		ylab = "Ergodic sector",
 		cex.lab = 2,
