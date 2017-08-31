@@ -201,7 +201,7 @@ grid.xy = as.data.frame(cbind(x,y));
 ## smooth vector values given grid indices, resulting in a list
 traj.overlap.s = smooth.2d(traj.overlap.v, ind = grid.xy, nrow = nx, ncol = ny, theta = 2);
 
-pdf(paste(args[3], "_cov_overlap_s.pdf", sep = ""));
+pdf(paste(args[2], "_cov_overlap_s.pdf", sep = ""));
 image.plot(traj.overlap.s);
 dev.off();
 
@@ -211,7 +211,7 @@ dev.off();
 ## get the diagonal as a proxy for overlap values in the block 
 sector.v = diag(traj.overlap.s$z);
 
-pdf(paste(args[3], "_sectors.pdf", sep = ""));
+pdf(paste(args[2], "_sectors.pdf", sep = ""));
 plot(sector.v, type = 's');
 dev.off()
 
@@ -236,7 +236,11 @@ sector.sel.tiv = sector.sel.niv * sBlock;
 sector.info = rbind(sector.idx.v, sector.sel.niv, sector.sel.tiv);
 rownames(sector.info) = c("sector_ID", "block_idx", "traj_idx");
 sector.info;
-write.table(sector.info, file = paste(args[2], "_sectors.dat"));
+write.table(sector.info, file = paste(args[2], "-sectors.dat", sep = ""));
+
+## save eigensystems and sector information for downstream trajectory comparisons
+saveRDS(eigtraj, file = paste(args[2], "-eigtraj.RDS", sep = ""));
+saveRDS(sector.info, file = paste(args[2], "-sectors.RDS", sep = ""));
 
 #===============================================================================
 

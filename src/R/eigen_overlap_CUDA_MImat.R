@@ -217,7 +217,12 @@ sector.sel.tiv = sector.sel.niv * sBlock;
 sector.info = rbind(sector.idx.v, sector.sel.niv, sector.sel.tiv);
 rownames(sector.info) = c("sector_ID", "block_idx", "traj_idx");
 sector.info;
-write.table(sector.info, file = paste(args[2], "_sectors.dat"));
+write.table(sector.info, file = paste(args[2], "_sectors.dat", sep = ""));
+
+## save eigensystems and sector information for downstream trajectory comparisons
+saveRDS(eigtraj, file = paste(args[2], "_eigtraj.RDS", sep = ""));
+saveRDS(sector.info, file = paste(args[2], "_sectors.RDS", sep = ""));
+saveRDS(eigrange, file = paste(args[2], "-eigrange.RDS", sep = ""));
 
 #===============================================================================
 
