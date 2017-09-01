@@ -273,12 +273,13 @@ extract.sectors = function(){
 	
 		## subset the contiguous sectors and find the element-
 		## wise average of the sector
+		# check whether we can average on the list directly
 		submat = nMImats[from:to]
 		Y = do.call(cbind, submat)
 		Y = array(Y, dim=c(dim(submat[[1]]), length(submat)))
 		sectors[[i]] = apply(Y, c(1, 2), mean, na.rm = TRUE)
 		
-		## write the element-averaged sectors to files	
+		## write the element-averaged sectors to files	## put this outside the for loop
 		write.table(sectors[[i]],
 			file=paste("ergodic_sector_", i, sep=""),
 			col.names=F, row.names=F,
