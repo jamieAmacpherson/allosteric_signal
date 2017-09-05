@@ -122,7 +122,7 @@ blocks1.unq = rapply(sectors1.l, function(x) head(x, 1));
 for (i in 1:(length(blocks1.unq)-1)) {
 	for (j in (i+1):length(blocks1.unq)) {
 		traj.overlap[[idx.comp]][i, j] = omegaAB(eigtraj1[[blocks1.unq[i]]], eigrange1,
-									 eigtraj1[[blocks2.unq[j]]], eigrange1);
+									 eigtraj1[[blocks1.unq[j]]], eigrange1);
 		traj.overlap[[idx.comp]][j, i] = traj.overlap[[idx.comp]][i, j];
 	}
 }
@@ -143,7 +143,7 @@ for (i in 1:(length(blocks2.unq)-1)) {
 	}
 }
 diag(traj.overlap[[idx.comp]]) = 1;
-png("traj_overlap.2_2.png");
+png("traj_overlap.1_2.png");
 image(traj.overlap[[idx.comp]]);
 dev.off();
 
