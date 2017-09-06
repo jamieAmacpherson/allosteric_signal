@@ -28,14 +28,14 @@ for (i in 1:length(filenames.sort)) {
 #______________________________________________________________________________
 ## MI AUTOCORRELATION 
 #______________________________________________________________________________
-nPos = dim(tmp.df)[1] * (dim(tmp.df)[1] - 1) / 2;
-fitval = rep(list(vector(mode = "numeric", length = 5)), nPos);
-
+## autocorrelation and exponential fit
 ## i: iteration index, r: row index, c: col index
-acMI = function(i, r, c) {
+acMI = function(r, c, i) {
+	print(paste("Hello", r, c, i));
+
 	## autocorrelation given matrix position
 	MI.v = rapply(MI, function(x) x[r, c]);
-	MI_acf = acf(MI.v);
+	MI_acf = acf(MI.v, plot = FALSE);
 
 	## create data frame
 	MI.df = data.frame(MI_acf$lag, MI_acf$acf);
@@ -47,12 +47,25 @@ acMI = function(i, r, c) {
 
 	## if fit successful, class of 'dat.nls' will be 'nls',
 	##	otherwise it will be 'try-error'
-	if (class(dat.nls) == c("nls")) {
-		fitval[[i]] = c(r, c, coef(dat.nls), deviance(dat.nls));
+	if (class(MI.nls) == c("nls")) {
+		fitval[[i]] = c(r, c, coef(MI.nls), deviance(MI.nls));
 	} else {
 		fitval[[i]] = c(r, c, 0, 0, 0);
 	}
 }
+
+## upper triange lindices
+#rc = combn(1:dim(tmp.df)[1], 2);
+rc = combn(1:200, 2);
+## iteration indices
+rc = rbind(rc, 1:dim(rc)[2]);
+## data structure for fit values
+nRc = dim(rc)[2];
+fitval = rep(list(vector(mode = "numeric", length = 5)), nRc);
+
+## run acMI function over all index values
+apply(rc, 2, function(x) { acMI(x[1], x[2], x[3]); });
+
 
 #===============================================================================
 
