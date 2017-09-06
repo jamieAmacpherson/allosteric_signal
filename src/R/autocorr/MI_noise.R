@@ -8,6 +8,10 @@
 ## LIBRARIES and FUNCTIONS
 #______________________________________________________________________________
 library("gtools");
+library("parallel");
+
+# number of cores
+nCore <- detectCores() - 1;
 
 #______________________________________________________________________________
 ## INPUT 
@@ -31,8 +35,6 @@ for (i in 1:length(filenames.sort)) {
 ## autocorrelation and exponential fit
 ## i: iteration index, r: row index, c: col index
 acMI = function(r, c, i) {
-	print(paste("Hello", r, c, i));
-
 	## autocorrelation given matrix position
 	MI.v = rapply(MI, function(x) x[r, c]);
 	MI_acf = acf(MI.v, plot = FALSE);
@@ -55,17 +57,29 @@ acMI = function(r, c, i) {
 }
 
 ## upper triange lindices
-#rc = combn(1:dim(tmp.df)[1], 2);
-rc = combn(1:200, 2);
+rc = combn(1:dim(tmp.df)[1], 2);
+#rc = combn(1:200, 2);
 ## iteration indices
 rc = rbind(rc, 1:dim(rc)[2]);
 ## data structure for fit values
 nRc = dim(rc)[2];
 fitval = rep(list(vector(mode = "numeric", length = 5)), nRc);
 
-## run acMI function over all index values
-apply(rc, 2, function(x) { acMI(x[1], x[2], x[3]); });
+## initiate cluster for parallel computation 
+#clu = makeCluster(nCore);
+## make parallel funcitons see predefined variables
+#clusterExport(clu, c("MI", "acMI", "rc", "fitval"));
+#parSapply(clu, 1:nRc, function(x) { acMI(rc[1, x], rc[2, x], rc[3, x]); });
 
+## run acMI function over all index values
+## 'invisible' suppresses any output of the function evaluation
+invisible(sapply(1:nRc, function(x) { acMI(rc[1, x], rc[2, x], rc[3, x]); }));
+
+
+saveRDS(fitval, "fitval.RDS");
+
+#______________________________________________________________________________
+stopCluster(cl);
 
 #===============================================================================
 
