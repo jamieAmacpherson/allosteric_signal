@@ -64,7 +64,7 @@ nRc = dim(rc)[2];
 ## data structure holding MI vectors of all positions
 MI.vl = rep(list(vector(mode = "numeric", length = length(MI))), nRc);
 for(i in 1:nRc) {
-	MI.vl = rapply(MI, function(x) x[rc[1,i], rc[2,i]]);
+	MI.vl[[i]] = rapply(MI, function(x) x[rc[1,i], rc[2,i]]);
 }
 
 ## data structure for fit values
