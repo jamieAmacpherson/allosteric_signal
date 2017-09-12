@@ -175,7 +175,16 @@ time = seq(from=0, to=args[3], length.out=nBlock)
 diag(traj.overlap) = 0;
 
 pdf(paste(args[4], "_cov_overlap.pdf", sep=""));
-image.plot(time, time, traj.overlap);
+par(mar=c(5,5,2,2))
+par(lab.cex=2)
+
+image.plot(time, time, traj.overlap,
+	legend.cex=2,
+	cex=2,
+	xlab="Time (ns)",
+	ylab="Time (ns)",
+	zlim=c(0, 0.7));
+
 dev.off();
 
 
@@ -223,11 +232,14 @@ dev.off()
 
 ## split the diagonal into sectors, here done for each quantile
 sector.liv = sapply(quantile(sector.v), function(x) x > sector.v);
+
+
 ## the 'FALSE' sectors at 75% should be useful
 sector.sel.niv = which(! sector.liv[ ,"75%"]);
 sector.idx = 1;
 sector.idx.v = vector(length = length(sector.sel.niv));
 sector.idx.v[1] = sector.idx
+
 ## count non-index-contiguous blocks
 for (i in 2:length(sector.sel.niv)) {
 	if (sector.sel.niv[i-1] != sector.sel.niv[i] - 1) {
@@ -243,13 +255,13 @@ sector.sel.tiv = sector.sel.niv * sBlock;
 sector.info = rbind(sector.idx.v, sector.sel.niv, sector.sel.tiv);
 rownames(sector.info) = c("sector_ID", "block_idx", "traj_idx");
 sector.info;
-write.table(sector.info, file = paste(args[2], "_sectors.dat", sep = ""));
+write.table(sector.info, file = paste(args[4], "_sectors.dat", sep = ""));
 
 ## save eigensystems and sector information for downstream trajectory comparisons
-saveRDS(eigtraj, file = paste(args[2], "_eigtraj.RDS", sep = ""));
-saveRDS(sector.info, file = paste(args[2], "_sectors.RDS", sep = ""));
-saveRDS(eigrange, file = paste(args[2], "-eigrange.RDS", sep = ""));
-write.table(sector.info, file = paste(args[2], "_sectors.dat", sep=""));
+saveRDS(eigtraj, file = paste(args[4], "_eigtraj.RDS", sep = ""));
+saveRDS(sector.info, file = paste(args[4], "_sectors.RDS", sep = ""));
+saveRDS(eigrange, file = paste(args[4], "_eigrange.RDS", sep = ""));
+write.table(sector.info, file = paste(args[4], "_sectors.dat", sep=""));
 
 #______________________________________________________________________________
 ## AVERAGE OVER CONTIGUOUS ERGODIC BLOCKS AND EXTRACT DISCRETE (AVERAGED) BLOCKS
@@ -308,7 +320,7 @@ extract.sectors = function(){
 	}
 
 	## show results as heatmap image
-	diag(sector.overlap) = 1;
+	diag(sector.overlap) = 0;
 
 	pdf(paste(args[4], "ergsector_cov_overlap.pdf", sep=""));
 	par(mar = c(5,5,1,2))
