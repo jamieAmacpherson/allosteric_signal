@@ -1,7 +1,9 @@
 #! /usr/bin/R
 
 #===============================================================================
-# Compute noise statistics between successive matrices 
+# Compute noise statistics between successive matrices.
+# This analysis of relaxation time (signal/random) should be combined
+#   with the analysis of signal strength (sinal/random).
 #===============================================================================
 
 #______________________________________________________________________________
@@ -9,6 +11,7 @@
 #______________________________________________________________________________
 library("gtools");
 library("parallel");
+library("fBasics");
 
 # number of cores
 nCore <- detectCores() - 1;
@@ -60,8 +63,8 @@ acMI = function(MI.v) {
 #______________________________________________________________________________
 ## upper triange lindices
 #rc = combn(1:dim(tmp.df)[1], 2);
-## up to 500 works fine
-rc = combn(1:500, 2);
+## chain A has 516 residues
+rc = combn(1:516, 2);
 ## iteration indices
 rc = rbind(rc, 1:dim(rc)[2]);
 nRc = dim(rc)[2];
@@ -69,8 +72,8 @@ nRc = dim(rc)[2];
 ## data structure holding MI vectors of all positions
 ## that is following the MI signal of each position over time
 MI.vl = rep(list(vector(mode = "numeric", length = length(MI))), nRc);
-for(i in 1:nRc) {
-	MI.vl[[i]] = rapply(MI, function(x) x[rc[1,i], rc[2,i]]);
+for (i in 1:nRc) {
+	MI.vl[[i]] = rapply(MI, function(x) x[rc[1, i], rc[2, i]]);
 }
 
 ## data structure for fit values
@@ -97,7 +100,40 @@ fitval.nozero = fitval[lapply(fitval, sum) > 0];
 tau = rapply(fitval.nozero, function(x) x[1]);
 ## tau distribution
 hist(tau, breaks = 200, xlim = c(0, 5));
+## tau is approximately log-normal
+ltau = log(tau);
+hist(ltau, breaks = 200, xlim = c(-3 ,3));
+## QQplot of log-ed and z-transformed distribution
+ltau.mean = mean(ltau);
+ltau.sd = sd(ltau);
+ltau.norm = (ltau - ltau.mean) / ltau.sd;
+## slightly overdispersed because of some non-random MI contributions
+qqnorm(ltau.norm);
+abline(0, 1);
 
+skewness(ltau.norm);
+kurtosis(ltau.norm);
+
+#______________________________________________________________________________
+## upper quantiles for hit list
+## 5%
+q.950 = quantile(ltau, 1 - 0.05);
+## 0.1%
+q.999 = quantile(ltau, 1 - 0.001);
+
+#______________________________________________________________________________
+## assemble results
+result = list(3);
+## indices of hit list
+result[[1]] = which(ltau > q.950);
+## row, column and combinatorial indices of hit list
+result[[2]] = rc[ , result[[1]]];
+## mean MI values of hit list
+result[[3]] = rapply(MI.vl[result[[1]]], mean);
+hist(result[[3]]);
+
+#______________________________________________________________________________
+save.image();
 
 #===============================================================================
 
