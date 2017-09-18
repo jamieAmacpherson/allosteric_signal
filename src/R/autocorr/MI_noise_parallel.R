@@ -61,7 +61,7 @@ acMI = function(MI.v) {
 ## upper triange lindices
 #rc = combn(1:dim(tmp.df)[1], 2);
 ## up to 500 works fine
-rc = combn(1:500, 2);
+rc = combn(1:800, 2);
 ## iteration indices
 rc = rbind(rc, 1:dim(rc)[2]);
 nRc = dim(rc)[2];

@@ -36,6 +36,7 @@ library("zoo");
 library("denstrip");
 library("matrixStats");
 library("data.table");
+library("MASS");
 
 args = commandArgs(TRUE);
 print("Usage: Rscript eigen_overlap.R <eigfrom> <eigto> <output prefix>"); 
@@ -96,8 +97,9 @@ readfiles = function() {
 	details = file.info(list.files(pattern="*.out", full.names=TRUE))
 	details = details[with(details, order(as.POSIXct(mtime))), ]
 	filenames = rownames(details)
-        df = lapply(filenames, read.table)
-	return(lapply(df, as.matrix))
+        datframe = lapply(filenames, read.table)
+	datframe = lapply(datframe, function(x) { x[is.na(x)] <- 0; x})
+	return(lapply(datframe, as.matrix))
 }
 
 print("READING MUTUAL INFORMATION MATRICES")
@@ -205,9 +207,47 @@ grid.xy = as.data.frame(cbind(x,y));
 traj.overlap.s = smooth.2d(traj.overlap.v, ind = grid.xy, nrow = nx, ncol = ny, theta = 2);
 
 pdf(paste(args[4], "_cov_overlap_s.pdf", sep=""));
-image.plot(traj.overlap.s);
+par(mar=c(5,5,2,2))
+
+image.plot(time, time, traj.overlap.s$z,
+        legend.cex=2,
+        cex=2,
+        xlab="Time (ns)",
+        ylab="Time (ns)");
+
 dev.off();
 
+# write smoothed matrix to file
+smoothedMI = replace(traj.overlap.s$z, traj.overlap.s$z = 0, NA)
+
+write.table(as.matrix(smoothedMI),
+		file=paste(args[4], "_cov_overlap_s.dat", sep=""),
+		sep=" ",
+		col.names=F,
+		row.names=F)
+
+fit = fitdistr(as.matrix(smoothedMI), densfun="log-normal")
+
+pdf(paste(args[4], "_overlap_dist.pdf", sep=""))
+par(mar=c(5,5,2,2))
+
+hist(as.matrix(smoothedMI),
+	breaks=20,
+	xlim=c(0,1),
+	xlab = "Covariance Overlap",
+	ylab = "Density",
+	prob=TRUE,
+	main="",
+	cex.axis=2,
+	cex.lab=2)
+
+lines(dnorm(as.matrix(smoothedMI),
+		fit$estimate[1],
+		fit$estimate[2]),
+		col="red")
+dev.off()
+
+fit
 
 #______________________________________________________________________________
 ## SPLIT OVERLAP MATRIX INTO SECTORS
@@ -229,6 +269,9 @@ plot(time, unlist(nMIvar),
 	xlab = 'Time (ns)',
 	ylab = 'MI variance')
 dev.off()
+
+# write the diagonal of the covariance overlap matrix to file
+write.table(sector.v, file="cov_overlap_diag.dat", col.names=F, row.names=F)
 
 ## split the diagonal into sectors, here done for each quantile
 sector.liv = sapply(quantile(sector.v), function(x) x > sector.v);

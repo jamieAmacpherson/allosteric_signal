@@ -58,6 +58,9 @@ option_list = list(
 	make_option(c("-v", "--p_value"), type="character", default="NULL", 
               help="P value matrix file name", metavar="character"),
 	
+	make_option(c("-d", "--dist_cutoff"), type="character", default="NULL", 
+              help="P value matrix file name", metavar="character"),
+	
 	make_option(c("-o", "--output"), type="character", default="NULL", 
               help="Output prefix", metavar="character")
 	
