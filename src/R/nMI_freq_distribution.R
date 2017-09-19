@@ -83,15 +83,24 @@ circosplt = function(nmi_matrix, pcutoff, rangemin, rangemax){
 	library(circlize)	
 	library(reshape2)
 
+	# rename rows and columns
+	if(ncol(nmi_matrix) == 515) {
+		row.names(nmi_matrix) = seq(from=1, to=ncol(nmi_matrix))
+		colnames(nmi_matrix) = seq(from=1, to=ncol(nmi_matrix))
+	}
+		else {
+			row.names(nmi_matrix) = c(sprintf("A%s",seq(1:515)),
+						sprintf("B%s",seq(516:1030)),
+						sprintf("C%s",seq(1031:1545)),
+						sprintf("D%s",seq(1546:2060)))  
+		}
+	
 	# extract the upper triangle of the MI matrix
 	nmi_matrix[lower.tri(nmi_matrix)] = 0	
 	
 	# extract desired range within the matrix
 	nmi_matrix = nmi_matrix[rangemin:rangemax,rangemin:rangemax] 
 	
-	# rename rows and columns
-	row.names(nmi_matrix) = seq(from=1, to=ncol(nmi_matrix))
-	colnames(nmi_matrix) = seq(from=1, to=ncol(nmi_matrix)) 
 	
 	# set all values smaller than user-defined cutoff to zero
 	print(pcutoff)
@@ -115,7 +124,7 @@ circosplt = function(nmi_matrix, pcutoff, rangemin, rangemax){
 	circdat_ord = circdatfilt[order(circdatfilt$Var1, circdatfilt$Var2),]
 	rownames(circdat_ord) = NULL
 
-	par(mar=c(5,5,2,2))
+#	par(mar=c(5,5,2,2))
 
 	chordDiagram(x = circdat_ord, annotationTrack = "grid", preAllocateTracks = 1,
 		annotationTrackHeight = c(0.05, 0.1),
@@ -138,13 +147,13 @@ circosplt = function(nmi_matrix, pcutoff, rangemin, rangemax){
 	bg.border = NA)
 
 	# plot total mutual information content per residue
-	totcont = apply(posmat, 2, sum)
-	plot(totcont, type='h',
-		cex.axis = 2,
-		cex.lab = 2,
-		cex = 2,
-		xlab = "Fragment",
-		ylab = "Mutual information content")
+#	totcont = apply(posmat, 2, sum)
+#	plot(totcont, type='h',
+#		cex.axis = 2,
+#		cex.lab = 2,
+#		cex = 2,
+#		xlab = "Fragment",
+#		ylab = "Mutual information content")
 }
 
 pdf("chainA_circ.pdf")
@@ -205,3 +214,77 @@ diflevelimage(dif,-0.046, 0.041)
 
 splitmatrix(dif, -0.046, 0.041)
 
+interprotcircosplt = function(nmi_matrix, pcutoff, xrangemin, xrangemax, yrangemin, yrangemax){
+	library(fields)
+	library(circlize)	
+	library(reshape2)
+
+	# rename rows and columns
+	row.names(nmi_matrix) = c(sprintf("A%s",seq(1:515)),
+				sprintf("B%s",seq(516:1030)),
+				sprintf("C%s",seq(1031:1545)),
+				sprintf("D%s",seq(1546:2060)))  
+	
+	
+	# extract the upper triangle of the MI matrix
+	nmi_matrix[lower.tri(nmi_matrix)] = 0	
+	
+	# extract desired range within the matrix
+	nmi_matrix = nmi_matrix[xrangemin:xrangemax, yrangemin:yrangemax] 
+	
+	
+	# set all values smaller than user-defined cutoff to zero
+	print(pcutoff)
+	posmat = replace(nmi_matrix, nmi_matrix < pcutoff, 0)
+	
+	# melt the matrix into a datafrane
+	mltdat = melt(as.matrix(posmat))
+	var2 = as.numeric(gsub("[^0-9]", "", mltdat$Var2))
+
+	circdat = as.data.frame(cbind(mltdat$Var1,
+				var2,
+				as.numeric(round(mltdat$value, 3))))	
+
+	# remove all correlations which have a zero mutual information
+	row_sub = apply(circdat, 1, function(row) all(row !=0 ))
+	circdatfilt = circdat[row_sub,]
+
+	names(circdatfilt) = c("Var1", "Var2", "value")
+	
+	# order the dataframe
+	circdat_ord = circdatfilt[order(circdatfilt$Var1, circdatfilt$Var2),]
+	rownames(circdat_ord) = NULL
+
+#	par(mar=c(5,5,2,2))
+
+	chordDiagram(x = circdat_ord, annotationTrack = "grid", preAllocateTracks = 1,
+		annotationTrackHeight = c(0.05, 0.1),
+		transparency = 0.25,
+		direction.type = c("diffHeight"), diffHeight  = -0.04,
+		directional=1,
+	)
+	
+	circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
+  		xlim = get.cell.meta.data("xlim")
+  		ylim = get.cell.meta.data("ylim")
+  		sector.name = get.cell.meta.data("sector.index")
+  		circos.text(mean(xlim), ylim[1] + .1,
+			sector.name,
+			facing = "clockwise",
+			niceFacing = TRUE,
+			adj = c(0, 0.5),
+			col = "lightgray")
+		},
+	bg.border = NA)
+
+	# plot total mutual information content per residue
+	totcont = apply(posmat, 2, sum)
+	plot(totcont, type='h',
+		cex.axis = 2,
+		cex.lab = 2,
+		cex = 2,
+		xlab = "Fragment",
+		ylab = "Mutual information content")
+}
+
+interprotcircosplt(dif, 0.05, 516, 1030, 1, 515)
