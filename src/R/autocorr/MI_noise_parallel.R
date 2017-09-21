@@ -13,8 +13,8 @@ library("gtools");
 library("parallel");
 library("fBasics");
 
-# number of cores
-nCore <- detectCores() - 1;
+## number of cores
+nCore = detectCores() - 1;
 
 #______________________________________________________________________________
 ## INPUT 
@@ -133,7 +133,7 @@ result[[3]] = rapply(MI.vl[result[[1]]], mean);
 hist(result[[3]]);
 
 #______________________________________________________________________________
-save.image();
+save.image("MI_noise_parallel.RData");
 
 #===============================================================================
 
