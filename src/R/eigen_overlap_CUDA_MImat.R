@@ -218,7 +218,7 @@ image.plot(time, time, traj.overlap.s$z,
 dev.off();
 
 # write smoothed matrix to file
-smoothedMI = replace(traj.overlap.s$z, traj.overlap.s$z = 0, NA)
+smoothedMI = replace(traj.overlap.s$z, traj.overlap.s$z == 0, NA)
 
 write.table(as.matrix(smoothedMI),
 		file=paste(args[4], "_cov_overlap_s.dat", sep=""),
@@ -226,28 +226,28 @@ write.table(as.matrix(smoothedMI),
 		col.names=F,
 		row.names=F)
 
-fit = fitdistr(as.matrix(smoothedMI), densfun="log-normal")
+#fit = try(fitdistr(as.matrix(smoothedMI), densfun="log-normal"))
 
-pdf(paste(args[4], "_overlap_dist.pdf", sep=""))
-par(mar=c(5,5,2,2))
+#pdf(paste(args[4], "_overlap_dist.pdf", sep=""))
+#par(mar=c(5,5,2,2))
 
-hist(as.matrix(smoothedMI),
-	breaks=20,
-	xlim=c(0,1),
-	xlab = "Covariance Overlap",
-	ylab = "Density",
-	prob=TRUE,
-	main="",
-	cex.axis=2,
-	cex.lab=2)
+#hist(as.matrix(smoothedMI),
+#	breaks=20,
+#	xlim=c(0,1),
+#	xlab = "Covariance Overlap",
+#	ylab = "Density",
+#	prob=TRUE,
+#	main="",
+#	cex.axis=2,
+#	cex.lab=2)
 
-lines(dnorm(as.matrix(smoothedMI),
-		fit$estimate[1],
-		fit$estimate[2]),
-		col="red")
-dev.off()
+#lines(dnorm(as.matrix(smoothedMI),
+#		fit$estimate[1],
+#		fit$estimate[2]),
+#		col="red")
+#dev.off()
 
-fit
+#fit
 
 #______________________________________________________________________________
 ## SPLIT OVERLAP MATRIX INTO SECTORS
