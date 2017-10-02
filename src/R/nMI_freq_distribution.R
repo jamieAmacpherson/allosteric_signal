@@ -84,22 +84,14 @@ circosplt = function(nmi_matrix, pcutoff, rangemin, rangemax){
 	library(reshape2)
 
 	# rename rows and columns
-	if(ncol(nmi_matrix) == 515) {
-		row.names(nmi_matrix) = seq(from=1, to=ncol(nmi_matrix))
-		colnames(nmi_matrix) = seq(from=1, to=ncol(nmi_matrix))
-	}
-		else {
-			row.names(nmi_matrix) = c(sprintf("A%s",seq(1:515)),
-						sprintf("B%s",seq(516:1030)),
-						sprintf("C%s",seq(1031:1545)),
-						sprintf("D%s",seq(1546:2060)))  
-		}
-	
+	row.names(nmi_matrix) = seq(from=1, to=ncol(nmi_matrix))
+	colnames(nmi_matrix) = seq(from=1, to=ncol(nmi_matrix))
+
 	# extract the upper triangle of the MI matrix
 	nmi_matrix[lower.tri(nmi_matrix)] = 0	
 	
 	# extract desired range within the matrix
-	nmi_matrix = nmi_matrix[rangemin:rangemax,rangemin:rangemax] 
+	nmi_matrix = nmi_matrix[rangemin:rangemax, rangemin:rangemax] 
 	
 	
 	# set all values smaller than user-defined cutoff to zero
@@ -108,23 +100,18 @@ circosplt = function(nmi_matrix, pcutoff, rangemin, rangemax){
 	
 	# melt the matrix into a datafrane
 	mltdat = melt(as.matrix(posmat))
-	var2 = as.numeric(gsub("[^0-9]", "", mltdat$Var2))
-
-	circdat = as.data.frame(cbind(mltdat$Var1,
-				var2,
-				as.numeric(round(mltdat$value, 3))))	
 
 	# remove all correlations which have a zero mutual information
-	row_sub = apply(circdat, 1, function(row) all(row !=0 ))
-	circdatfilt = circdat[row_sub,]
+	row_sub = apply(mltdat, 1, function(row) all(row !=0 ))
+	circdatfilt = mltdat[row_sub,]
 
-	names(circdatfilt) = c("Var1", "Var2", "value")
 	
 	# order the dataframe
-	circdat_ord = circdatfilt[order(circdatfilt$Var1, circdatfilt$Var2),]
+	circdat_ord = mltdat[order(mltdat$Var1, mltdat$Var2),]
 	rownames(circdat_ord) = NULL
+	print(max(circdat_ord$value))
 
-#	par(mar=c(5,5,2,2))
+	par(mar=c(5,5,2,2))
 
 	chordDiagram(x = circdat_ord, annotationTrack = "grid", preAllocateTracks = 1,
 		annotationTrackHeight = c(0.05, 0.1),
@@ -147,36 +134,47 @@ circosplt = function(nmi_matrix, pcutoff, rangemin, rangemax){
 	bg.border = NA)
 
 	# plot total mutual information content per residue
-#	totcont = apply(posmat, 2, sum)
-#	plot(totcont, type='h',
-#		cex.axis = 2,
-#		cex.lab = 2,
-#		cex = 2,
-#		xlab = "Fragment",
-#		ylab = "Mutual information content")
+	totcont = apply(posmat, 2, sum)
+	totcont = as.data.frame(cbind(seq(from=1, to=length(totcont)),
+					totcont))	
+	
+	plot(totcont, type='h',
+		cex.axis = 2,
+		cex.lab = 2,
+		cex = 2,
+		xlab = "Fragment",
+		ylab = "Mutual information content")
+	
+	contcut = quantile(totcont$totcont, 0.9)
+	contrm = apply(totcont, 1, function(row) all(row > contcut ))
+	sigcont = totcont[contrm,]
+
+	resids = sigcont$V1 + 13 
+	return(resids)	
 }
+	
 
 pdf("chainA_circ.pdf")
-circosplt(dif, 0.998, 1, 515)
+intraprot.a = circosplt(dif, 0.05, 1, 515)
 dev.off()
 
 pdf("chainB_circ.pdf")
-circosplt(dif, 0.998, 516, 1030)
+intraprot.b = circosplt(dif, 0.05, 516, 1030)
 dev.off()
 
 pdf("chainC_circ.pdf")
-circosplt(dif, 0.998, 1031, 1545)
+intraprot.c = circosplt(dif, 0.05, 1031, 1545)
 dev.off()
 
 pdf("chainD_circ.pdf")
-circosplt(dif, 0.998, 1546, 2060)
+intraprot.d = circosplt(dif, 0.05, 1546, 2060)
 dev.off()
 
 
 protav = (dif[1:515, 1:515] + dif[516:1030, 516:1030] + dif[1031:1545, 1031:1545] + dif[1546:2060, 1546:2060]) / 4
 
 pdf("av_prot_circ.pdf") 
-circosplt(protav, 0.998, 1, 515)
+circosplt(protav, 0.05, 1, 515)
 dev.off()
 
 splitmatrix = function(difference_matrix, ncutoff, pcutoff){
@@ -288,34 +286,49 @@ interprotcircosplt = function(nmi_matrix, pcutoff, xrangemin, xrangemax, yrangem
 		xlab = "Fragment",
 		ylab = "Mutual information content")
 	
-	contcut = quantile(totcont$totcont, 0.95)
+	contcut = quantile(totcont$totcont, 0.9)
 	contrm = apply(totcont, 1, function(row) all(row > contcut ))
 	sigcont = totcont[contrm,]
 
-
-	print(sigcont$V1 + 13)
-	
+	resids = sigcont$V1 + 13 
+	return(resids)	
 }
 
 pdf("aa_12_circosplt.pdf")
-interprotcircosplt(dif, 0.05, 1, 515, 516, 1030, aa12)
+aa12 = interprotcircosplt(dif, 0.05, 1, 515, 516, 1030, aa12)
 dev.off()
 
 pdf("aa_34_circosplt.pdf")
-interprotcircosplt(dif, 0.05, 1031, 1545, 1546, 2060, aa34)
+aa34 = interprotcircosplt(dif, 0.05, 1031, 1545, 1546, 2060, aa34)
 dev.off()
 
 pdf("cc_13_circosplt.pdf")
-interprotcircosplt(dif, 0.05, 1, 515, 1031, 1545, cc13)
+cc13 = interprotcircosplt(dif, 0.05, 1, 515, 1031, 1545, cc13)
 dev.off()
 
 pdf("cc_24_circosplt.pdf")
-interprotcircosplt(dif, 0.05, 516, 1030, 1546, 2060, cc24)
+cc24 = interprotcircosplt(dif, 0.05, 516, 1030, 1546, 2060, cc24)
 dev.off()
 
 
 
+vendiag = function(grpA, grpB, grpC) {
+	library(VennDiagram)
+	
+	vp = venn.diagram(list(Intra=grpA, AA=grpB, CC=grpC),
+		alpha = 0.1, filename = NULL,
+		cex = 2, lty =2, 
+		fill = c("red", "green", "blue"),
+		category.names = c("Intra-protomer" , "A-A interface" , "C-C interface"))
+	grid.draw(vp)
+}
 
 
+# find common hubs in the two interface combinations
+aa.com = intersect(aa12, aa34)
+cc.com = intersect(cc13, cc24)
+intra.com = intersect(intersect(intersect(intraprot.a, intraprot.b), intraprot.c), intraprot.d)
 
-
+pdf("hubs_venn_diag.pdf")
+vendiag(intra.com, aa.com, cc.com)
+dev.off()
