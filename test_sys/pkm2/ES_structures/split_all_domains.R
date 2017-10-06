@@ -8,7 +8,7 @@ library("bio3d");
 ## for atom selection mechanisms see:
 ## http://thegrantlab.org/bio3d/tutorials/structure-analysis
 
-## all PDB pairs
+## all PDB structures
 filename = list.files(path = '.', full.names = FALSE, pattern = 'pdb$');
 
 ## output directory

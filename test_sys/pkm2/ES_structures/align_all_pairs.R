@@ -58,10 +58,10 @@ inFileName[[7]] = list.files(path = '.', full.names = FALSE,
 inFileName[[8]] = list.files(path = '.', full.names = FALSE,
 	pattern = 'fbp\\d{1}\\.domC\\.pdb$');
 
-lapply(inFileName, function(i) {
+for (i in 1:length(inFileName)) {
 	#_______________________________________________________________________________
 	## structure pairs
-	pair.cbn = combn(i, 2, simplify = FALSE);
+	pair.cbn = combn(inFileName[[i]], 2, simplify = FALSE);
 
 	#_______________________________________________________________________________
 	## parallelisation
@@ -77,6 +77,6 @@ lapply(inFileName, function(i) {
 	#_______________________________________________________________________________
 	## release memory of parallelised structure
 	stopCluster(clu);
-});
+};
 
 #===============================================================================
