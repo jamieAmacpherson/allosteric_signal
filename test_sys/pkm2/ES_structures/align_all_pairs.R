@@ -32,7 +32,7 @@ inFileName = list(8);
 
 ## domN APO domains
 inFileName[[1]] = list.files(path = '.', full.names = FALSE,
-	pattern = 'apo\\d{1}\\.domN\\.pdb$');
+	pattern = '\\d{1}_apo_.*\\.domN\\.pdb$');
 ## domN FBP domains
 inFileName[[2]] = list.files(path = '.', full.names = FALSE,
 	pattern = 'fbp\\d{1}\\.domN\\.pdb$');

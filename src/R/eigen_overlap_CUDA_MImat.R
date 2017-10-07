@@ -94,7 +94,7 @@ omegaAB_CUDA = function(esA, irange, esB, jrange) {
 ## load Mutual information matrices 
 
 readfiles = function() {
-	details = file.info(list.files(pattern="*.out", full.names=TRUE))
+	details = file.info(list.files(pattern="*nMImat.out", full.names=TRUE))
 	details = details[with(details, order(as.POSIXct(mtime))), ]
 	filenames = rownames(details)
         datframe = lapply(filenames, read.table)
@@ -105,6 +105,22 @@ readfiles = function() {
 print("READING MUTUAL INFORMATION MATRICES")
 nMImats = readfiles()
 print("FINISHED READING MUTUAL INFORMATION MATRICES")
+
+#______________________________________________________________________________
+## load Mutual information matrices 
+
+readentropyfiles = function() {
+	details = file.info(list.files(pattern="*entropy.dat", full.names=TRUE))
+	details = details[with(details, order(as.POSIXct(mtime))), ]
+	filenames = rownames(details)
+        datframe = lapply(filenames, read.table)
+	datframe = lapply(datframe, function(x) { x[is.na(x)] <- 0; x})
+	return(lapply(datframe, as.matrix))
+}
+
+print("READING POSITIONAL ENTROPY DATA")
+entropydat = readentropyfiles()
+print("FINISHED READING POSITIONAL ENTROPY DATA")
 
 #______________________________________________________________________________
 ## EIGENSYSTEMS of mutual information matrices
@@ -318,7 +334,8 @@ extract.sectors = function(){
 	dimy = ncol(nMImats[[1]])
 
 	sectors = list()
-	
+	sectorsentropy = list()
+
 	## find contiguous sectors and add them to list "sectors"
 	for (i in 1:nSectors.cont){
 		from=sector.cont.ind[i,1]
@@ -339,6 +356,19 @@ extract.sectors = function(){
 			file=paste("ergodic_sector_", i, sep=""),
 			col.names=F, row.names=F,
 			sep=" ")
+		
+		# subset the entropy in the contiguous sectors
+		subentr = entropydat[from:to]
+		X = do.call(cbind, subentr)
+		X = array(X, dim=c(dim(subentr[[1]]), length(subentr)))
+		sectorsentropy[[i]] = apply(X, c(1, 2), mean, na.rm = TRUE)
+
+		## write the element-averaged sector entopy to files  ## put this outside the for loop
+                write.table(sectorsentropy[[i]],
+                        file=paste("ergodic_sector_entropy_", i, sep=""),
+                        col.names=F, row.names=F,
+                        sep=" ")
+
 	}
 
 	## lists of covariance matrices and eigensystems
