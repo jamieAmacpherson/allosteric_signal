@@ -104,25 +104,24 @@ for (i in 1:length(inFileName)) {
 	outFileNameAll = list(outFileNameComplete, outFileNameDom, outFileNameDomPair);
 	## simplify list structure
 	outFileNameAll.l = as.list(unlist(outFileNameAll));
+	outFileNameDirAll.l = as.list(paste(outDir, outStrDir, unlist(outFileNameAll), sep = "/"));
 
 	#_______________________________________________________________________________
 	## parallelisation
 	## initiate cluster for parallel computation 
-	clu = makeCluster(nCore);
+	#clu = makeCluster(nCore);
 	## make parallel functions see predefined variables
-	clusterExport(clu, c("outFileNameAll.l"));
+	#clusterExport(clu, c("outFileNameDirAll.l"));
 
 	#_______________________________________________________________________________
 	## POPS all derived structures of one input structure
-	setwd(paste(outDir, outStrDir, sep = "/"));
-
-	parLapply(clu, outFileNameAll.l, function(x) {
-	system(paste("./pops --pdb ", x, " --popsOut ", x, ".out", " --popsbOut ", x, ".bout", " --sigmaOut ", x, ".sout", sep = "")); });
-	
-	setwd("../..");
+	#parLapply(clu, outFileNameDirAll.l, function(x) {
+	#	print(paste("./pops --pdb ", x, " --popsOut ", x, ".out", " --popsbOut ", x, ".bout", " --sigmaOut ", x, ".sout", sep = "")); });
+	lapply(outFileNameDirAll.l, function(x) {
+		system(paste("./pops --pdb ", x, " --popsOut ", x, ".out", " --popsbOut ", x, ".bout", " --sigmaOut ", x, ".sout", sep = "")); });
 
 	## release memory of parallelised structure
-	stopCluster(clu);
+	#stopCluster(clu);
 }
 
 #===============================================================================
