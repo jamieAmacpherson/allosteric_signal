@@ -34,25 +34,25 @@ for (i in 1:length(inFileName)) {
 	## rename chain of N-terminal domain (first residue set to 1, min is 1)
 	pdb$atom$chain[pdb$atom$resno %in% c(1:47)] = "N";
 	## create PDB of N-terminal domain
-	chainN = atom.select(pdb, chain = "N");
+	chainN = atom.select(pdb, resno = c(1:47));
     pdbChainN = trim.pdb(pdb, chainN);
 
 	## rename chain of A domain
 	pdb$atom$chain[pdb$atom$resno %in% c(48:116, 221:388)] = "A";
 	## create PDB of A domain
-	chainA = atom.select(pdb, chain = "A");
+	chainA = atom.select(pdb, resno = c(48:116, 221:388));
     pdbChainA = trim.pdb(pdb, chainA);
 
 	## rename chain of B domain
 	pdb$atom$chain[pdb$atom$resno %in% c(117:220)] = "B";
 	## create PDB of B domain
-	chainB = atom.select(pdb, chain = "B");
+	chainB = atom.select(pdb, resno = c(117:220));
     pdbChainB = trim.pdb(pdb, chainB);
 
 	## rename chain of C domain (last residue set to 550, max is 533)
 	pdb$atom$chain[pdb$atom$resno %in% c(389:550)] = "C";
 	## create PDB of C domain
-	chainC = atom.select(pdb, chain = "C");
+	chainC = atom.select(pdb, resno = c(389:550));
     pdbChainC = trim.pdb(pdb, chainC);
 
 	#_______________________________________________________________________________
@@ -90,7 +90,7 @@ for (i in 1:length(inFileName)) {
 	for (j in 1:length(pair.cbn)) {
 		## concatenate domains
 		domPair = cat.pdb(doms[[pair.cbn[[j]][1]]], doms[[pair.cbn[[j]][2]]],
-							renumber = FALSE, rechain = FALSE);
+							renumber = TRUE, rechain = FALSE);
 		outFileNameDomPair[[j]] = paste(
 						domsName[pair.cbn[[j]][1]],
 						domsName[pair.cbn[[j]][2]],
@@ -118,7 +118,7 @@ for (i in 1:length(inFileName)) {
 	#parLapply(clu, outFileNameDirAll.l, function(x) {
 	#	print(paste("./pops --pdb ", x, " --popsOut ", x, ".out", " --popsbOut ", x, ".bout", " --sigmaOut ", x, ".sout", sep = "")); });
 	lapply(outFileNameDirAll.l, function(x) {
-		system(paste("./pops --pdb ", x, " --popsOut ", x, ".out", " --popsbOut ", x, ".bout", " --sigmaOut ", x, ".sout", sep = "")); });
+		system(paste("./pops --pdb ", x, " --popsOut ", x, ".out", " --popsbOut ", x, ".bout", " --sigmaOut ", x, ".sout", " --coarse", sep = "")); });
 
 	## release memory of parallelised structure
 	#stopCluster(clu);
