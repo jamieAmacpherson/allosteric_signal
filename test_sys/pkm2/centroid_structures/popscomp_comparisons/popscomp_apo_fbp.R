@@ -24,4 +24,5 @@ colnames(dataFbp.df) = paste("FBP", colnames(dataFbp.df), sep = ".");
 
 ## merge data frames
 dataAll.df = merge(dataApo.df, dataFbp.df, by = "row.names");
+write.table(dataAll.df, file = "popscomp_apo_fbp.out");
 
