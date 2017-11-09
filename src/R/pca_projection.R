@@ -23,6 +23,11 @@ print('<reference.pdb>: PDB trajectory file used as the reference in PCA analysi
 print('<projection.pdb>: PDB trajectory file projected into PCA space of the reference trajectory.')
 print('<output prefix>: Output prefix for plots')
 
+if(length(args) < 3)
+{
+	  stop('Not enough arguments. Please supply 3 arguments.')
+}
+
 #______________________________________________________________________________
 # Read PDB files and adjust the trajectory dimensions
 #______________________________________________________________________________
@@ -103,25 +108,50 @@ projection.proj = predict(pca.ref, xyz.proj);
 
 ## Plot the projected and reference PCA on the same plot
 pcascatterplt = function(pca.ref.dat.x, pca.ref.dat.y, pca.proj.dat.x, pca.proj.dat.y){
+
+	# arrange the data frames for the PCA plot of the reference and projected
+	# trajectories
 	ref.dat = as.data.frame(cbind(pca.ref.dat.x, pca.ref.dat.y))
 	names(ref.dat) = c('V1', 'V2')
 	proj.dat = as.data.frame(cbind(pca.proj.dat.x, pca.proj.dat.y))
 	names(proj.dat) = c('V1', 'V2')
- 	
+ 
+	# define the dimensions of the projected PCA plot
+	ref.dat.range = range(ref.dat)
+	proj.dat.range = range(proj.dat)
 
+	if(ref.dat.range[1] < proj.dat.range[1]){
+		dim.min = ref.dat.range[1] - (ref.dat.range[1] * 0.05)
+	}	else {
+		dim.min = proj.dat.range[1] - (proj.dat.range[1] * 0.05)
+	}
+
+	if(ref.dat.range[2] > proj.dat.range[2]){
+		dim.max = ref.dat.range[2] + (ref.dat.range[2] * 0.05)
+	}	else {
+		dim.max = proj.dat.range[2] + (proj.dat.range[2] * 0.05)
+	}
+
+	# plot the projection PCA
 	plt1 = ggplot(data=ref.dat, aes(x=V1, y=V2)) +
      		geom_point(col='red', alpha=0.6, size=3) +
-		xlim(-50, 100) +
-		ylim(-50,120) +
+		xlim(dim.min, dim.max) +
+		ylim(dim.min, dim.max) +
 		xlab('PC1') +
 		ylab('PC2') +
 
 		geom_point(data=proj.dat, aes(x=V1, y=V2),
 			   col='forestgreen', alpha=0.6, size=3) +
+		theme_bw(base_size = 20) 
 
-		theme_bw()
+	# save the projected PCA plot to a pdf file
+	pdf(paste(args[3], '_projected_pca.pdf', sep=''))
+	par(mar=c(5,5,2,2))
+	print(plt1)
+	dev.off()
 
 	# cluster the distribution in PC1 and PC2
+	pdf(paste(args[3], '_pca_cluster.pdf', sep=''))
 	dat = as.data.frame(rbind(ref.dat, proj.dat))
 	nc = NbClust(dat, min.nc=2, max.nc=15, method="kmeans")
 
@@ -134,19 +164,11 @@ pcascatterplt = function(pca.ref.dat.x, pca.ref.dat.y, pca.proj.dat.x, pca.proj.
 		 color=TRUE,
 		 shade=TRUE)
 
-	pdf(paste(args[3], '_projected_pca.pdf', sep=''))
-	print(plt1)
-	dev.off()
-
-	pdf(paste(args[3], '_pca_cluster.pdf', sep=''))
-	print(plt2)
-	print(plt3)
 	dev.off()
 }
 
 pcascatterplt(pca.ref$x[,1], pca.ref$x[,2], projection.proj[,1], projection.proj[,2])
 
-dev.off()
 
 ## Compute the residue loadings onto PC1 and PC2
 pc.loadings = function(ref_traj, proj_traj, ...){
@@ -180,6 +202,7 @@ pc.loadings = function(ref_traj, proj_traj, ...){
 	       pc.proj$au[,2],
 	       col='forestgreen',
 	       typ='l')
+
 	dev.off()
 
 
