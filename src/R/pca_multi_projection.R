@@ -404,9 +404,9 @@ pc.loadings = function(ref_traj, ref_name, proj_traj, proj_name, outputprefix, .
 }
 
 
-pc.loadings(xyz.ref, 'tFBP' , xyz.proj1, 'tApo', 'tFBP-tApo')
-pc.loadings(xyz.ref, 'tFBP', xyz.proj2, 'mFBP', 'tFBP-mFBP')
-pc.loadings(xyz.proj1, 'tApo', xyz.proj3, 'mApo', 'tApo-mApo')
-pc.loadings(xyz.proj2, 'mFBP', xyz.proj4, 'mTepp-46', 'mFBP-mTEPP')
+#pc.loadings(xyz.ref, 'tFBP' , xyz.proj1, 'tApo', 'tFBP-tApo')
+#pc.loadings(xyz.ref, 'tFBP', xyz.proj2, 'mFBP', 'tFBP-mFBP')
+#pc.loadings(xyz.proj1, 'tApo', xyz.proj3, 'mApo', 'tApo-mApo')
+#pc.loadings(xyz.proj2, 'mFBP', xyz.proj4, 'mTepp-46', 'mFBP-mTEPP')
 
 
