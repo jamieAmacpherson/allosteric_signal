@@ -76,7 +76,8 @@ splitmat = function(nmi.matrix.dat, outprefix){
 }
 
 #______________________________________________________________________________
-# process the list of matrices
+## Process the list of matrices and plot the chain-averaged mutual information
+# as a volcano plot 
 mat.process = function(listmatrices, sign.pval, sig.nMIval, outprefix, ...){
 	#______________________________________________________________________________
 	## Arguments:
@@ -145,7 +146,10 @@ mat.process = function(listmatrices, sign.pval, sig.nMIval, outprefix, ...){
 
 
 #______________________________________________________________________________
-# find shortest path using the Dijkstra algorithm
+## Calculate the distance for the shortest path between two vertices using the
+# Dijkstra algorithm. This is applied over all combinations of vertices between
+# the FBP binding pocket and the active site. Residues at the two pockets are 
+# defined from Dombrauckas J, et al. Biochemistry 2005, 44, 9417-9429. 
 dijsktra.distance = function(matrixdat, pdb.file, ...){
 	#______________________________________________________________________________
 	## Arguments:
@@ -196,6 +200,8 @@ dijsktra.distance = function(matrixdat, pdb.file, ...){
 	diag(scaled.MImatrix) = 0
 	
 	# vector containing FBP-binding pocket fragments
+	# as defined in the following publication:
+	# Dombrauckas J, et al. Biochemistry 2005, 44, 9417-9429
 	fbp.pocket = c(seq(from=419, to=427),
 			seq(from=500, to=510),
 			seq(from=468, to=478))
@@ -259,7 +265,7 @@ plt.path.distances = function(fbpmat.file, apomat.file, pdb.file){
 	## Plot the path distances for the Apo and FBP matrices
 	fbpmatlist = calc.distances(fbpmat.file, 'fbp', pdb.file)
 	apomatlist = calc.distances(apomat.file, 'apo', pdb.file)
-	subt = function(x){return(x-5.5)}
+	subt = function(x){return(x-5)}
 	fbpmatlist = lapply(fbpmatlist, subt)
 
 	dfdist = length(apomatlist[[1]][,1])
@@ -277,27 +283,27 @@ plt.path.distances = function(fbpmat.file, apomat.file, pdb.file){
 			cbind(as.vector(apomatlist[[2]][,1]),
 					rep('chain2'),
 					rep('Apo'),
-					rep(3, dfdist)),
+					rep(1, dfdist)),
 			cbind(as.vector(fbpmatlist[[2]][,1]),
 					rep('chain2'),
 					rep('FBP'),
-					rep(4, dfdist)),
+					rep(2, dfdist)),
 			cbind(as.vector(apomatlist[[3]][,1]),
 					rep('chain3'),
 					rep('Apo'),
-					rep(5, dfdist)),
+					rep(1, dfdist)),
 			cbind(as.vector(fbpmatlist[[3]][,1]),
 					rep('chain3'),
 					rep('FBP'),
-					rep(6, dfdist)),
+					rep(2, dfdist)),
 			cbind(as.vector(apomatlist[[4]][,1]),
 					rep('chain4'),
 					rep('Apo'),
-					rep(7, dfdist)),
+					rep(1, dfdist)),
 			cbind(as.vector(fbpmatlist[[4]][,1]),
 					rep('chain4'),
 					rep('FBP'),
-					rep(8, dfdist))))
+					rep(2, dfdist))))
 
 	names(dat) = c('distance', 'chain', 'system', 'group')
 
@@ -305,21 +311,19 @@ plt.path.distances = function(fbpmat.file, apomat.file, pdb.file){
 	dat$group <- as.numeric(as.character(dat$group))
 
 	# statistical comparisons 
-	my_comparisons = list(c('1', '2'),
-                        c('3', '4'),
-                        c('5', '6'),
-                        c('7', '8'))
-
+	my_comparisons = list(c('1', '2'))
 	
 	plt = 	ggboxplot(dat, x='group', y='distance', fill='system', size=0.2,
 			palette = c("red", "forestgreen"), width=0.6) +
               	  geom_jitter(position=position_jitter(width=.1, height=0), size=0.1) +
               	  theme_bw() +
-                  stat_compare_means(comparisons = my_comparisons) +
+                  
                   theme(text = element_text(size=20),
                           axis.text.x = element_text(hjust=1)) +
-                  facet_grid(. ~ chain, scales='free') + 
-                  #ylim(0, 0.20)
+                  facet_wrap( ~ chain, scales='free') +
+                  stat_compare_means(comparisons = my_comparisons, map_signif_level = F) +
+                  expand_limits(y=0) +
+                  ylim(0, 61)
 
 	pdf('graph_distances.pdf')
 	print(plt)
@@ -333,7 +337,10 @@ plt.path.distances('fbp_nMI.mat', 'apo_nMI.mat', 'prot_ca.pdb')
 
 
 #______________________________________________________________________________
-## print maximum sum path of mutual information matrix 
+## Determine the vertices along the shortest path using the. This is applied
+# over all combinations of vertices between the FBP binding pocket and the
+# active site. Residues at the two pockets are defined from Dombrauckas J,
+# et al. Biochemistry 2005, 44, 9417-9429. 
 path.trace = function(matrixdat, pdb.file){
 	#______________________________________________________________________________
 	# Calculate the shortest path between the allosteric pocket
@@ -447,17 +454,62 @@ calc.paths = function(matdatname, outprefix, pdb.file){
 
 ## calculate the maximum sum paths for all FBP chains
 fbppaths = calc.paths('fbp_nMI.mat', 'fbp', 'prot_ca.pdb')
+apopaths = calc.paths('apo_nMI.mat', 'apo', 'prot_ca.pdb')
 
 #______________________________________________________________________________
 ## Plot the paths onto a structure using the bio3d plugin
-plot.paths = function(paths, pdb.file){
+plot.paths = function(pathlist, chain){
 	# read pdb file
-	pdb = read.pdb(pdb.file)
+	# for each of the following active-site residues:
+	# 63, 66, 101, 102, 108, 258, 260, 284, 316, 350
+	as.residues = c(63, 66, 101, 102, 108, 258, 260, 284, 316, 350)
+
+	# initialise a list to take the paths from each of the active 
+	# site residues
+	as.paths = list()
+
+	## there are 63 path combinations for each of the active site residues
+	## loop through the list of paths in increments of 31 and extract
+	## the vertices
+
+	# initialise variable
+	i = 1
+
+	while (i < (length(pathlist)-1) ){
+		# start of the list
+		start = i
+		end = i + 31
+
+		# extract the list of vertices
+		dat = as.data.frame(
+			table(
+				unlist(
+					pathlist[[chain]][start:end]) + 12
+				)
+			)
+
+		
+
+	dat = as.data.frame(
+		table(
+			unlist(
+				pathlist[[chain]][begin:end])+12
+			)
+		)$Var1
+	
+
+	print(dat)
+
 	## TODO: plot each path onto the structure:
 	# for f in paths:
 	#	for vertices in f:
 	#		draw line between vertices
 	# export as python executable script
+
+	#pymol(pdb,
+	#	as = 'putty',
+	#	type = 'script',
+	#	)
 
 }
 
