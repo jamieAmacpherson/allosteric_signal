@@ -459,6 +459,9 @@ apopaths = calc.paths('apo_nMI.mat', 'apo', 'prot_ca.pdb')
 #______________________________________________________________________________
 ## Plot the paths onto a structure using the bio3d plugin
 plot.paths = function(pathlist, chain){
+
+	pathlist.chain = pathlist[[chain]]
+
 	# read pdb file
 	# for each of the following active-site residues:
 	# 63, 66, 101, 102, 108, 258, 260, 284, 316, 350
@@ -473,46 +476,39 @@ plot.paths = function(pathlist, chain){
 	## the vertices
 
 	# initialise variable
+
 	i = 1
 
-	while (i < (length(pathlist)-1) ){
+	while (i < (nrow(pathlist.chain)-1) ){
 		# start of the list
-		start = i
-		end = i + 31
+		start.pos = i
+		end.pos = i + 31
+
+		print(start.pos)
+		print(end.pos)
 
 		# extract the list of vertices
 		dat = as.data.frame(
 			table(
 				unlist(
-					pathlist[[chain]][start:end]) + 12
+					pathlist.chain[start.pos:end.pos]) + 12
 				)
 			)
+		#print(dat)
+		list.pos = end.pos/32
 
-		
+		as.paths[[list.pos]] = dat
 
-	dat = as.data.frame(
-		table(
-			unlist(
-				pathlist[[chain]][begin:end])+12
-			)
-		)$Var1
+		i = i + 32
+	}
+
+	#combined_as_paths = do.call(rbind, as.paths)
+
+	return(as.paths)
 	
 
-	print(dat)
-
-	## TODO: plot each path onto the structure:
-	# for f in paths:
-	#	for vertices in f:
-	#		draw line between vertices
-	# export as python executable script
-
-	#pymol(pdb,
-	#	as = 'putty',
-	#	type = 'script',
-	#	)
-
 }
-
+test = plot.paths(fbppaths, 1)
 
 #______________________________________________________________________________
 ## print maximum sum path of mutual information matrix 
