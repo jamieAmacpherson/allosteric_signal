@@ -493,22 +493,133 @@ plot.paths = function(pathlist, chain){
 				unlist(
 					pathlist.chain[start.pos:end.pos]) + 12
 				)
-			)
-		#print(dat)
+			) $ Var1
+
+		# convert the string of vertices from class factor to 
+		# class numeric
+		dat.num = as.numeric(as.character(dat))
+
+		# add 32 positions to the iterator
 		list.pos = end.pos/32
 
-		as.paths[[list.pos]] = dat
+		# add the numeric vector of vertices to a list
+		as.paths[[list.pos]] = dat.num
 
 		i = i + 32
 	}
 
-	#combined_as_paths = do.call(rbind, as.paths)
+	## generate a list of strings to draw bonds in PyMOL
+	
+	# bond selection command, given two input atoms and a name for the 
+	# bond - returned as a string
+	pymol.bond.sele.command = function(atom1, atom2, nbond, chainID){
+
+		# chain switches
+		if(chainID == 1){
+			pymolchain = 'A'
+		}
+		else if(chainID == 2){
+			pymolchain = 'B'
+		}
+		else if(chainID == 3){
+			pymolchain = 'C'
+		}
+		else if(chainID == 4){
+			pymolchain = 'D'
+		}
+
+		# return PyMOL command to draw a bond between atoms 1 and 2
+		return(paste(paste('distance ', paste('mydist', nbond, ', ', sep=''),
+			'chain ', pymolchain, ' and ', atom1, '/CA, ', 'chain ', pymolchain, ' and ', atom2, '/CA', sep='')))
+	}
+
+	## remove the labels from the selected distances
+	pymol.bond.lab.rm.command = function(nbond, chainID){
+
+		# return PyMOL command to remove the distance label drawn for distance element x
+		return(paste('hide labels, mydist', nbond, sep=''))
+	}
 
 
+	## function which writes a pymol selection command for pathway
+	pymol.bond = function(vertex.vec){
+		# initialise a vector to catch the selection string commands
+		pymol.commands = c()
 
-	return(as.paths)
+		# loop through the vertex vector calling pymol.bond.sele.command() for 
+		# each successive combination of path vertices
+		for ( w in c(1:length(vertex.vec)-1)){
+			cmd.tmp = pymol.bond.sele.command(vertex.vec[w], vertex.vec[w + 1], w, chain)
+			pymol.commands = append(pymol.commands, cmd.tmp)
+		}
 
+		# remove the first element of the list (redundant output)
+		pymol.commands = pymol.commands[-1]
+		return(pymol.commands)
+	}
+
+	path.commands = lapply(as.paths, pymol.bond)
+
+	## function which writes a pymol selection command for removing the labels from the pathway lines
+	pymol.rm.label = function(vertex.vec){
+		# initialise a vector to catch the selection string commands
+		pymol.commands = c()
+
+		# loop through the vertex vector calling pymol.bond.sele.command() for 
+		# each successive combination of path vertices
+		for ( w in c(1:length(vertex.vec)-1)){
+			cmd.tmp = pymol.bond.lab.rm.command(w)
+			pymol.commands = append(pymol.commands, cmd.tmp)
+		}
+
+		# remove the first element of the list (redundant output)
+		pymol.commands = pymol.commands[-1]
+		return(pymol.commands)
+	}
+
+	path.rm.lab = lapply(as.paths, pymol.rm.label)
+	#return(as.paths)
+
+	## write the PyMOL script file to the working directory
+	fileConn = file(paste('as_paths_chain', chain, '_script.txt', sep=''), 'w')
+	lapply(path.commands,
+		write,
+		fileConn,
+		append=TRUE)
+
+	close(fileConn)
+
+	## write PyMOL script that removes the distances from the drawn paths in the first script above
+	fileConn = file(paste('as_paths_chain', chain, '_script_rmlab.txt', sep=''), 'w')
+	lapply(path.rm.lab,
+		write,
+		fileConn,
+		append=TRUE)
+
+	close(fileConn)	
+
+	#fileConn = file(paste('as_paths_chain', chain, '_script.txt'))
+	#writeLines(path.commands, fileConn)
+	#close(fileConn)
+
+	print('PYMOL SCRIPT FILE SAVED TO WD, CONTAINING LIST OF RESIDUES IN ALLOSTERIC PATHWAY')
 }
+
+plot.paths.allchains = function(nchains){
+	# loop through all chains in the structure
+	# and extract the allosteric pathways
+	for(i in c(1:nchains)){
+		# FBP-bound pathways
+		plot.paths(fbppaths, i)
+
+		# Apo PKM2 pathways
+		plot.paths(apopaths, i)
+
+	}
+}
+
+plot.paths.allchains(4)
+
 
 
 identify.hub.resids = function(){
