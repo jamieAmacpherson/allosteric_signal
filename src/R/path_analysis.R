@@ -504,7 +504,46 @@ plot.paths = function(pathlist, chain){
 
 	#combined_as_paths = do.call(rbind, as.paths)
 
+
+
 	return(as.paths)
+
+}
+
+
+identify.hub.resids = function(){
+	# identify hub residues along each of the 10 paths
+	hub.resids = c(491, 247, 357, 197, 492, 413, 237, 70, 307, 178)
+
+	# active site residues
+	as.resids = c(75, 78, 113, 114, 120, 270, 272, 296, 328, 362)
+
+	## for all combinations of hub and path residue
+	# generate a table of all unique combinations
+	combins = as.matrix(expand.grid(hub.resids, as.resids))
+
+	# empty vector to store the distance results
+	path.distances.list = list()
+
+	# loop through all possible combinations and calculate the shortest
+	# distance between fragments
+	for (i in 1:nrow(combins)){
+		
+		print(paste(i, nrow(combins), sep='/'))
+	
+		# calculate the distance and store in temp variable
+		dist.tmp = distances(ig,
+				v = combins[[i,1]],
+				to = combins[[i,2]],
+				algorithm = 'dijkstra')
+		
+		path.distances.list[[i]] = dist.tmp # add it to your list
+	}
+	
+	# combine distances into a dataframe
+	path.distances = do.call(rbind, path.distances.list) 
+
+}
 	
 
 }
