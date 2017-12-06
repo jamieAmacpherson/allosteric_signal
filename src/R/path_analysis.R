@@ -28,6 +28,8 @@ library(ggrepel)
 library(igraph)
 library(ggpubr)
 library(bio3d)
+library(raster)
+library(scales)
 
 #______________________________________________________________________________
 # split the matrix into a list of four equal size matrices for each chain
@@ -49,7 +51,7 @@ splitmat = function(nmi.matrix.dat, outprefix){
                                 sprintf("D%s",seq(1546:2060)))
 
         # extract the upper triangle of the MI matrix
-        nmi.matrix[lower.tri(nmi.matrix)] = 0
+    nmi.matrix[lower.tri(nmi.matrix)] = 0
 	diag(nmi.matrix) = 0
 	
 	# generate a list of matrices for each chain
@@ -89,19 +91,37 @@ mat.process = function(listmatrices, sign.pval, sig.nMIval, outprefix, ...){
 
 	# compute the element-wise mean
 	listmean = apply(simplify2array(listmatrices), 1:2, mean)
+	listsd = apply(simplify2array(listmatrices), 1:2, sd)
 
-	# compute the element-wise p value from non-parametric t test
-	listpval = -log10(apply(simplify2array(listmatrices), 1:2, function(x) {t.test(x)$p.value}))
+
+	## Compute the element-wise p-value using a Kruskall Wallis test for significance
+	## Function is written to accomodate a list of four matrices
+	kwtest = function(input){
+		# Input is element-wise matrices
+		g = factor(rep(1:4,
+			c(1,1,1,1)),
+			labels=c('mat1', 'mat2', 'mat3', 'mat4'))
+
+	kw.out = kruskal.test(input, g)$p.value
+
+	return(kw.out)
+	}
+
+	# parse the element-wise entries of the list of matrices into the kwtest() function
+	# to compute significance 
+	#listpval = -log10(apply(simplify2array(listmatrices), 1:2, function(x) {t.test(x)$p.value}))
+
+
 
 	is.nan.data.frame <- function(x) {do.call(cbind, lapply(x, is.nan))}
-	listpval[is.nan(listpval)] <- 0
+	listsd[is.nan(listsd)] <- 0
 
 	# define the fragment names
 	fragnames = paste(melt(listmean)$Var1, melt(listmean)$Var2, sep='_')
 
 	# combine p value and mean matrices
 	pltdat = as.data.frame(cbind(melt(listmean)$value,
-				(melt(listpval)$value)))
+				(melt(listsd)$value)))
 
 	names(pltdat) = c('MI', 'pval')	
 
@@ -141,9 +161,132 @@ mat.process = function(listmatrices, sign.pval, sig.nMIval, outprefix, ...){
 	dev.off()
 }
 
-
 #mat.process(splitmat(args[1]), 0.07, 0.1, args[2])
 
+#______________________________________________________________________________
+## Statistcal plots of mutual information
+# plot mean nMI vs. variance of nMI
+plt_sig_mu_MI = function(listmatrices, outprefix, ...){
+
+		# compute the element-wise mean
+	listmean = apply(simplify2array(listmatrices), 1:2, mean)
+	listsd = apply(simplify2array(listmatrices), 1:2, sd)
+
+	is.nan.data.frame <- function(x) {do.call(cbind, lapply(x, is.nan))}
+	listsd[is.nan(listsd)] <- 0
+
+	# define the fragment names
+	fragnames = paste(melt(listmean)$Var1, melt(listmean)$Var2, sep='_')
+
+	# combine p value and mean matrices
+	pltdat = as.data.frame(cbind(melt(listmean)$value,
+				(melt(listsd)$value)))
+
+	names(pltdat) = c('MI', 'pval')	
+
+	plt = ggplot(pltdat, aes(MI, pval)) +
+		geom_point(alpha = 0.5, size = 0.2) +
+		theme_bw() +
+		xlab(expression(paste(mu, Delta^{'FBP'}, ' nMI'))) +
+		ylab(expression(paste(sigma, Delta^{'FBP'}, ' nMI'))) +
+		theme(plot.margin = (unit(c(0.2, 0.2, 0.5, 0.5), 'lines')),
+			axis.text = element_text(size = rel(2), colour = 'black'),
+			axis.title = element_text(size = rel(2), colour = 'black'),
+			legend.position = 'none')
+
+	pdf(paste(outprefix, '_sig_mu.pdf', sep=''), height = 4, width = 4)
+	print(plt)
+	dev.off()
+
+}
+plt_sig_mu_MI(splitmat('diff_mat.dat'), 'diff')
+plt_sig_mu_MI(splitmat('fbp_nMI.mat', 'fbp'), 'fbp')
+plt_sig_mu_MI(splitmat('apo_nMI.mat', 'apo'), 'apo')
+
+
+# plot mean nMI vs. coefficient of variance of nMI
+plt_cv_mu_MI = function(listmatrices, outprefix, ...){
+
+	# compute the element-wise mean
+	listmean = apply(simplify2array(listmatrices), 1:2, mean)
+	listsd = apply(simplify2array(listmatrices), 1:2, cv)**2
+
+	is.nan.data.frame <- function(x) {do.call(cbind, lapply(x, is.nan))}
+	listsd[is.nan(listsd)] <- 0
+
+	# define the fragment names
+	fragnames = paste(melt(listmean)$Var1, melt(listmean)$Var2, sep='_')
+
+	# combine p value and mean matrices
+	pltdat = as.data.frame(cbind(melt(listmean)$value,
+				(melt(listsd)$value)))
+
+	names(pltdat) = c('MI', 'pval')	
+
+	plt = ggplot(pltdat, aes(MI, pval)) +
+		geom_point(alpha = 0.5, size = 0.2) +
+		theme_bw() +
+		xlab(expression(paste(mu, Delta^{'FBP'}, ' nMI'))) +
+		ylab(expression(paste('cv'^{2}, Delta^{'FBP'}), ' nMI')) +
+		theme(plot.margin = (unit(c(0.2, 0.2, 0.5, 0.5), 'lines')),
+			axis.text = element_text(size = rel(2), colour = 'black'),
+			axis.title = element_text(size = rel(2), colour = 'black'),
+			legend.position = 'none') +
+
+		# double log scale
+		scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+              labels = trans_format("log10", math_format(10^.x))) +
+
+		#scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
+         #     labels = trans_format("log10", math_format(10^.x))) +
+
+		annotation_logticks()
+
+	pdf(paste(outprefix, '_cv_mu.pdf', sep=''), height = 4, width = 4)
+	print(plt)
+	dev.off()
+
+}
+plt_cv_mu_MI(splitmat('diff_mat.dat', 'diff'), 'diff')
+plt_cv_mu_MI(splitmat('fbp_nMI.mat', 'fbp'), 'fbp')
+plt_cv_mu_MI(splitmat('apo_nMI.mat', 'apo'), 'apo')
+
+# combine the two conditions (Apo and FBP) and plot nMI vs. coefficient of variance
+# of the combined data set
+
+plt_comb_cv = function(apolistmatrix, fbplistmatrix){
+	
+	# melt matrix data into a useable data.frame
+	melt_data_vals = function(datin){
+
+		mivals = melt(x)$value
+		return(mivals)
+	}
+
+	# melt matrix data names into a useable data.frame
+	melt_data_names = function(datin){
+
+		fragnames = paste(melt(x)$Var1,
+				melt(x)$Var1, sep='_')
+
+		return(fragnames)
+	}	
+
+	# melt apo matrix chains into a four-column data.frame
+	apodatframe = do.call(cbind, lapply(apolistmatrix, melt_data_vals))
+ 	
+ 	# melt fbp matrix chains into a four-column data.frame
+ 	fbpdatframe = do.call(cbind, lapply(fbplistmatrix, melt_data_vals))
+
+ 	# combine the two conditions into a single data.frame
+ 	combdatframe = as.data.frame(cbind(melt_data_names(
+ 		fbplistmatrix)[1], 
+ 		apodatframe,
+ 		fbpdatframe))
+
+ 	return(combdatframe)
+
+}
 
 #______________________________________________________________________________
 ## Calculate the distance for the shortest path between two vertices using the
@@ -592,7 +735,7 @@ plot.paths = function(pathlist, chain){
 	## write PyMOL script that removes the distances from the drawn paths in the first script above
 	fileConn = file(paste('as_paths_chain', chain, '_script_rmlab.txt', sep=''), 'w')
 	lapply(path.rm.lab,
-		write,
+		write, 
 		fileConn,
 		append=TRUE)
 
