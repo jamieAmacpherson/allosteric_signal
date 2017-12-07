@@ -30,6 +30,7 @@ library(ggpubr)
 library(bio3d)
 library(raster)
 library(scales)
+library(stringr)
 
 #______________________________________________________________________________
 # split the matrix into a list of four equal size matrices for each chain
@@ -254,39 +255,121 @@ plt_cv_mu_MI(splitmat('apo_nMI.mat', 'apo'), 'apo')
 # combine the two conditions (Apo and FBP) and plot nMI vs. coefficient of variance
 # of the combined data set
 
-plt_comb_cv = function(apolistmatrix, fbplistmatrix){
+plt_comb_cv = function(apolistmatrix, fbplistmatrix, outprefix){
 	
 	# melt matrix data into a useable data.frame
 	melt_data_vals = function(datin){
 
-		mivals = melt(x)$value
+		mivals = melt(datin)$value
 		return(mivals)
 	}
 
 	# melt matrix data names into a useable data.frame
 	melt_data_names = function(datin){
 
-		fragnames = paste(melt(x)$Var1,
-				melt(x)$Var1, sep='_')
+		fragnames = paste(melt(datin)$Var1,
+				melt(datin)$Var2, sep='_')
 
 		return(fragnames)
 	}	
 
-	# melt apo matrix chains into a four-column data.frame
-	apodatframe = do.call(cbind, lapply(apolistmatrix, melt_data_vals))
- 	
- 	# melt fbp matrix chains into a four-column data.frame
- 	fbpdatframe = do.call(cbind, lapply(fbplistmatrix, melt_data_vals))
+	# calculate the coef. of variance from two lists of data
+	calcstats = function(fbplistdat, apolistdat){
+		fbpdatframe = do.call(cbind, lapply(fbplistdat, melt_data_vals))
+		apodatframe = do.call(cbind, lapply(apolistdat, melt_data_vals))
+
+		cvsqrd = c()
+		for (i in c(1:nrow(fbpdatframe))){
+			cvdat = -log10(t.test(apodatframe[i,], fbpdatframe[i,])$p.value)
+
+			cvsqrd = append(cvsqrd, cvdat)
+		}
+
+		log2fc = log2(apply(fbpdatframe, 1, mean) / apply(apodatframe, 1, mean))
+
+		# concatenate the data frames together 
+		datframe = as.data.frame(cbind(fbpdatframe, apodatframe))
+
+		# compute the mean and the coef. of variance**2
+		datmean = apply(datframe, 1, mean)
+
+		# remove NAs from coef. of variance**2 calculation
+		cvsqrd[is.na(cvsqrd)] = 0
+
+		# cbind the resulting statistics
+		outdat = as.data.frame(cbind(datmean, cvsqrd, log2fc))
+
+		return(outdat)
+	}
+
+	dat = calcstats(fbplistmatrix, apolistmatrix)
 
  	# combine the two conditions into a single data.frame
  	combdatframe = as.data.frame(cbind(melt_data_names(
- 		fbplistmatrix)[1], 
- 		apodatframe,
- 		fbpdatframe))
+ 		fbplistmatrix[1]),
+ 		dat))
 
- 	return(combdatframe)
+ 	names(combdatframe) = c('fragnames', 'mu', 'pval', 'log2fc')
 
+	# set a significance threshold
+	sig.thresh = -log10(0.01)
+	pav.thresh = 2
+	nav.thresh = -2
+
+	# identify points which have a significant change in the mutual information and that
+	# that change in mutual information is signficant over the four chains	
+	combdatframe$threshold = as.factor((combdatframe$log2fc > pav.thresh | combdatframe$log2fc < nav.thresh) & combdatframe$pval > sig.thresh) 
+ 	
+
+	## plot mutual information mean vs. coefficient of variance
+ 	
+ 	plt = ggplot(combdatframe, aes(x = log2fc, y = pval)) +
+		# points for FBP
+		geom_point(size = 0.1, aes(colour = threshold)) +
+		scale_color_manual(values = c('grey', 'forestgreen')) +
+		# theme settings
+		theme_bw() +
+		xlab(expression(paste(log[2], ' fold-change'))) +
+		ylab(expression(paste(-log[10], ' p-value'))) +
+		theme(plot.margin = (unit(c(0.2, 0.2, 0.5, 0.5), 'lines')),
+			axis.text = element_text(size = rel(2), colour = 'black'),
+			axis.title = element_text(size = rel(2), colour = 'black'),
+			legend.position = 'none')
+
+
+		#geom_text_repel(data = subset(combdatframe, (combdatframe$log2fc > pav.thresh) & combdatframe$pval > sig.thresh),
+		#	aes(label = fragnames),
+		#	size = 2,
+		#	colour = 'black',
+		#	box.padding = unit(0.5, 'lines'),
+		#	point.padding = unit(0.5, 'lines'))
+
+
+	pdf(paste(outprefix, '_volcano.pdf', sep=''), height = 4, width = 4)
+	print(plt)
+	dev.off()
+
+
+	# positive signficant fragments
+	pos_sign = subset(combdatframe, (combdatframe$log2fc > pav.thresh) & combdatframe$pval > sig.thresh)
+	# order the signficant fragments according to their mutual information value
+	sig_frags = combdat[order(combdat$mu),]$fragnames
+
+	ordered_frags.i = c()
+	ordered_frags.j = c()
+	for (i in c(1:length(sig_frags)-1)){
+		ordered_frags.i = append(ordered_frags.i, as.numeric(str_sub(sig_frags[i],2,4)))
+		ordered_frags.j = append(ordered_frags.i, as.numeric(str_sub(sig_frags[i],7,9)))
+	}
+
+	ordered_frags = as.data.frame(cbind(ordered_frags.i, ordered_frags.j))
+
+	return(sig_frags)
 }
+
+combdat = plt_comb_cv(splitmat('fbp_nMI.mat', 'fbp'), splitmat('apo_nMI.mat', 'apo'), 'catdat')
+
+plt_comb_cv(listx, listy, 'test')
 
 #______________________________________________________________________________
 ## Calculate the distance for the shortest path between two vertices using the
