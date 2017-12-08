@@ -345,31 +345,79 @@ plt_comb_cv = function(apolistmatrix, fbplistmatrix, outprefix){
 		#	point.padding = unit(0.5, 'lines'))
 
 
-	pdf(paste(outprefix, '_volcano.pdf', sep=''), height = 4, width = 4)
-	print(plt)
-	dev.off()
+	#pdf(paste(outprefix, '_volcano.pdf', sep=''), height = 4, width = 4)
+	#print(plt)
+	#dev.off()
 
-
-	# positive signficant fragments
+	#______________________________________________________________________________
+	## positive signficant fragments
+	#______________________________________________________________________________
 	pos_sign = subset(combdatframe, (combdatframe$log2fc > pav.thresh) & combdatframe$pval > sig.thresh)
+	neg_sign = subset(combdatframe, (combdatframe$log2fc < nav.thresh) & combdatframe$pval > sig.thresh)
 	# order the signficant fragments according to their mutual information value
-	sig_frags = combdat[order(combdat$mu),]$fragnames
+	extract.sig.frags = function(subsetdat, outstring){
 
-	ordered_frags.i = c()
-	ordered_frags.j = c()
-	for (i in c(1:length(sig_frags)-1)){
-		ordered_frags.i = append(ordered_frags.i, as.numeric(str_sub(sig_frags[i],2,4)))
-		ordered_frags.j = append(ordered_frags.i, as.numeric(str_sub(sig_frags[i],7,9)))
+		sig_frags = subsetdat[order(subsetdat$mu),]$fragnames
+
+		ordered_frags.i = c()
+		ordered_frags.j = c()
+		
+		for (i in c(1:(length(sig_frags)-1))){
+			ordered_frags.i = append(ordered_frags.i, as.numeric(gsub('[^0-9]', '', str_sub(sig_frags[i],1,4))))
+
+		# depending on the length of the character fragment coupling, extract
+		# the correct number of values to give the second fragment in the coupled pair
+		if (nchar(as.character(sig_frags[i])) == 9){
+			ordered_frags.j = append(ordered_frags.j, as.numeric(gsub('[^0-9]', '', str_sub(sig_frags[i],-5))))
+		}
+
+		if (nchar(as.character(sig_frags[i])) == 8){
+			ordered_frags.j = append(ordered_frags.j, as.numeric(gsub('[^0-9]', '', str_sub(sig_frags[i],-4))))
+		}
+
+		if (nchar(as.character(sig_frags[i])) == 7){
+			ordered_frags.j = append(ordered_frags.j, as.numeric(gsub('[^0-9]', '', str_sub(sig_frags[i],-3))))
+		}
 	}
 
+	# combine the coupled fragment pair and remove duplicate fragments
 	ordered_frags = as.data.frame(cbind(ordered_frags.i, ordered_frags.j))
+	ordered_frags = unique(as.vector(t(ordered_frags))) + 12 # add 12 bc structure starts at 12th residue
 
-	return(sig_frags)
+	# extract the top ten fragments
+	top10.frags = tail(ordered_frags, 10)
+
+	# write pymol script to highlight the top 10 identified fragments
+	write.table(top10.frags,
+		file = paste(outstring, '_hubs_script.txt', sep=''),
+		col.names = FALSE,
+		row.names = FALSE,
+		sep = '+')
+
+	return(top10.frags)
+
+	}
+	
+	pos_hubs = extract.sig.frags(pos_sign, 'positive')
+
+	neg_hubs = extract.sig.frags(neg_sign, 'negative')
+
+	return(pos_hubs)
+	
 }
 
 combdat = plt_comb_cv(splitmat('fbp_nMI.mat', 'fbp'), splitmat('apo_nMI.mat', 'apo'), 'catdat')
 
 plt_comb_cv(listx, listy, 'test')
+
+
+#______________________________________________________________________________
+# Calculate the evolutionary conservation for each of the amino acid residues
+# contained within each of the hub fragments
+#
+#
+
+
 
 #______________________________________________________________________________
 ## Calculate the distance for the shortest path between two vertices using the
@@ -845,6 +893,17 @@ plot.paths.allchains = function(nchains){
 }
 
 plot.paths.allchains(4)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
