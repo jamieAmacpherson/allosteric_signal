@@ -31,6 +31,11 @@ library(bio3d)
 library(raster)
 library(scales)
 library(stringr)
+library(foreach)
+library(doMC)
+
+## Register the number of CPUs
+registerDoMC(6)
 
 #______________________________________________________________________________
 # split the matrix into a list of four equal size matrices for each chain
@@ -200,9 +205,9 @@ plt_sig_mu_MI = function(listmatrices, outprefix, ...){
 	dev.off()
 
 }
-plt_sig_mu_MI(splitmat('diff_mat.dat'), 'diff')
-plt_sig_mu_MI(splitmat('fbp_nMI.mat', 'fbp'), 'fbp')
-plt_sig_mu_MI(splitmat('apo_nMI.mat', 'apo'), 'apo')
+#plt_sig_mu_MI(splitmat('diff_mat.dat'), 'diff')
+#plt_sig_mu_MI(splitmat('fbp_nMI.mat', 'fbp'), 'fbp')
+#plt_sig_mu_MI(splitmat('apo_nMI.mat', 'apo'), 'apo')
 
 
 # plot mean nMI vs. coefficient of variance of nMI
@@ -248,14 +253,15 @@ plt_cv_mu_MI = function(listmatrices, outprefix, ...){
 	dev.off()
 
 }
-plt_cv_mu_MI(splitmat('diff_mat.dat', 'diff'), 'diff')
-plt_cv_mu_MI(splitmat('fbp_nMI.mat', 'fbp'), 'fbp')
-plt_cv_mu_MI(splitmat('apo_nMI.mat', 'apo'), 'apo')
+#plt_cv_mu_MI(splitmat('diff_mat.dat', 'diff'), 'diff')
+#plt_cv_mu_MI(splitmat('fbp_nMI.mat', 'fbp'), 'fbp')
+#plt_cv_mu_MI(splitmat('apo_nMI.mat', 'apo'), 'apo')
 
 # combine the two conditions (Apo and FBP) and plot nMI vs. coefficient of variance
 # of the combined data set
 
 plt_comb_cv = function(apolistmatrix, fbplistmatrix, outprefix){
+
 	
 	# melt matrix data into a useable data.frame
 	melt_data_vals = function(datin){
@@ -264,6 +270,7 @@ plt_comb_cv = function(apolistmatrix, fbplistmatrix, outprefix){
 		return(mivals)
 	}
 
+
 	# melt matrix data names into a useable data.frame
 	melt_data_names = function(datin){
 
@@ -271,19 +278,55 @@ plt_comb_cv = function(apolistmatrix, fbplistmatrix, outprefix){
 				melt(datin)$Var2, sep='_')
 
 		return(fragnames)
-	}	
+	}
+
+
+	# try T-test, if the data is the same, return NA	
+	t.test.p.value = function(...) {
+
+		obj = try(t.test(...), silent=TRUE)
+
+		if (is(obj, "try-error")){
+			return(NA)}
+		else{
+			return(obj$p.value)
+		}
+
+	}
+
 
 	# calculate the coef. of variance from two lists of data
 	calcstats = function(fbplistdat, apolistdat){
+
+
 		fbpdatframe = do.call(cbind, lapply(fbplistdat, melt_data_vals))
 		apodatframe = do.call(cbind, lapply(apolistdat, melt_data_vals))
 
 		cvsqrd = c()
-		for (i in c(1:nrow(fbpdatframe))){
-			cvdat = -log10(t.test(apodatframe[i,], fbpdatframe[i,])$p.value)
+
+		#pval.loop.out = function(col1, col2, col3, col4, col5, col6, col7, col8){
+	#		pvaldat = -log10(t.test.p.value(
+#				c(col1, col2, col3, col4),
+#				c(col5, col6, col7, col8)))
+#
+#			return(pvaldat)
+#		}
+
+#		cvsqrd = 
+
+		pval.loop.out = foreach(i=1:nrow(fbpdatframe), .combine=rbind) %dopar% {
+		#for (i in c(1:nrow(fbpdatframe))){
+			print(paste(i, nrow(fbpdatframe), sep='/'))
+
+			cvdat = -log10(t.test.p.value(apodatframe[i,], fbpdatframe[i,]))
 
 			cvsqrd = append(cvsqrd, cvdat)
 		}
+
+		cvsqrd = pval.loop.out
+		print(head(cvsqrd))
+
+		print('finished pval calculation')
 
 		log2fc = log2(apply(fbpdatframe, 1, mean) / apply(apodatframe, 1, mean))
 
@@ -309,6 +352,8 @@ plt_comb_cv = function(apolistmatrix, fbplistmatrix, outprefix){
  		fbplistmatrix[1]),
  		dat))
 
+ 	print(head(combdatframe))
+
  	names(combdatframe) = c('fragnames', 'mu', 'pval', 'log2fc')
 
 	# set a significance threshold
@@ -324,9 +369,11 @@ plt_comb_cv = function(apolistmatrix, fbplistmatrix, outprefix){
 	## plot mutual information mean vs. coefficient of variance
  	
  	plt = ggplot(combdatframe, aes(x = log2fc, y = pval)) +
+		
 		# points for FBP
 		geom_point(size = 0.1, aes(colour = threshold)) +
 		scale_color_manual(values = c('grey', 'forestgreen')) +
+		
 		# theme settings
 		theme_bw() +
 		xlab(expression(paste(log[2], ' fold-change'))) +
@@ -354,6 +401,8 @@ plt_comb_cv = function(apolistmatrix, fbplistmatrix, outprefix){
 	#______________________________________________________________________________
 	pos_sign = subset(combdatframe, (combdatframe$log2fc > pav.thresh) & combdatframe$pval > sig.thresh)
 	neg_sign = subset(combdatframe, (combdatframe$log2fc < nav.thresh) & combdatframe$pval > sig.thresh)
+	
+
 	# order the signficant fragments according to their mutual information value
 	extract.sig.frags = function(subsetdat, outstring){
 
@@ -381,11 +430,15 @@ plt_comb_cv = function(apolistmatrix, fbplistmatrix, outprefix){
 	}
 
 	# combine the coupled fragment pair and remove duplicate fragments
-	ordered_frags = as.data.frame(cbind(ordered_frags.i, ordered_frags.j))
-	ordered_frags = unique(as.vector(t(ordered_frags))) + 12 # add 12 bc structure starts at 12th residue
+	ordered_frags = as.data.frame(cbind(ordered_frags.i, ordered_frags.j)) #+ 12
+	
+	
+	# add 12 because structure starts at 12th residue
+	#ordered_frags = unique(as.vector(t(ordered_frags))) + 12
+	
 
 	# extract the top ten fragments
-	top10.frags = tail(ordered_frags, 10)
+	top10.frags = tail(ordered_frags, 20)
 
 	# write pymol script to highlight the top 10 identified fragments
 	write.table(top10.frags,
@@ -394,7 +447,7 @@ plt_comb_cv = function(apolistmatrix, fbplistmatrix, outprefix){
 		row.names = FALSE,
 		sep = '+')
 
-	return(top10.frags)
+	return(list(ordered_frags, top10.frags))
 
 	}
 	
