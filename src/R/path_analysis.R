@@ -52,8 +52,8 @@ splitmat = function(nmi.matrix.dat, outprefix){
                                 sprintf("D%s",seq(1546:2060)))
 
         # extract the upper triangle of the MI matrix
-    nmi.matrix[lower.tri(nmi.matrix)] = 0
-	diag(nmi.matrix) = 0
+    #nmi.matrix[lower.tri(nmi.matrix)] = 0
+	#diag(nmi.matrix) = 0
 	
 	# generate a list of matrices for each chain
 	chainA = nmi.matrix[1:515, 1:515]
@@ -896,17 +896,6 @@ plot.paths.allchains(4)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 identify.hub.resids = function(){
 	# identify hub residues along each of the 10 paths
 	hub.resids = c(491, 247, 357, 197, 492, 413, 237, 70, 307, 178)
@@ -1053,5 +1042,30 @@ trace.paths = function(matdatname, outprefix){
 
         return(distance.values)
 }
+
+
+#______________________________________________________________________________
+## Compute the decay of the mutual information signal proximal to allosteric
+## hubs
+
+MIdecay = function(MImatrix){
+	print('''
+		Compute the decay of the mutual information signal proximal to allosteric hubs.
+
+		Inputs:
+		(1) Mutual information matrix
+
+		Output:
+		(2) Autocorrelation function decay of mutual information signal either side of 
+		allosteric fragment hubs.
+		''')
+
+	# hard-coded allosteric hubs
+	allosteric.hubs = c(109, 420, 191, 293, 292, 312, 343, 477, 232, 274)
+
+
+
+}
+
 
 
