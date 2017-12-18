@@ -35,7 +35,7 @@ library(foreach)
 library(doMC)
 
 ## Register the number of CPUs
-registerDoMC(6)
+registerDoMC(10)
 
 #______________________________________________________________________________
 # split the matrix into a list of four equal size matrices for each chain
@@ -404,9 +404,9 @@ plt_comb_cv = function(apolistmatrix, fbplistmatrix, outprefix){
 	
 
 	# order the signficant fragments according to their mutual information value
-	extract.sig.frags = function(subsetdat, outstring){
+	extract.sig.frags = function(subsetdat, fulldat, outstring){
 
-		sig_frags = subsetdat[order(subsetdat$mu),]$fragnames
+		sig_frags = subsetdat[order(subsetdat$log2fc),]$fragnames
 
 		ordered_frags.i = c()
 		ordered_frags.j = c()
@@ -447,13 +447,13 @@ plt_comb_cv = function(apolistmatrix, fbplistmatrix, outprefix){
 		row.names = FALSE,
 		sep = '+')
 
-	return(list(ordered_frags, top10.frags))
+	return(list(ordered_frags, top10.frags, fulldat))
 
 	}
 	
-	pos_hubs = extract.sig.frags(pos_sign, 'positive')
+	pos_hubs = extract.sig.frags(pos_sign, combdatframe, 'positive')
 
-	neg_hubs = extract.sig.frags(neg_sign, 'negative')
+	neg_hubs = extract.sig.frags(neg_sign, combdatframe, 'negative')
 
 	return(pos_hubs)
 	
