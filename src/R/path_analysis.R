@@ -1100,6 +1100,102 @@ trace.paths = function(matdatname, outprefix){
 #______________________________________________________________________________
 ## Compute the decay of the mutual information signal proximal to allosteric
 ## hubs
+reconstruct = function(sumseq, n.window, ...){
+
+	# Initialise unknown sequence
+	unknown.seq = c()
+
+	# Hardcode sumseq for now
+	known.sumseq = sumseq
+
+	# Hardcode sum window length
+	n = n.window
+
+	# Assign positions n - 1
+	assign.n = n - 1
+
+	for (i in c(1:assign.n)){
+
+		# initialisation value to start the sequence
+		init.val = known.sumseq[1]/n
+
+		# sample a variance from the initialised value
+		init.val = init.val + rnorm(1, mean=0, sd=(init.val*2))
+
+		unknown.seq = append(unknown.seq, init.val)
+	}
+
+
+
+	#print(paste('First (n-1) random assignments:', unknown.seq, sep=' '))
+
+	# solve subsequent positions
+
+	for (positions in c(n:(length(known.sumseq) + assign.n) )){
+
+		pos.val =  known.sumseq[positions - assign.n] -
+			unknown.seq[positions - 1] -
+			unknown.seq[positions - 2] - 
+			unknown.seq[positions - 3]
+
+		unknown.seq = append(unknown.seq, pos.val)
+
+		#print(pos.val)
+
+	}
+
+	return(unknown.seq)
+
+}
+
+
+# Generate a random known sequence to benchmark the algorithm
+plot.reconstruction = function(datin, n.repeats, hub.string, ...){
+
+	# plot the positional C-alpha mutual information
+	# INPUTS:
+	#	1. Combination data [ output of plt_comb_cv() ]
+	#	2. Number of iterations of solving the Calpha-positional MI
+	#	3. String containing the hub
+
+	# position in the dataframe 
+	subset.pos = which(datin[[3]]$fragnames == hub.string)
+
+	# subset the data to include 
+	subset.start = subset.pos - 5
+	subset.end = subset.pos + 5
+
+	sumseq = datin[[3]][c((subset.start) : (subset.end)), ]
+	print(sumseq)
+
+	sumseq = sumseq$mu
+
+	reconstructed.sequence = reconstruct(sumseq,
+		n.window = 4)
+
+	par(mar=c(5,5,2,2))
+
+	plot(reconstructed.sequence,
+		type='l',
+		panel.first=grid(),
+		xlim = c(6, 9),
+		cex = 2,
+		cex.lab = 2,
+		cex.axis = 2,
+		xlab = 'Position',
+		ylab = 'Mutual information',
+		...)
+
+
+	for (i in c(1:n.repeats)){
+		test.lines = reconstruct(sumseq, 4)
+
+		lines(test.lines)
+	}
+
+}
+
+
 
 MIdecay = function(MImatrix){
 	print('''
