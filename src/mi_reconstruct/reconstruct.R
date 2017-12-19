@@ -74,6 +74,64 @@ mean.sliding.window = function(datain){
 }
 
 #____________________________________________________________
+# Compute the numerical convergence of the solution
+#____________________________________________________________
+convergence.plt = function(iteration.data){
+	# compute convergence of the solution to the numerical problem
+	# of assigning positional values, given sliding window sums
+	# (see schematic for details of the numerical problem)
+	# INPUT: dataframe output of the computed solution
+	# OUTPUT: plot showing the convergence of the numerical solution
+
+	n.iterations = ncol(iteration.data)
+
+	# initialise a vector to catch the output of the convergence 
+	# calculation
+	convergence.out = c()
+
+	# loop through the iterations of the numerical solution
+	for(i in c(1:n.iterations)){
+		print(paste(i, n.iterations, sep='/'))
+		# calculate the difference between the average solution and the next
+		# iteration
+
+		if(i == 1){
+			prev.average = iteration.data[,1]
+			curr.average = iteration.data[,1]
+		}
+		if(i == 2){
+			prev.average = iteration.data[,1]
+			curr.average = apply(iteration.data[,c(1:2)], 1, mean)
+		}
+		if(i > 2){
+			prev.average = apply(iteration.data[,c(1:(i-1))], 1, mean)
+			curr.average = apply(iteration.data[,c(1:(i))], 1, mean)
+		}
+		
+		diff = curr.average - prev.average
+
+		# compute the mean difference
+		average.diff = mean(diff)
+
+		# if the difference is negative, convert to positive value
+		if(average.diff < 0){
+			average.diff = average.diff * -1
+		}
+
+		# append the result to the output vector
+		convergence.out = append(convergence.out, average.diff)
+
+		cumsum.convergence = cumsum(convergence.out)
+
+	}
+
+	plot(cumsum.convergence,
+		type = 'l',
+		xlab = 'Iteration',
+		ylab = 'Difference')
+}
+
+#____________________________________________________________
 # Testing the algorithm
 #____________________________________________________________
 
@@ -92,47 +150,75 @@ benchmark.test = function(n.repeats, sequence.length){
 		datmean = 0.001,
 		datsd = 0.001)
 
-
-	par(mfrow = c(2,1))
+	par(mfrow = c(2,2))
+	
 	plot(reconstructed.sequence, type='l')
 
 
+	# catch the results of each of the iterations
+	iteration.results = c()
+
+	# loop through a defined number of iterations, solving for the positional 
+	# sums (see schematic for a description of the numerical problem)
 	for (i in c(1:n.repeats)){
 		test.lines = reconstruct(known.sliding.sum, 4, datmean = 0.001, datsd = 0.001)
+		
+		# catch results
+		iteration.results = cbind(iteration.results, test.lines)
 
+		# plot the results of the iteration
 		lines(test.lines)
 	}
 
+	# compute the mean reconstructed sequence
+	average.result = apply(iteration.results, 1, mean)
 
+	# compute the standard deviation of the result
+	sd.result = apply(iteration.results, 1, sd)
+
+	# plot a trace of the 'known sequence'
 	lines(known.sequence, col='red')
 
-	## return (1) residuals and (2) dataframe containing real vs. calculated
-	# residuals:
-	#out.resids = known.sequence - reconstructed.sequence
-
 	# real vs. calculated dataframe
-	out.df = as.data.frame(cbind(known.sequence, reconstructed.sequence))
-	lm.df = lm(out.df$reconstructed.sequence ~ out.df$known.sequence)
+	#out.df = as.data.frame(cbind(known.sequence, average.result))
+	lm.df = lm(average.result ~ known.sequence)
 
-	plot(out.df)
+	# plot the correlation between known sequence and the average result
+	plot(known.sequence, average.result)
+	
+	# plot the standard deviation of the computation as error bars
+	arrows(known.sequence, average.result - sd.result,
+		known.sequence, average.result + sd.result,
+		length=0.05,
+		angle=90,
+		code=3)
+
 	abline(lm.df)
+
+	return(iteration.results)
 }
 
 
+
+
 pdf('benchmark_test_10.pdf')
-test.out = benchmark.test(n.repeats = 100, sequence.length = 10)
+test.out = benchmark.test(n.repeats = 5000, sequence.length = 10)
+convergence(test.out)
 dev.off()
 
 
 pdf('benchmark_test_100.pdf')
-test.out = benchmark.test(n.repeats = 100, sequence.length = 100)
+test.out = benchmark.test(n.repeats = 5000, sequence.length = 100)
+convergence(test.out)
 dev.off()
 
 pdf('benchmark_test_1000.pdf')
-test.out = benchmark.test(n.repeats = 100, sequence.length = 1000)
+test.out = benchmark.test(n.repeats = 5000, sequence.length = 1000)
+convergence(test.out)
 dev.off()
 
 pdf('benchmark_test_2000.pdf')
-test.out = benchmark.test(n.repeats = 100, sequence.length = 2000)
+test.out = benchmark.test(n.repeats = 5000, sequence.length = 2000)
+convergence(test.out)
 dev.off()
 

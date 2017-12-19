@@ -1178,7 +1178,7 @@ plot.reconstruction = function(datin, n.repeats, hub.string, ...){
 	plot(reconstructed.sequence,
 		type='l',
 		panel.first=grid(),
-		xlim = c(6, 9),
+		xlim = c(6, 10),
 		cex = 2,
 		cex.lab = 2,
 		cex.axis = 2,
@@ -1195,26 +1195,43 @@ plot.reconstruction = function(datin, n.repeats, hub.string, ...){
 
 }
 
+pdf('H1_positional_MI.pdf', width=4, height=4)
+plot.reconstruction(combdat, 5000, 'A109_A505', ylim=c(-0.2, 0.3))
+dev.off()
+
+pdf('H2_positional_MI.pdf', width=4, height=4)
+plot.reconstruction(combdat, 5000, 'A191_A232', ylim=c(-0.2, 0.3))
+dev.off()
+
+pdf('H3_positional_MI.pdf', width=4, height=4)
+plot.reconstruction(combdat, 5000, 'A232_A191', ylim=c(-0.2, 0.3))
+dev.off()
+
+pdf('H4_positional_MI.pdf', width=4, height=4)
+plot.reconstruction(combdat, 5000, 'A275_A360', ylim=c(-0.2, 0.3))
+dev.off()
+
+pdf('H5_positional_MI.pdf', width=4, height=4)
+plot.reconstruction(combdat, 5000, 'A292_A477', ylim=c(-0.2, 0.3))
+dev.off()
+
+pdf('H6_positional_MI.pdf', width=4, height=4)
+plot.reconstruction(combdat, 5000, 'A312_A477', ylim=c(-0.2, 0.3))
+dev.off()
+
+pdf('H7_positional_MI.pdf', width=4, height=4)
+plot.reconstruction(combdat, 5000, 'A343_A191', ylim=c(-0.2, 0.3))
+dev.off()
+
+pdf('H8_positional_MI.pdf', width=4, height=4)
+plot.reconstruction(combdat, 5000, 'A418_A421', ylim=c(-0.2, 0.3))
+dev.off()
+
+pdf('H9_positional_MI.pdf', width=4, height=4)
+plot.reconstruction(combdat, 5000, 'A477_A312', ylim=c(-0.2, 0.3))
+dev.off()
 
 
-MIdecay = function(MImatrix){
-	print('''
-		Compute the decay of the mutual information signal proximal to allosteric hubs.
-
-		Inputs:
-		(1) Mutual information matrix
-
-		Output:
-		(2) Autocorrelation function decay of mutual information signal either side of 
-		allosteric fragment hubs.
-		''')
-
-	# hard-coded allosteric hubs
-	allosteric.hubs = c(109, 420, 191, 293, 292, 312, 343, 477, 232, 274)
-
-
-
-}
 
 
 
