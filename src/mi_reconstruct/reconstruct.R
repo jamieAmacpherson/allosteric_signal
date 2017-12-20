@@ -1,4 +1,40 @@
 #! /usr/bin/R
+library(foreach)
+library(doMC)
+
+## Register the number of CPUs
+registerDoMC(12)
+
+
+# log-axis minor ticks function
+# (https://stackoverflow.com/questions/6955440/displaying-minor-logarithmic-ticks-in-x-axis-in-r)
+minor.ticks.axis <- function(ax,n,t.ratio=0.5,mn,mx,...){
+
+  lims <- par("usr")
+  if(ax %in%c(1,3)) lims <- lims[1:2] else lims[3:4]
+
+  major.ticks <- pretty(lims,n=5)
+  if(missing(mn)) mn <- min(major.ticks)
+  if(missing(mx)) mx <- max(major.ticks)
+
+  major.ticks <- major.ticks[major.ticks >= mn & major.ticks <= mx]
+
+  labels <- sapply(major.ticks,function(i)
+            as.expression(bquote(10^ .(i)))
+          )
+  axis(ax,at=major.ticks,labels=labels, cex.axis=1.7,...)
+
+  n <- n+2
+  minors <- log10(pretty(10^major.ticks[1:2],n))-major.ticks[1]
+  minors <- minors[-c(1,n)]
+
+  minor.ticks = c(outer(minors,major.ticks,`+`))
+  minor.ticks <- minor.ticks[minor.ticks > mn & minor.ticks < mx]
+
+
+  axis(ax,at=minor.ticks,tcl=par("tcl")*t.ratio,labels=FALSE)
+}
+
 
 # reconstruct a sequence given a sliding window average
 reconstruct = function(sumseq, n.window, datmean, datsd, ...){
@@ -90,7 +126,7 @@ convergence.plt = function(iteration.data){
 	convergence.out = c()
 
 	# loop through the iterations of the numerical solution
-	for(i in c(1:n.iterations)){
+	convergence.out = foreach(i=1:n.iterations, .combine=rbind) %dopar% {
 		print(paste(i, n.iterations, sep='/'))
 		# calculate the difference between the average solution and the next
 		# iteration
@@ -108,7 +144,7 @@ convergence.plt = function(iteration.data){
 			curr.average = apply(iteration.data[,c(1:(i))], 1, mean)
 		}
 		
-		diff = curr.average - prev.average
+		diff = (curr.average - prev.average)/prev.average
 
 		# compute the mean difference
 		average.diff = mean(diff)
@@ -119,16 +155,24 @@ convergence.plt = function(iteration.data){
 		}
 
 		# append the result to the output vector
-		convergence.out = append(convergence.out, average.diff)
+		#convergence.out = append(convergence.out, average.diff)
 
-		cumsum.convergence = cumsum(convergence.out)
+		
 
 	}
 
-	plot(cumsum.convergence,
+	iterations = seq(from=1, to=length(convergence.out))
+	par(mar=c(5,5,2,2))
+	plot(log10(iterations),
+		convergence.out,
 		type = 'l',
 		xlab = 'Iteration',
-		ylab = 'Difference')
+		ylab = 'Fractional difference',
+		xaxt='n',
+		cex.axis=1.7,
+		cex.lab=1.7)
+
+	minor.ticks.axis(1,9,mn=0, mx=round(log10(n.iterations)))
 }
 
 #____________________________________________________________
@@ -136,7 +180,8 @@ convergence.plt = function(iteration.data){
 #____________________________________________________________
 
 # Generate a random known sequence to benchmark the algorithm
-benchmark.test = function(n.repeats, sequence.length){
+benchmark.test = function(n.repeats, sequence.length, plt.switch, ...){
+	## Benchmark test 
 
 	known.sequence = rnorm(sequence.length, mean=0.001, sd=0.001)
 
@@ -150,24 +195,35 @@ benchmark.test = function(n.repeats, sequence.length){
 		datmean = 0.001,
 		datsd = 0.001)
 
-	par(mfrow = c(2,2))
+	if(plt.switch == 'YES'){
+		par(mfrow = c(2,1),
+			mar=c(5,5,2,2))
+		plot(reconstructed.sequence,
+			type='l',
+			cex.axis = 1.7,
+			cex.lab = 1.7,
+			...)
+	}
 	
-	plot(reconstructed.sequence, type='l')
-
 
 	# catch the results of each of the iterations
 	iteration.results = c()
 
 	# loop through a defined number of iterations, solving for the positional 
 	# sums (see schematic for a description of the numerical problem)
-	for (i in c(1:n.repeats)){
+	iteration.results = foreach(i=1:n.repeats, .combine=cbind) %dopar% {
 		test.lines = reconstruct(known.sliding.sum, 4, datmean = 0.001, datsd = 0.001)
 		
 		# catch results
 		iteration.results = cbind(iteration.results, test.lines)
 
 		# plot the results of the iteration
-		lines(test.lines)
+		
+	}
+
+	if(plt.switch == 'YES'){
+
+		apply(iteration.results, 2, lines)
 	}
 
 	# compute the mean reconstructed sequence
@@ -177,23 +233,29 @@ benchmark.test = function(n.repeats, sequence.length){
 	sd.result = apply(iteration.results, 1, sd)
 
 	# plot a trace of the 'known sequence'
-	lines(known.sequence, col='red')
+	if(plt.switch == 'YES'){
+		lines(known.sequence, col='red')
+	}
 
 	# real vs. calculated dataframe
 	#out.df = as.data.frame(cbind(known.sequence, average.result))
 	lm.df = lm(average.result ~ known.sequence)
 
-	# plot the correlation between known sequence and the average result
-	plot(known.sequence, average.result)
+	if(plt.switch == 'YES'){
+		# plot the correlation between known sequence and the average result
+		plot(known.sequence, average.result,
+			cex.axis = 1.7,
+			cex.lab = 1.7)
 	
-	# plot the standard deviation of the computation as error bars
-	arrows(known.sequence, average.result - sd.result,
-		known.sequence, average.result + sd.result,
-		length=0.05,
-		angle=90,
-		code=3)
+		# plot the standard deviation of the computation as error bars
+		arrows(known.sequence, average.result - sd.result,
+			known.sequence, average.result + sd.result,
+			length=0.05,
+			angle=90,
+			code=3)
 
-	abline(lm.df)
+		abline(lm.df)
+	}	
 
 	return(iteration.results)
 }
@@ -202,23 +264,34 @@ benchmark.test = function(n.repeats, sequence.length){
 
 
 pdf('benchmark_test_10.pdf')
-test.out = benchmark.test(n.repeats = 5000, sequence.length = 10)
-convergence(test.out)
+test.out = benchmark.test(n.repeats = 10000,
+	sequence.length = 10,
+	plt.switch='YES',
+	ylim=c(-0.005, 0.005))
+#convergence.plt(test.out)
+dev.off()
+
+pdf('benchmark_test_100.pdf')
+test.out = benchmark.test(n.repeats = 10000,
+	sequence.length = 100,
+	plt.switch='YES',
+	ylim=c(-0.005, 0.005))
+#convergence.plt(test.out)
 dev.off()
 
 
-pdf('benchmark_test_100.pdf')
-test.out = benchmark.test(n.repeats = 5000, sequence.length = 100)
-convergence(test.out)
+pdf('benchmark_test_100_convergence.pdf')
+test.out = benchmark.test(n.repeats = 10000, sequence.length = 100, plt.switch='YES')
+#convergence.plt(test.out)
 dev.off()
 
 pdf('benchmark_test_1000.pdf')
-test.out = benchmark.test(n.repeats = 5000, sequence.length = 1000)
-convergence(test.out)
+test.out = benchmark.test(n.repeats = 1000, sequence.length = 1000)
+convergence.plt(test.out)
 dev.off()
 
 pdf('benchmark_test_2000.pdf')
-test.out = benchmark.test(n.repeats = 5000, sequence.length = 2000)
-convergence(test.out)
+test.out = benchmark.test(n.repeats = 1000, sequence.length = 2000)
+convergence.plt(test.out)
 dev.off()
 
