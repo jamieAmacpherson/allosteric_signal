@@ -3,7 +3,7 @@ library(foreach)
 library(doMC)
 
 ## Register the number of CPUs
-registerDoMC(12)
+registerDoMC(4)
 
 
 # log-axis minor ticks function
