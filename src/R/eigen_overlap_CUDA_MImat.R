@@ -118,9 +118,9 @@ readentropyfiles = function() {
 	return(lapply(datframe, as.matrix))
 }
 
-print("READING POSITIONAL ENTROPY DATA")
-entropydat = readentropyfiles()
-print("FINISHED READING POSITIONAL ENTROPY DATA")
+#print("READING POSITIONAL ENTROPY DATA")
+#entropydat = readentropyfiles()
+#print("FINISHED READING POSITIONAL ENTROPY DATA")
 
 #______________________________________________________________________________
 ## EIGENSYSTEMS of mutual information matrices
@@ -357,17 +357,17 @@ extract.sectors = function(){
 			col.names=F, row.names=F,
 			sep=" ")
 		
-		# subset the entropy in the contiguous sectors
-		subentr = entropydat[from:to]
-		X = do.call(cbind, subentr)
-		X = array(X, dim=c(dim(subentr[[1]]), length(subentr)))
-		sectorsentropy[[i]] = apply(X, c(1, 2), mean, na.rm = TRUE)
+#		# subset the entropy in the contiguous sectors
+#		subentr = entropydat[from:to]
+#		X = do.call(cbind, subentr)
+#		X = array(X, dim=c(dim(subentr[[1]]), length(subentr)))
+#		sectorsentropy[[i]] = apply(X, c(1, 2), mean, na.rm = TRUE)
 
 		## write the element-averaged sector entopy to files  ## put this outside the for loop
-                write.table(sectorsentropy[[i]],
-                        file=paste("ergodic_sector_entropy_", i, sep=""),
-                        col.names=F, row.names=F,
-                        sep=" ")
+#                write.table(sectorsentropy[[i]],
+#                        file=paste("ergodic_sector_entropy_", i, sep=""),
+#                        col.names=F, row.names=F,
+#                        sep=" ")
 
 	}
 

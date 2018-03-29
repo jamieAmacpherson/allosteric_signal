@@ -281,8 +281,8 @@ dev.off()
 
 
 pdf('benchmark_test_100_convergence.pdf')
-test.out = benchmark.test(n.repeats = 10000, sequence.length = 100, plt.switch='YES')
-#convergence.plt(test.out)
+test.out = benchmark.test(n.repeats = 50000, sequence.length = 100, plt.switch='NO')
+convergence.plt(test.out)
 dev.off()
 
 pdf('benchmark_test_1000.pdf')
