@@ -43,7 +43,7 @@ extract_sectors = function(sector.info, MImatlist){
 		sectors[[i]] = apply(Y, c(1, 2), mean, na.rm = TRUE)
 
 
-		## write the element-averaged sectors to files	## put this outside the for loop
+		## write the element-averaged sectors to files	
 		print(paste('Writing sector #', i, ' to the current working directory'))
 
 		write.table(sectors[[i]],
@@ -53,6 +53,7 @@ extract_sectors = function(sector.info, MImatlist){
 
 	}
 
+	# return a list of matrices, each is an averaged mutual information matrix for an ergodic sector
 	return(sectors)
 
 }

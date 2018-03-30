@@ -71,7 +71,8 @@ splitmat = function(nmi.matrix.dat, outprefix){
 				file = paste(paste(outprefix, chainID, '.dat', sep='')),
 				col.names=F,
 				row.names=F)
-}
+	}
+
 	savematrix(chainA, 'chainA')
 	savematrix(chainB, 'chainB')
 	savematrix(chainC, 'chainC')
@@ -108,9 +109,9 @@ mat.process = function(listmatrices, sign.pval, sig.nMIval, outprefix, ...){
 			c(1,1,1,1)),
 			labels=c('mat1', 'mat2', 'mat3', 'mat4'))
 
-	kw.out = kruskal.test(input, g)$p.value
+		kw.out = kruskal.test(input, g)$p.value
 
-	return(kw.out)
+		return(kw.out)
 	}
 
 	# parse the element-wise entries of the list of matrices into the kwtest() function
