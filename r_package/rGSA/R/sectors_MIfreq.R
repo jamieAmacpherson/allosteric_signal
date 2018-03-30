@@ -30,6 +30,7 @@ sectors_MIfreq = function(sector.list, n.sigmas){
 
 	} else {
 
+
 		# if there is only a single ergodic sector identified in the MD trajectory, then use
 		# the mutual information matrix of that single ergodic sector
 		mat = sector.list[[1]]
@@ -43,7 +44,7 @@ sectors_MIfreq = function(sector.list, n.sigmas){
 	sig.mat = sd(mat)
 
 	# calculate the significance threshold
-	threshold = mumat + (n.sigmas*sig.mat)
+	threshold = mu.mat + (n.sigmas*sig.mat)
 
 	# histogram of the average mutual information matrix
 	mathist = hist(mat,
@@ -52,6 +53,8 @@ sectors_MIfreq = function(sector.list, n.sigmas){
 
 
 	# plot the histogram
+	par(mar = c(5,5,2,2))
+
 	plot(mathist$breaks[-1],
 		mathist$counts,
 		type='h',
@@ -68,7 +71,7 @@ sectors_MIfreq = function(sector.list, n.sigmas){
 		lwd=2)
 	
 	# text
-	text(threshold + 0.3, (max(mathist$density) / 2),
+	text(threshold + 0.3, (max(mathist$counts) / 2),
 		paste("nMI > ", round(threshold, 3)),
 		cex=2)
 	

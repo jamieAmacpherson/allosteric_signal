@@ -18,7 +18,7 @@ sectors_2dplot = function(overlap.matrix.s, t.traj){
 	sector.v = diag(overlap.matrix.s$z)
 
 	# determine a vector defining the trajectory time-sequence
-	times = seq(from = 0, to = t.traj, length.out = nrow(sector.v))
+	times = seq(from = 0, to = t.traj, length.out = length(sector.v))
 
 	# combine time and covariance overlap values into a single dataframe
 	dat = cbind(times, sector.v)

@@ -21,7 +21,7 @@ comp_eigensystem = function(MImatlist){
 
 	# compute the covarince matrix for each of the elements in the input list
 	print("COMPUTING COVARIANCE MATRICES")
-	covtraj = lapply(MImatlist, covar)
+	covtraj = lapply(MImatlist, coop::covar)
 
 	# conpute eigensystem for each matrix in input list
 	print("COMPUTING EIGEN-SYSTEMS")

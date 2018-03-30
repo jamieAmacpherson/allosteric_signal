@@ -34,7 +34,7 @@ extract_sectors = function(sector.info, MImatlist){
 	
 		## subset the contiguous sectors and find the element-
 		## wise average of the sector
-		submat = nMImats[from:to]
+		submat = MImatlist[from:to]
 		
 		Y = do.call(cbind, submat)
 		

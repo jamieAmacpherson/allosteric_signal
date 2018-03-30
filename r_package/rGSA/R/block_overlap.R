@@ -23,10 +23,10 @@ block_overlap = function(eigensys.list, eigfrom, eigto){
 	traj.overlap = matrix(0, nrow = nBlock, ncol = nBlock)
 	
 	# range of eigenvalues used in calculating the covariance overlap
-	eigenrange = eigfrom:eigto
+	eigrange = eigfrom:eigto
 
 
-	print("COMPUTING COVARIANCE OVERLAP OF MUTUAL INFORMATION MATRICE")
+	print("COMPUTING COVARIANCE OVERLAP OF MUTUAL INFORMATION MATRICES")
 	
 	# measure time taken to execute 
 	system.time(

@@ -15,7 +15,7 @@
 sectors_3dplot = function(overlap.matrix.s, t.traj){
 
 	# determine a vector defining the trajectory time-sequence
-	times = seq(from = 0, to = t.traj, length.out = ncol(overlap.matrix.s))
+	times = seq(from = 0, to = t.traj, length.out = ncol(overlap.matrix.s$z))
 
 	# generate the image plot
 	par(mar=c(5,5,2,2))
@@ -26,6 +26,5 @@ sectors_3dplot = function(overlap.matrix.s, t.traj){
 	        xlab="Time (ns)",
 	        ylab="Time (ns)")
 
-	dev.off()
 
 }
