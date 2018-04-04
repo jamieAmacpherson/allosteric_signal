@@ -10,7 +10,7 @@
 
 
 
-block_overlap = function(eigensys.list, eigfrom, eigto){
+block_overlap = function(eigensys.list, eigfrom = 1, eigto = 10){
 
 	# parse default values if user does not specify
 	eigfrom = as.numeric(ifelse(is.na(eigfrom), 1, eigfrom))

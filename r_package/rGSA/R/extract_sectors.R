@@ -16,7 +16,7 @@
 extract_sectors = function(sector.info, MImatlist){
 
 
-	sector.cont.ind = seqToIntervals(sector.info[2,])
+	sector.cont.ind = denstrip::seqToIntervals(sector.info[2,])
 	nSectors.cont = nrow(sector.cont.ind)
 	sector.cont = list(nSectors.cont)
 

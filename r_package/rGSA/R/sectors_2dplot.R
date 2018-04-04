@@ -36,5 +36,4 @@ sectors_2dplot = function(overlap.matrix.s, t.traj){
 		cex.lab = 2,
 		type = 'o')
 
-
 }

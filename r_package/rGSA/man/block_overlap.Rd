@@ -5,7 +5,7 @@
 \title{Compute the covariance overlap between each of the trajectory blocks from an input list
 of eigensystems.}
 \usage{
-block_overlap(eigensys.list, eigfrom, eigto)
+block_overlap(eigensys.list, eigfrom = 1, eigto = 10)
 }
 \arguments{
 \item{eigensys.list}{A list of eigen-systems determined from comp_eigensystem()}

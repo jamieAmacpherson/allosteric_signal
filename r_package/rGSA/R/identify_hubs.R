@@ -21,7 +21,7 @@
 
 
 
-identify_hubs = function(sector.list, n.hubs){
+identify_hubs = function(sector.list, n.hubs = 10){
 
 
 	# if the number of fragment hubs is not specified by the user, assign default value of 10
@@ -33,6 +33,9 @@ identify_hubs = function(sector.list, n.hubs){
 		writelines('WARNING \n Number of hubs selected exceeds total number of protein fragments.
 			\n All of the protein fragments will be sorted according to their predicted
 			contribution to the allosteric process. \n This may take a long time for large protein systems.')
+
+		# set n.hubs to the total number of fragments to avoid indexing errors
+		n.hubs = sector.list
 	}
 
 

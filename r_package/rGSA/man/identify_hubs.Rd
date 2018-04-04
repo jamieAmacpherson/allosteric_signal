@@ -4,7 +4,7 @@
 \alias{identify_hubs}
 \title{Identify the allosteric hubs from the ergodic sector mutual information matrix}
 \usage{
-identify_hubs(sector.list, n.hubs)
+identify_hubs(sector.list, n.hubs = 10)
 }
 \arguments{
 \item{sector.list}{A list of matrices, each is an averaged mutual information matrix for an ergodic sector}
