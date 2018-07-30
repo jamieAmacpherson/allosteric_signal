@@ -178,6 +178,7 @@ This may lead to eraneous results. Proceed with caution.
 	plt.ylim(-0.2,4) 
 	plt.ylabel(r'P($\lambda$)')
 	plt.xlabel(r'Eigenvalue, $\lambda$')
+	plt.grid(True)
 	plt.savefig('MMpdf.pdf', bbox_inches='tight')
 
 difmat(args.c[0])
