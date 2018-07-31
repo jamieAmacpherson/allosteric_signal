@@ -1,0 +1,10 @@
+TITLE     Protein in water
+REMARK    THIS IS A SIMULATION BOX
+CRYST1   34.806   34.806   34.806  70.53 109.47  70.53 P 1           1
+MODEL        1
+ATOM      1  CA  GLY A   1       2.630  11.087 -12.054
+ATOM      1  CA  GLY A   2       2.357  13.026 -15.290
+ATOM      1  CA  GLY A   3       1.365  16.691 -15.389
+ATOM      1  CA  GLY A   4       0.262  18.241 -18.694
+TER
+ENDMDL
