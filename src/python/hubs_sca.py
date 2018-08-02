@@ -120,6 +120,9 @@ def sca_calc(MSAalignment, alignment_start, alignment_end):
 	showMutinfoMatrix(hubs_mutinfo, clim=[0, 0.2], cmap='jet')
 	plt.savefig('sca_pkm2_allhubs.pdf', bbox_inches='tight')
 
+	## plot network of SCA couplings
+	
+
 	## plot histogram distribution of the SCA matrix
 	
 	# flatten SCA matrix into 1D array

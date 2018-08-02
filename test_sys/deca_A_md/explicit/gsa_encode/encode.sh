@@ -17,7 +17,7 @@ OUTPREFIX=$3
 OUTDIR=.
 ###################
 ###################
-$SRCDIR/g_sa_encode -f $1\
+$SRCDIR/g_sa_encode -f $2\
                       -s $2\
                       -strlf $OUTDIR/$OUTPREFIX.lf_str.out\
                       -rmsdlf $OUTDIR/$OUTPREFIX.lf_rmsd.xvg\
