@@ -18,8 +18,8 @@ from matplotlib import rcParams as pltparam
 
 ##__________________________________________________________________
 ## Plot styles
-plt.style.use('seaborn-ticks')
-pltparam.update({'font.size': 20})
+#plt.style.use('seaborn-ticks')
+#pltparam.update({'font.size': 20})
 
 ##__________________________________________________________________
 ## Input parser
@@ -65,7 +65,7 @@ def sca_calc(MSAalignment, alignment_start, alignment_end):
 
 	# Parse the multiple sequence
 	msa = parseMSA(MSAalignment)
-	msa_refine = refineMSA(msa, label='PKM2_HUMAN', rowocc=0.8, seqid=0.98)
+	msa_refine = refineMSA(msa, label='seq_1', rowocc=0.8, seqid=0.98)
 
 	# Calculate mutual information matrixmutinfo_norm = applyMutinfoNorm(mutinfo, entropy, norm='minent')
 	entropy = calcShannonEntropy(msa_refine)
@@ -117,7 +117,7 @@ def sca_calc(MSAalignment, alignment_start, alignment_end):
 
 	plt.figure()
 
-	showMutinfoMatrix(hubs_mutinfo, clim=[0, 0.2], cmap='jet')
+	showMutinfoMatrix(hubs_mutinfo, clim=[0.03, 0.2], cmap='Reds')
 	plt.savefig('sca_pkm2_allhubs.pdf', bbox_inches='tight')
 
 	## plot network of SCA couplings

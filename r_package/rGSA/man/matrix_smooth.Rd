@@ -8,10 +8,6 @@ matrix_smooth(overlap.matrix)
 }
 \arguments{
 \item{overlap.matrix}{Matrix of covariance overlaps, computed using block_overlap()}
-
-\item{eigfrom}{First eigenvector considered in computing the covariance overlap}
-
-\item{eigto}{Last eigenvector considered in computing the covariance overlap}
 }
 \value{
 A matrix containing the covariance overlap between each of the trajectory blocks

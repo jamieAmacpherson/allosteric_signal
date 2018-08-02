@@ -1,0 +1,16 @@
+TITLE     Protein in water
+REMARK    THIS IS A SIMULATION BOX
+CRYST1   34.806   34.806   34.806  70.53 109.47  70.53 P 1           1
+MODEL        1
+ATOM      5  CA  ALA     1      20.320  22.940  20.640  1.00  0.00            
+ATOM     11  CA  ALA     2      19.640  26.250  18.880  1.00  0.00            
+ATOM     17  CA  ALA     3      21.090  25.420  15.460  1.00  0.00            
+ATOM     23  CA  ALA     4      19.690  21.810  15.110  1.00  0.00            
+ATOM     28  H   ALA     5      18.300  23.160  16.780  1.00  0.00            
+ATOM     35  CA  ALA     6      16.210  25.760  13.550  1.00  0.00            
+ATOM     41  CA  ALA     7      17.210  23.350  10.830  1.00  0.00            
+ATOM     47  CA  ALA     8      14.200  21.170  11.710  1.00  0.00            
+ATOM     53  CA  ALA     9      11.370  23.680  12.040  1.00  0.00            
+ATOM     59  CA  ALA    10      11.480  27.290  10.950  1.00  0.00            
+TER
+ENDMDL
