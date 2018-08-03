@@ -1,0 +1,108 @@
+---
+title: "AlloHubMat tutorial"
+author: "Jamie Macpherson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The following tutorial will guide you through the various core functions included in the AlloHubMat software, which
+facilitates the prediction of allosteric hub residues from a molecular dynamics simulation. Briefly, the user supplies an
+input molecular dynamics trajectory file and a topology file, the mutual information between distal residues are calculated
+and allosteric hub residues are identified.
+
+Direct any and all questions to james.macpherson@crick.ac.uk.  
+
+Lets get started! 
+
+
+## Encoding molecular dynamics trajectory with the M32K25 structural alphabet
+
+First, we parse a molecular dynamics trajectory file into the R environment so that the xyz Cartesian coordinates can be 
+simplified into a coarse-grained structural alphabet representation. The package currently only supports the trajectory file
+format *.dcd, and *.pdb topology file format. We are working to expand the selection of file formats. But for now, you can convert
+most MD file formats into a *.dcd file using MDconvert (http://mdtraj.org/latest/mdconvert.html). 
+
+```
+# read pdb topolgy file
+pdb = read_pdb_file(workingdir = 'pdbs', structure.name = 'decaA_ca.pdb', str.format = 'pdb')
+
+# read dcd trajectory file
+dcd = read_traj_file(workingdir = 'pdbs', trajectory.name = 'decaA_ca.dcd', str.format = 'dcd')
+
+# superimpose the trajectory coordinates onto the topology to remove roto-translational
+# motions from the trajectory
+dcd_s = superpose_trj(topol = pdb, traj = dcd, traj.format = 'dcd')
+
+# encode the MD trajectory with the M32K25 structural alphabet
+sa.traj = encode_dcd_trajectory(traj = dcd_s, num.atoms = 10)
+
+# visualise the structural alphabet alignment over the entire MD trajectory
+vis_seq_logo(sa.traj)
+
+```
+
+
+## Calculate the mutual information matrix
+Using the M32K25 structural-encoded trajectory we can now measure the mutual information between distal sites in the protein.
+The mutual information matrix will be calculated over blocks of the MD trajectory, so that we can explitly identify sub-states 
+within the simulation.
+
+```
+# split the structural alphabet alignment into regular blocks
+sa.traj.b = split_sa_align(sa.traj, nblocks = 12)
+
+# determine the mutual information for each trajectory block
+mi.mats = lapply(sa.traj.b, mi_mat)
+
+# Compute the eigensystem for the list of mutual information matrices
+eigensys = comp_eigensystem(mi.mats)
+
+# Compute the covariance overlap between each of the trajectory blocks from an input list
+# of eigensystems.
+overlap.mat = block_overlap(eigensys, 1, 5)
+
+# Smooth the matrix of covariance overlaps using a kernal smoothing algorithm.
+overlap.mat.s = matrix_smooth(overlap.mat)
+
+# Automated detection of ergodic sectors from a list of time-averaged mutual information matrices.
+erg.sec.info = detect_sectors(overlap.mat.s, traj.length)
+
+# Extract the ergodic sectors from a trajectory of mutual information matrices.
+erg.secs = extract_sectors(erg.sec.info, mi.mats)
+
+# Identify the allosteric hubs from the ergodic sector mutual information matrix  
+allosteric.hubs = identify_hubs(erg.secs) 
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

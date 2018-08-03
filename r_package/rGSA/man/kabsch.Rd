@@ -4,12 +4,12 @@
 \alias{kabsch}
 \title{Kabsch Algorithm}
 \usage{
-kabsch(P, Q)
+kabsch(Q, P)
 }
 \arguments{
-\item{P}{n x d matrix of reference points.}
-
 \item{Q}{n x d matrix of points to align to to \code{pm}}
+
+\item{P}{n x d matrix of reference points.}
 }
 \value{
 Matrix \code{qm} rotated and translated so that the ith point 

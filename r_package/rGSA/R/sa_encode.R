@@ -14,13 +14,13 @@
 #'
 #' @export
 
-sa_encode = function(pdbfile){
+sa_encode = function(traj.xyz, str.format = "pdb"){
 	## fragment letters
 	fragment_letters = c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y')
 
 	## fragment coordinates
 	fragment_coordinates = list(
-		matrix( c( c(  2.630,  11.087,-12.054), c(  2.357,  13.026,-15.290), c(  1.365,  16.691,-15.389), c(  0.262,  18.241,-18.694)), byrow = TRUE, nrow = 4, ncol=3), #A
+	matrix( c( c(  2.630,  11.087,-12.054), c(  2.357,  13.026,-15.290), c(  1.365,  16.691,-15.389), c(  0.262,  18.241,-18.694)), byrow = TRUE, nrow = 4, ncol=3), #A
         matrix( c( c(  9.284,  15.264, 44.980), c( 12.933,  14.193, 44.880), c( 14.898,  12.077, 47.307), c( 18.502,  10.955, 47.619)), byrow = TRUE, nrow = 4, ncol=3), #B
         matrix( c( c(-25.311,  23.402, 33.999), c(-23.168,  25.490, 36.333), c(-23.449,  24.762, 40.062), c( -23.266, 27.976, 42.095)), byrow = TRUE, nrow = 4, ncol=3), #C
         matrix( c( c( 23.078,   3.265, -5.609), c( 21.369,   6.342, -4.176), c( 20.292,   6.283, -0.487), c( 17.232,   7.962,  1.027)), byrow = TRUE, nrow = 4, ncol=3), #D
@@ -48,14 +48,21 @@ sa_encode = function(pdbfile){
 
 	names(fragment_coordinates) = fragment_letters;
 
-	## parse pdb file coordinates into matrices of four sequential Calpha coordinates
-	## index vector of Calpha atoms
-    ca.ix = atom.select(pdbfile, "calpha");
-	## matrix of x,y,z coordinates of all Calpha atoms
-	ca.xyz = pdbfile$atom[ca.ix$atom, c("x","y","z")];
+
+        if(str.format == 'pdb'){
+	       ## parse pdb file coordinates into matrices of four sequential Calpha coordinates
+	       ## index vector of Calpha atom
+               ca.ix = bio3d::atom.select(pdbfile, "calpha");
+	       ## matrix of x,y,z coordinates of all Calpha atoms
+	       ca.xyz = pdbfile$atom[ca.ix$atom, c("x","y","z")];
+               } else if(str.format == 'dcd'){
+                ca.xyz = traj.xyz
+               } else
+        stop(paste("structure extension", str.format, "not supported"));
 
 	## create index matrix to fragment-subset coordinate matrix
 	## each matrix column corresponds to a 4-Calpha fragment of the input structure
+        nFs = dim(ca.xyz)[1] - 3;
 	fs.m = matrix(nrow = 4, ncol = nFs);
 	## index list from 1 to (length-3)
 	fs.ix = seq(1:(dim(ca.xyz)[1] - 3));
@@ -83,4 +90,144 @@ sa_encode = function(pdbfile){
 	# return string of SA fragments
 	return(fragstring);
 }
+
+
+## encode a dcd trajectory file with the M32K25 structural alphabet
+encode_dcd_trajectory = function(traj, num.atoms){
+
+        ## length of the trajectory
+        nframes = length(traj[,1]);
+
+        ## append xyz coordinates of each frame to an element in a list
+        trajectory = list();
+
+        for (i in seq(from = 1, to = nframes, by = 1)) {
+
+                ## assign the xyz coordinates to a data frame
+                coords = as.data.frame(matrix(traj[i,], nrow = num.atoms, byrow=T))
+                names(coords) = c('x', 'y', 'z')
+
+                ## append the coordinates to a list
+                trajectory[[i]] = coords
+        }
+
+        ## encode the trajectory with the M32K25 structural alphabet
+        sa.trajectory = lapply(trajectory, sa_encode, 'dcd');
+
+        ## number of fragments in the alignment
+        num.frags = num.atoms - 3;
+
+        ## format the structural alphabet strings into a matrix
+        sa.trajectory.mat = matrix(unlist(sa.trajectory), ncol = num.frags, byrow = FALSE);
+
+        ## return the structural alphabet-encoded trajectory
+        return(sa.trajectory.mat);
+}
+
+
+
+## visualise the structural alphabet alignment as a sequence logo
+vis_seq_logo = function(sa_traj){
+
+        ## initialise a vector to contain the structural alphabet fragments
+        frags = c()
+
+        ## 
+        for(i in seq(from = 1, to = ncol(sa_traj))) {
+                frags[i] = paste(sa_traj[i,], collapse = '')
+        }
+        
+        plt = ggseqlogo::ggseqlogo(frags, method = 'prob' )
+
+        print(plt)
+
+}
+
+
+## split the structural alphabet alignment into regular blocks
+split_sa_align = function(sa_traj, nblocks){
+
+        ## if the number of rows in the alignment is a prime number, remove the first row
+        rows = nrow(sa_traj);
+
+        if(primes::is_prime(rows) == 'TRUE'){
+                sa_traj = sa_traj[-1,]
+
+                print('WARNING: number if rows in the alignment is a prime number. The first encoded snapshot in the trajectory was removed')
+        };
+
+        ## again determine the number of rows
+        rows = nrow(sa_traj);
+
+        ## determine whether the alignment can be equally spit into the defined
+        ## number of blocks
+        if(rows %% nblocks != 0) {
+
+                for(i in seq(from=1, to=9, by=1)) {
+
+                        ## search for a lower number of blocks that evenly divides the trajectory
+                        new.nblocks = nblocks - i
+
+                        ## break the block size search if the trajectory is evenly divisible by the 
+                        ## new block size
+                        if(rows %% new.nblocks == 0){
+                                break
+                        } 
+                }
+
+                print(paste('WARNING: fragment-encoded trajectory is not evenly divisible by ', nblocks, '. The trajectory will instead be divided into ', new.nblocks, ' even blocks.'))
+
+        } else if(rows %% nblocks == 0){
+                new.nblocks = nblocks
+        }
+
+        ## determine the number of rows in each block
+        block.rows = rows/new.nblocks
+
+        ## initialise list to append into
+        sa.list = list()
+
+        ## generate vector dereferencing the start row for each block in the alignment
+        ref.seq = seq(from = 1, to = rows, by = block.rows)
+
+        ## loop over the structural alphabet alignment 
+        for(i in c(1: length(ref.seq))) {
+
+                rowstart = ref.seq[i];
+
+                rowend = ref.seq[i] + (block.rows-1);
+                #print(paste(rowstart, rowend))
+                ## assign block to temporary matrix 
+                mat = sa_traj[c(rowstart : rowend), ]
+
+                ## append the block to sa.list
+                sa.list[[i]] = mat
+        }
+
+        return(sa.list);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
