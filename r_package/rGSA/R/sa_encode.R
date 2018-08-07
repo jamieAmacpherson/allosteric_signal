@@ -93,7 +93,7 @@ sa_encode = function(traj.xyz, str.format = "pdb"){
 
 
 ## encode a dcd trajectory file with the M32K25 structural alphabet
-encode_dcd_trajectory = function(traj, num.atoms){
+encode_dcd_trajectory = function(traj, num.atoms, parallel.calc = 'TRUE'){
 
         ## length of the trajectory
         nframes = length(traj[,1]);
@@ -103,6 +103,11 @@ encode_dcd_trajectory = function(traj, num.atoms){
 
         for (i in seq(from = 1, to = nframes, by = 1)) {
 
+                prog = (i/nframes)*100;
+                if(prog %% 10 == 0){
+                        print(paste(prog, ' %', sep=''))
+                }
+
                 ## assign the xyz coordinates to a data frame
                 coords = as.data.frame(matrix(traj[i,], nrow = num.atoms, byrow=T))
                 names(coords) = c('x', 'y', 'z')
@@ -111,8 +116,28 @@ encode_dcd_trajectory = function(traj, num.atoms){
                 trajectory[[i]] = coords
         }
 
-        ## encode the trajectory with the M32K25 structural alphabet
-        sa.trajectory = lapply(trajectory, sa_encode, 'dcd');
+        ## switch to execute the fragment encoding in parallel
+        if(parallel.calc == 'TRUE'){
+                # determine the number of cores on the machine
+                n_cores = parallel::detectCores() - 2;
+
+                ## initiate a cluster to encode in parallel
+                cluster = parallel::makeCluster(n_cores)
+
+                ## export sa_encode to cluster
+                parallel::clusterEvalQ(cl, library("rGSA"))
+
+                ## encode the trajectory with the M32K25 structural alphabet
+                ## in parallel
+                sa.trajectory = pbapply::pblapply(trajectory, cl = cluster, sa_encode, 'dcd')
+
+        } else if(parallel.calc == 'FALSE'){
+                
+                ## encode the trajectory with the M32K25 structural alphabet
+                sa.trajectory = pbapply::pblapply(trajectory, sa_encode, 'dcd');
+
+        }
+
 
         ## number of fragments in the alignment
         num.frags = num.atoms - 3;

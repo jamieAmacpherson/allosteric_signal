@@ -1,6 +1,6 @@
 ---
 title: "AlloHubMat tutorial"
-author: "Jamie Macpherson"
+author: "Jamie Macpherson, Jens Kleinjung, Dimitrios Anastasiou and Franca Fraternali"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -38,14 +38,14 @@ most MD file formats into a *.dcd file using MDconvert (http://mdtraj.org/latest
 pdb = read_pdb_file(workingdir = 'pdbs', structure.name = 'decaA_ca.pdb', str.format = 'pdb')
 
 # read dcd trajectory file
-dcd = read_traj_file(workingdir = 'pdbs', trajectory.name = 'decaA_ca.dcd', str.format = 'dcd')
+dcd = read_traj_file(workingdir = 'pdbs', trajectory.name = 'decaA_ca.dcd', traj.format = 'dcd')
 
 # superimpose the trajectory coordinates onto the topology to remove roto-translational
 # motions from the trajectory
 dcd_s = superpose_trj(topol = pdb, traj = dcd, traj.format = 'dcd')
 
 # encode the MD trajectory with the M32K25 structural alphabet
-sa.traj = encode_dcd_trajectory(traj = dcd_s, num.atoms = 10)
+sa.traj = encode_dcd_trajectory(traj = dcd_s, num.atoms = 2073)
 
 # visualise the structural alphabet alignment over the entire MD trajectory
 vis_seq_logo(sa.traj)
