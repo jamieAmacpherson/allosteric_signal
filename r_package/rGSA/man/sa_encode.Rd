@@ -4,7 +4,7 @@
 \alias{sa_encode}
 \title{sa_encode.R}
 \usage{
-sa_encode(pdbfile)
+sa_encode(traj.xyz, str.format = "pdb")
 }
 \arguments{
 \item{pdbfile}{}
