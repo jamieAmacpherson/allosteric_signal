@@ -119,13 +119,13 @@ encode_dcd_trajectory = function(traj, num.atoms, parallel.calc = 'TRUE'){
         ## switch to execute the fragment encoding in parallel
         if(parallel.calc == 'TRUE'){
                 # determine the number of cores on the machine
-                n_cores = parallel::detectCores() - 2;
+                n_cores = parallel::detectCores() - 1;
 
                 ## initiate a cluster to encode in parallel
                 cluster = parallel::makeCluster(n_cores)
 
                 ## export sa_encode to cluster
-                parallel::clusterEvalQ(cl, library("rGSA"))
+                parallel::clusterEvalQ(cluster, library("rGSA"))
 
                 ## encode the trajectory with the M32K25 structural alphabet
                 ## in parallel
