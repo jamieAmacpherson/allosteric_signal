@@ -29,7 +29,7 @@ kabsch = function(Q, P){
   Pc = scale(P, center=T, scale=F)
 
   ## determine the cross-covariance matrix
-  C = t(Pc) %*% Qc
+  C = crossprod(Pc, Qc)
 
   ## compute a single value decomposition of the
   ## cross-covariance matrix
@@ -41,7 +41,7 @@ kabsch = function(Q, P){
   d = det(C.svd$u) * det(C.svd$v)
 
   ## determine the optimal rotation matrix
-  U = C.svd$u %*% t(C.svd$v)
+  U = tcrossprod(C.svd$u, C.svd$v)
 
   ## rotate matrix P unto Q
   Prot = Pc %*% U
