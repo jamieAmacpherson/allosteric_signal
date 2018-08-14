@@ -145,6 +145,9 @@ encode_dcd_trajectory = function(traj, num.atoms, parallel.calc = 'TRUE'){
         ## format the structural alphabet strings into a matrix
         sa.trajectory.mat = matrix(unlist(sa.trajectory), ncol = num.frags, byrow = FALSE);
 
+        ## write the structural alphabet-encoded trajectory to the disk
+        saveRDS(sa.trajectory.mat, paste0(format(now, "%Y%m%d_%H%M%S_"), "_sa_trajectory_matrix.rds", sep=""))
+
         ## return the structural alphabet-encoded trajectory
         return(sa.trajectory.mat);
 }
