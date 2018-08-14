@@ -125,7 +125,7 @@ encode_dcd_trajectory = function(traj, num.atoms, parallel.calc = 'TRUE'){
                 cluster = parallel::makeCluster(n_cores)
 
                 ## export sa_encode to cluster
-                parallel::clusterEvalQ(cluster, library("rGSA"))
+                parallel::clusterEvalQ(cluster, devtools::load_all("rGSA"))
 
                 ## encode the trajectory with the M32K25 structural alphabet
                 ## in parallel
