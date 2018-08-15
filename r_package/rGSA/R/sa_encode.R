@@ -20,7 +20,8 @@ sa_encode = function(traj.xyz, str.format = "pdb"){
 
 	## fragment coordinates
 	fragment_coordinates = list(
-	matrix( c( c(  2.630,  11.087,-12.054), c(  2.357,  13.026,-15.290), c(  1.365,  16.691,-15.389), c(  0.262,  18.241,-18.694)), byrow = TRUE, nrow = 4, ncol=3), #A
+
+        matrix( c( c(  2.630,  11.087,-12.054), c(  2.357,  13.026,-15.290), c(  1.365,  16.691,-15.389), c(  0.262,  18.241,-18.694)), byrow = TRUE, nrow = 4, ncol=3), #A
         matrix( c( c(  9.284,  15.264, 44.980), c( 12.933,  14.193, 44.880), c( 14.898,  12.077, 47.307), c( 18.502,  10.955, 47.619)), byrow = TRUE, nrow = 4, ncol=3), #B
         matrix( c( c(-25.311,  23.402, 33.999), c(-23.168,  25.490, 36.333), c(-23.449,  24.762, 40.062), c( -23.266, 27.976, 42.095)), byrow = TRUE, nrow = 4, ncol=3), #C
         matrix( c( c( 23.078,   3.265, -5.609), c( 21.369,   6.342, -4.176), c( 20.292,   6.283, -0.487), c( 17.232,   7.962,  1.027)), byrow = TRUE, nrow = 4, ncol=3), #D
@@ -118,8 +119,16 @@ encode_dcd_trajectory = function(traj, num.atoms, parallel.calc = 'TRUE'){
 
         ## switch to execute the fragment encoding in parallel
         if(parallel.calc == 'TRUE'){
-                # determine the number of cores on the machine
-                n_cores = parallel::detectCores() - 1;
+
+                if(parallel::detectCores() == 1){
+                    
+                    n_cores = 1
+
+                } else{
+
+                    # determine the number of cores on the machine
+                    n_cores = parallel::detectCores() - 1
+                }
 
                 ## initiate a cluster to encode in parallel
                 cluster = parallel::makeCluster(n_cores)
@@ -203,7 +212,11 @@ split_sa_align = function(sa_traj, nblocks){
                         } 
                 }
 
-                print(paste('WARNING: fragment-encoded trajectory is not evenly divisible by ', nblocks, '. The trajectory will instead be divided into ', new.nblocks, ' even blocks.'))
+                print(paste('WARNING: fragment-encoded trajectory is not evenly divisible by ',
+                    nblocks,
+                    '. The trajectory will instead be divided into ',
+                    new.nblocks,
+                    ' even blocks.'))
 
         } else if(rows %% nblocks == 0){
                 new.nblocks = nblocks
