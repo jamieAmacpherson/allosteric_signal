@@ -20,7 +20,6 @@ sa_encode = function(traj.xyz, str.format = "pdb"){
 
 	## fragment coordinates
 	fragment_coordinates = list(
-
         matrix( c( c(  2.630,  11.087,-12.054), c(  2.357,  13.026,-15.290), c(  1.365,  16.691,-15.389), c(  0.262,  18.241,-18.694)), byrow = TRUE, nrow = 4, ncol=3), #A
         matrix( c( c(  9.284,  15.264, 44.980), c( 12.933,  14.193, 44.880), c( 14.898,  12.077, 47.307), c( 18.502,  10.955, 47.619)), byrow = TRUE, nrow = 4, ncol=3), #B
         matrix( c( c(-25.311,  23.402, 33.999), c(-23.168,  25.490, 36.333), c(-23.449,  24.762, 40.062), c( -23.266, 27.976, 42.095)), byrow = TRUE, nrow = 4, ncol=3), #C
@@ -49,21 +48,21 @@ sa_encode = function(traj.xyz, str.format = "pdb"){
 
 	names(fragment_coordinates) = fragment_letters;
 
-
-        if(str.format == 'pdb'){
-	       ## parse pdb file coordinates into matrices of four sequential Calpha coordinates
-	       ## index vector of Calpha atom
-               ca.ix = bio3d::atom.select(pdbfile, "calpha");
-	       ## matrix of x,y,z coordinates of all Calpha atoms
-	       ca.xyz = pdbfile$atom[ca.ix$atom, c("x","y","z")];
-               } else if(str.format == 'dcd'){
-                ca.xyz = traj.xyz
-               } else
-        stop(paste("structure extension", str.format, "not supported"));
+    if(str.format == 'pdb'){
+	    ## parse pdb file coordinates into matrices of four sequential Calpha coordinates
+	    ## index vector of Calpha atom
+        ca.ix = bio3d::atom.select(pdbfile, "calpha");
+	    ## matrix of x,y,z coordinates of all Calpha atoms
+	    ca.xyz = pdbfile$atom[ca.ix$atom, c("x","y","z")];
+	} else if(str.format == 'dcd'){
+        ca.xyz = traj.xyz
+	} else {
+		stop(paste("structure extension", str.format, "not supported"));
+	}
 
 	## create index matrix to fragment-subset coordinate matrix
 	## each matrix column corresponds to a 4-Calpha fragment of the input structure
-        nFs = dim(ca.xyz)[1] - 3;
+     nFs = dim(ca.xyz)[1] - 3;
 	fs.m = matrix(nrow = 4, ncol = nFs);
 	## index list from 1 to (length-3)
 	fs.ix = seq(1:(dim(ca.xyz)[1] - 3));
