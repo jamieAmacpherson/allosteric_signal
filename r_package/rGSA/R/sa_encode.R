@@ -120,13 +120,16 @@ encode_dcd_trajectory = function(traj, num.atoms, parallel.calc = 'TRUE'){
         ## switch to execute the fragment encoding in parallel
         if(parallel.calc == 'TRUE'){
 
+                ## set number of cores to 1 if machine only has 1 core
                 if(parallel::detectCores() == 1){
                     
                     n_cores = 1
 
-                } else{
+                    print('WARNING: You have selected the parallel option but have only a single core on this machine. Using a single core. This may take a long time for large proteins / long trajectories...')
 
-                    # determine the number of cores on the machine
+                } else if(parallel::detectCores() > 1){
+
+                    ## determine the number of cores on the machine
                     n_cores = parallel::detectCores() - 1
                 }
 
