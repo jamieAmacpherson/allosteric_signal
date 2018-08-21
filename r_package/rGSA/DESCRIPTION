@@ -1,7 +1,9 @@
 Package: rGSA
 Title: Allosteric hub analysis
 Version: 0.0.0.9000
-Authors@R: person("Jamie", "Macpherson", email = "james.macpherson@crick.ac.uk", role = c("aut", "cre"))
+Authors@R: c(person("Jamie", "Macpherson", email = "james.macpherson@crick.ac.uk", role = c("aut", "cre")),
+	person("Jens", "Kleinjung", email = "jens.kleinjung@heptares.com", role = c("aut")),
+	person("Franca", "Fraternali", email = "franca.fraternali@kcl.ac.uk", role = c("aut")))	
 Description: What the package does (one paragraph).
 Depends: R (>= 3.4.0)
 License: What license is it under?

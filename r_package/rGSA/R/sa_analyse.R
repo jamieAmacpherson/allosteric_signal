@@ -55,43 +55,86 @@
 
 ## test SA alignment matrix
 testmat = function(num.row){
-	sa.mat = matrix(nrow = num.row, ncol = 7)
-	sa.mat[1,] = c('U','W','U','U','U','U','U')
-	sa.mat[2,] = c('X','U','U','U','U','W','V')
-	sa.mat[3,] = c('X','U','U','W','U','U','W')
-	sa.mat[4,] = c('W','U','U','U','V','U','W')
-	sa.mat[5,] = c('W','U','U','U','U','W','W')
-	sa.mat[6,] = c('W','U','U','U','U','W','W')
- 	sa.mat[7,] = c('W','U','U','U','U','W','W')
- 	sa.mat[8,] = c('W','U','U','U','U','W','W')
- 	sa.mat[9,] = c('W','U','U','U','U','W','W')
- 	sa.mat[c(10:num.row),] = c('W','U','U','U','U','W','W')
+	sa.mat = matrix(nrow = num.row, ncol = 21)
+	sa.mat[1,] = c('U','W','U','U','U','U','U', 'U','W','U','U','U','U','U', 'U','W','U','U','U','U','U')
+	sa.mat[2,] = c('X','U','U','U','U','W','V', 'X','U','U','U','U','W','V', 'X','U','U','U','U','W','V')
+	sa.mat[3,] = c('X','U','U','W','U','U','W', 'X','U','U','W','U','U','W', 'X','U','U','W','U','U','W')
+	sa.mat[4,] = c('W','U','U','U','V','U','W', 'W','U','U','U','V','U','W', 'W','U','U','U','V','U','W')
+	sa.mat[5,] = c('W','U','U','U','U','W','W', 'W','U','U','U','U','W','W', 'W','U','U','U','U','W','W')
+	sa.mat[6,] = c('W','U','U','U','U','W','W', 'W','U','U','U','U','W','W', 'W','U','U','U','U','W','W')
+ 	sa.mat[7,] = c('W','U','U','U','U','W','W', 'W','U','U','U','U','W','W', 'W','U','U','U','U','W','W')
+ 	sa.mat[8,] = c('W','U','U','U','U','W','W', 'W','U','U','U','U','W','W', 'W','U','U','U','U','W','W')
+ 	sa.mat[9,] = c('W','U','U','U','U','W','W', 'W','U','U','U','U','W','W', 'W','U','U','U','U','W','W')
+ 	sa.mat[c(10:num.row),] = c('W','U','U','U','U','W','W', 'W','U','U','U','U','W','W', 'W','U','U','U','U','W','W')
 
  	return(sa.mat)
- }
+};
+
+ ## time complexity test of the mutual information calculation
+ t.comp.row = function(num.col){
+
+ 	## initialise an SA alignment matrix with a defined number of rows
+ 	sa.mat = matrix(nrow = 100, ncol = num.col)
+ 	sa.mat[c(1:100),] = rep(c('W'), ncol = num.col)
+
+ 	## calculate the time taken to compute the mutual information matrix
+ 	tt = system.time(
+
+ 		mi_mat(sa.mat)
+
+ 		)[1]
+
+ 	## return the system time
+ 	return(tt)
 
 
+};
 
-## calculate the probability matrix of the alignment
-probmat = function(sa.mat, col1, col2){
+## calculate and plot the time complexity
+cal.time.complex = function(maxin){
+
+	tt.comp = c()
+
+	for(x in seq(from = 10, to = maxin, by = 1)){
+		tt = t.comp.row(x)
+
+		tt.comp = append(tt.comp, tt)
+
+		print(paste('[', (x/maxin)*100, '%]', sep=''))
+
+		}
+
+	return(tt.comp)
+}
+
+
+## calculate the probability matrix for all columns of the alignment
+## as a pre-compiled matrix
+probmat = function(sa.mat){
 
 	## check that both user-defined columns are not the same
-	if(col1 == col2){
-		stop('Select distinct columns in the structural alphabet alignment',
-			call = TRUE)
-	};
+	#if(col1 == col2){
+	#	stop('Select distinct columns in the structural alphabet alignment',
+	#		call = TRUE)
+	#};
 
 	## dimensions of the alignment matrix
 	d = dim(sa.mat);
 
 	## determine the summary statistics of the alignment
-	pm = list(table(sa.mat[,col1]), table(sa.mat[,col2]));
+	pm = list()
+	for(i in seq(1, d[2])){
+		pm[[i]] = table(sa.mat[,i])
+
+	}
+
+	#pm = apply(sa.mat, 2, function(x){table(x)});
 
 	## calculate the probabilities of each letter in the columns
 	ppm = lapply(pm, function(x){ x / d[1] });
 
 	## initiate a complete probability matrix
-	pmat = matrix(nrow = 2, ncol = 25);
+	pmat = matrix(nrow = d[2], ncol = 25);
 
 	## each row corresponds to a letter in the structural alphabet
 	fragment_letters = c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y');
@@ -182,6 +225,7 @@ column_MI = function(prob.matrix, paired.prob.matrix){
 
 		## determine the elements of the mutual information term
 		Iprobs = pf1pf2 * log2( pf1pf2 / (pf1 * pf2) )
+	
 	}));
 
 	## return the mutual information
@@ -245,19 +289,19 @@ column_fs_error = function(sa.mat, prob.matrix, paired.prob.matrix){
 
 
 ## compute the normalised mutual information between two columns of the alignment
-colunm_norm_MI = function(sa.mat, col1, col2){
+column_norm_MI = function(sa.mat, prob.matrix, col1, col2){
 
 	## compute the probability matrix for both columns of the alignment
-	p = probmat(sa.mat, col1, col2);
+	p = cbind(prob.matrix[,col1], prob.matrix[,col2]);
 
 	## compute the paired probability matrix for both columns of the alignment
 	pp = pairprobmat(sa.mat, col1, col2);
 
 	## determine the mutual information
-	H = column_MI(p, pp);
+	I = column_MI(p, pp);
 
 	## determine the joint entropy
-	I = column_entropy(p, pp);
+	H = column_entropy(p, pp);
 
 	## determine the finite size error term
 	e = column_fs_error(sa.mat, p, pp);
@@ -275,18 +319,20 @@ colunm_norm_MI = function(sa.mat, col1, col2){
 mi_mat = function(sa.mat){
 
 	## determine the number of fragment positions in the alignment
-	v = seq(1,dim(mat)[2]);
+	v = seq(1,dim(sa.mat)[2]);
 
 	## initialise a v*v matrix
 	mi.mat = matrix(0, nrow = length(v), ncol = length(v));
 
 	## determine the pairs of columns over which to compute the mutual
 	## information
-	combinations = combn(v,2)
+	combinations = combn(v,2);
+
+	## pre-compile the marginal probability matrix
+	p.matrix = probmat(sa.mat);
 
 	## apply over each of the combinations
 	#sapply(c(1:ncol(combinations)), function(x){
-
 	for(x in c(1:ncol(combinations))){
 		## column position 1
 		pos1 = combinations[1,x]
@@ -295,7 +341,7 @@ mi_mat = function(sa.mat){
 		pos2 = combinations[2,x]
 		
 		## determine the mutual information for each combination of positions
-		mi.col = colunm_norm_MI(sa.mat, combinations[1,x], combinations[2,x])
+		mi.col = column_norm_MI(sa.mat, p.matrix, pos1, pos2)
 
 		#print(mi.col)
 
@@ -318,8 +364,6 @@ mi_mat = function(sa.mat){
 };
 
 
-
-mi_mat(mat)
 
 
 
