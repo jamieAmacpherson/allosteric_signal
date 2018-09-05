@@ -49,24 +49,25 @@ sa_encode = function(traj.xyz, str.format = "pdb"){
 	names(fragment_coordinates) = fragment_letters;
 
 
-        if(str.format == 'pdb'){
-	       ## parse pdb file coordinates into matrices of four sequential Calpha coordinates
-	       ## index vector of Calpha atom
-               ca.ix = bio3d::atom.select(pdbfile, "calpha");
-	       ## matrix of x,y,z coordinates of all Calpha atoms
-	       ca.xyz = pdbfile$atom[ca.ix$atom, c("x","y","z")];
-               } else if(str.format == 'dcd'){
-                ca.xyz = traj.xyz
-               } else
+	if(str.format == 'pdb'){
+		## parse pdb file coordinates into matrices of four sequential Calpha coordinates
+		## index vector of Calpha atoms
+		ca.ix = bio3d::atom.select(pdbfile, "calpha");
+	    ## matrix of x,y,z coordinates of all Calpha atoms
+	    ca.xyz = pdbfile$atom[ca.ix$atom, c("x","y","z")];
+    } else if(str.format == 'dcd'){
+        ca.xyz = traj.xyz
+    } else {
         stop(paste("structure extension", str.format, "not supported"));
+	}
 
 	## create index matrix to fragment-subset coordinate matrix
 	## each matrix column corresponds to a 4-Calpha fragment of the input structure
-        nFs = dim(ca.xyz)[1] - 3;
+    nFs = dim(ca.xyz)[1] - 3;
 	fs.m = matrix(nrow = 4, ncol = nFs);
-	## index list from 1 to (length-3)
+	## index vector from 1 to (length-3)
 	fs.ix = seq(1:(dim(ca.xyz)[1] - 3));
-	## assign index list and the following incremental lists
+	## assign index vectors and the corresponding +1:3 incremental vectors
 	fs.m[1, ] = fs.ix;
 	fs.m[2, ] = fs.ix + 1;
 	fs.m[3, ] = fs.ix + 2;
@@ -206,28 +207,4 @@ split_sa_align = function(sa_traj, nblocks){
 
         return(sa.list);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -6,29 +6,21 @@
 #' @return bio3d structure trajectory
 #' @export
 
-
-
 #_______________________________________________________________________________
 ## read trajectory
-## optionally XTC or DCD format, default is XTC
-read_traj_file = function(workingdir, trajectory.name, traj.format = "xtc") {
+## optionally XTC or DCD format, default is DCD 
+read_traj_file = function(workingdir, trajectory.name, traj.format = "dcd") {
 	print("READING STRUCTURE TRAJECTORY");
 
-	#workingdir = "/home/export/jens.kleinjung/jk.software/SAsuite/allosteric_signal/test_sys/deca_A_md/explicit/md";
-	#trajectory.name = "decaA_1.xtc";
-
-	## read XTC trajectory
 	traj.path = paste(workingdir, trajectory.name, sep = "/");
-	#first_frame = 1;
-	#last_frame = 10;
-	#traj.format = "xtc";
-	#if (identical(traj.format, "xtc")) {
-	#	traj = streaMD::loadxtc(traj.path, first_frame, last_frame);
-	#	traj.bio3d = streaMD::streaMD_to_bio3d(traj);
-	#} else 
 
 	if (identical(traj.format, "dcd")) {
 		traj.bio3d = bio3d::read.dcd(traj.path);
+	} else if (identical(traj.format, "xtc") {
+		first_frame = 1;
+		last_frame = 10;
+		traj = streaMD::loadxtc(traj.path, first_frame, last_frame);
+		traj.bio3d = streaMD::streaMD_to_bio3d(traj);
 	} else {
 		stop(paste("trajectory extension", traj.format, "not supported"));
 	}
@@ -44,10 +36,6 @@ read_traj_file = function(workingdir, trajectory.name, traj.format = "xtc") {
 ## optionally PDB or GRO format, default is PDB
 read_pdb_file = function(workingdir, structure.name, str.format = "pdb") {
 	print("READING STRUCTURE");
-
-	#workingdir = "/home/export/jens.kleinjung/jk.software/SAsuite/allosteric_signal/test_sys/deca_A_md/explicit/md";
-	#structure.name = "decaA.pdb";
-	str.format = "pdb";
 
 	## read PDB structure
 	str.path = paste(workingdir, structure.name, sep = "/");
