@@ -11,16 +11,16 @@
 #' ordering, i.e. point one of the second matrix is mapped to point one of
 #' the reference matrix, point two of the second matrix is mapped to point two 
 #' of the reference matrix, and so on.
-#' The current implementation is for non-stereogenic systems. 
-#'   
+#'	 
 #' @param P n x d matrix of reference points.
 #' @param Q n x d matrix of points to align to to \code{pm}
 #' @return Matrix \code{qm} rotated and translated so that the ith point 
-#'  is aligned to the ith point of \code{pm} in the least-squares sense.
+#'	is aligned to the ith point of \code{pm} in the least-squares sense.
 #' @references
 #' \url{https://en.wikipedia.org/wiki/Kabsch_algorithm}
 
 kabsch = function(Q, P){
+
 	## center objects
 	# center Q
 	Qc = scale(Q, center=T, scale=F)
@@ -29,7 +29,7 @@ kabsch = function(Q, P){
 	Pc = scale(P, center=T, scale=F)
 
 	## determine the cross-covariance matrix
-	C = t(Pc) %*% Qc
+	C = crossprod(Pc, Qc)
 
 	## compute a single value decomposition of the
 	## cross-covariance matrix
@@ -38,17 +38,16 @@ kabsch = function(Q, P){
 	## use the sign of the determinant to ensure a right-hand coordinate system
 	## (this is only required if the fragments are stereogenic systems, which
 	## they aren't)
-	#d = det(C.svd$u) * det(C.svd$v)
+	d = det(C.svd$u) * det(C.svd$v)
 
 	## determine the optimal rotation matrix
-	## in case of a stereogenic system, the above determinant needs to be integrated
-	U = C.svd$u %*% t(C.svd$v)
+	U = tcrossprod(C.svd$u, C.svd$v)
 
 	## rotate matrix P unto Q
 	Prot = Pc %*% U
 
 	## determine the RMSD between rotated P and Q
-	## squared differences
+	# squared differences
 	Dsr.sq = (Prot - Qc)**2
 
 	rmsd = sqrt(sum(apply(Dsr.sq, 1, sum)) / dim(Dsr.sq)[1]);
@@ -56,4 +55,8 @@ kabsch = function(Q, P){
 	## spit out the optimal fit RMSD between Q and P
 	return(rmsd)
 }
+
+
+
+
 

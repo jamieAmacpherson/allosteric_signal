@@ -20,7 +20,7 @@ sa_encode = function(traj.xyz, str.format = "pdb"){
 
 	## fragment coordinates
 	fragment_coordinates = list(
-	matrix( c( c(  2.630,  11.087,-12.054), c(  2.357,  13.026,-15.290), c(  1.365,  16.691,-15.389), c(  0.262,  18.241,-18.694)), byrow = TRUE, nrow = 4, ncol=3), #A
+        matrix( c( c(  2.630,  11.087,-12.054), c(  2.357,  13.026,-15.290), c(  1.365,  16.691,-15.389), c(  0.262,  18.241,-18.694)), byrow = TRUE, nrow = 4, ncol=3), #A
         matrix( c( c(  9.284,  15.264, 44.980), c( 12.933,  14.193, 44.880), c( 14.898,  12.077, 47.307), c( 18.502,  10.955, 47.619)), byrow = TRUE, nrow = 4, ncol=3), #B
         matrix( c( c(-25.311,  23.402, 33.999), c(-23.168,  25.490, 36.333), c(-23.449,  24.762, 40.062), c( -23.266, 27.976, 42.095)), byrow = TRUE, nrow = 4, ncol=3), #C
         matrix( c( c( 23.078,   3.265, -5.609), c( 21.369,   6.342, -4.176), c( 20.292,   6.283, -0.487), c( 17.232,   7.962,  1.027)), byrow = TRUE, nrow = 4, ncol=3), #D
@@ -48,17 +48,16 @@ sa_encode = function(traj.xyz, str.format = "pdb"){
 
 	names(fragment_coordinates) = fragment_letters;
 
-
-	if(str.format == 'pdb'){
-		## parse pdb file coordinates into matrices of four sequential Calpha coordinates
-		## index vector of Calpha atoms
-		ca.ix = bio3d::atom.select(pdbfile, "calpha");
+    if(str.format == 'pdb'){
+	    ## parse pdb file coordinates into matrices of four sequential Calpha coordinates
+	    ## index vector of Calpha atom
+        ca.ix = bio3d::atom.select(pdbfile, "calpha");
 	    ## matrix of x,y,z coordinates of all Calpha atoms
 	    ca.xyz = pdbfile$atom[ca.ix$atom, c("x","y","z")];
-    } else if(str.format == 'dcd'){
+	} else if(str.format == 'dcd'){
         ca.xyz = traj.xyz
-    } else {
-        stop(paste("structure extension", str.format, "not supported"));
+	} else {
+		stop(paste("structure extension", str.format, "not supported"));
 	}
 
 	## create index matrix to fragment-subset coordinate matrix
@@ -94,7 +93,7 @@ sa_encode = function(traj.xyz, str.format = "pdb"){
 
 
 ## encode a dcd trajectory file with the M32K25 structural alphabet
-encode_dcd_trajectory = function(traj, num.atoms){
+encode_dcd_trajectory = function(traj, num.atoms, parallel.calc = 'TRUE'){
 
         ## length of the trajectory
         nframes = length(traj[,1]);
@@ -104,6 +103,11 @@ encode_dcd_trajectory = function(traj, num.atoms){
 
         for (i in seq(from = 1, to = nframes, by = 1)) {
 
+                prog = (i/nframes)*100;
+                if(prog %% 10 == 0){
+                        print(paste(prog, ' %', sep=''))
+                }
+
                 ## assign the xyz coordinates to a data frame
                 coords = as.data.frame(matrix(traj[i,], nrow = num.atoms, byrow=T))
                 names(coords) = c('x', 'y', 'z')
@@ -112,14 +116,45 @@ encode_dcd_trajectory = function(traj, num.atoms){
                 trajectory[[i]] = coords
         }
 
-        ## encode the trajectory with the M32K25 structural alphabet
-        sa.trajectory = lapply(trajectory, sa_encode, 'dcd');
+        ## switch to execute the fragment encoding in parallel
+        if(parallel.calc == 'TRUE'){
+
+                if(parallel::detectCores() == 1){
+                    
+                    n_cores = 1
+
+                } else{
+
+                    # determine the number of cores on the machine
+                    n_cores = parallel::detectCores() - 1
+                }
+
+                ## initiate a cluster to encode in parallel
+                cluster = parallel::makeCluster(n_cores)
+
+                ## export sa_encode to cluster
+                parallel::clusterEvalQ(cluster, devtools::load_all())
+
+                ## encode the trajectory with the M32K25 structural alphabet
+                ## in parallel
+                sa.trajectory = pbapply::pblapply(trajectory, cl = cluster, sa_encode, 'dcd')
+
+        } else if(parallel.calc == 'FALSE'){
+                
+                ## encode the trajectory with the M32K25 structural alphabet
+                sa.trajectory = pbapply::pblapply(trajectory, sa_encode, 'dcd');
+
+        }
+
 
         ## number of fragments in the alignment
         num.frags = num.atoms - 3;
 
         ## format the structural alphabet strings into a matrix
         sa.trajectory.mat = matrix(unlist(sa.trajectory), ncol = num.frags, byrow = FALSE);
+
+        ## write the structural alphabet-encoded trajectory to the disk
+        saveRDS(sa.trajectory.mat, paste0(format(Sys.time(), "%Y%m%d_%H%M%S_"), "_sa_trajectory_matrix.rds", sep=""))
 
         ## return the structural alphabet-encoded trajectory
         return(sa.trajectory.mat);
@@ -176,7 +211,11 @@ split_sa_align = function(sa_traj, nblocks){
                         } 
                 }
 
-                print(paste('WARNING: fragment-encoded trajectory is not evenly divisible by ', nblocks, '. The trajectory will instead be divided into ', new.nblocks, ' even blocks.'))
+                print(paste('WARNING: fragment-encoded trajectory is not evenly divisible by ',
+                    nblocks,
+                    '. The trajectory will instead be divided into ',
+                    new.nblocks,
+                    ' even blocks.'))
 
         } else if(rows %% nblocks == 0){
                 new.nblocks = nblocks
