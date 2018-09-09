@@ -19,6 +19,11 @@ render_VMD = function(corrfile, pdbname) {
 	## read correlation data
 	corrs = readRDS(corrfile);
 
+	## read structure
+	#pdb = bio3d::read.pdb2(pdbname);
+	## select CA atoms
+	#ca.inds = atom.select(pdb, "calpha");
+
 	## colour map
 	cols = c("blue", "cyan", "orange", "red");
 
@@ -26,46 +31,65 @@ render_VMD = function(corrfile, pdbname) {
 	## open output file
 	sink("show_corrs.vmd");
 
-	## to load molecule
-	cat(paste("mol new", pdbname, "type pdb first 0 last -1\n"));
-
 	## function to reset visualisation
-	cat("proc reset_viz {molid} {\n");
-	cat("## operate only on existing molecules\n");
-	cat("if {[lsearch [molinfo list] $molid] >= 0} {\n");
-	cat("    # delete all representations\n");
-	cat("    set numrep [molinfo $molid get numreps]\n");
-	cat("    for {set i 0} {$i < $numrep} {incr i} {\n");
-	cat("      mol delrep $i $molid\n");
-	cat("    }\n");
-	cat("    ## add new representations\n");
-	cat("    ## protein cartoon\n");
-	cat("    mol color Index\n");
-	cat("    mol representation NewCartoon\n");
-	cat("    mol selection all\n");
-	cat("    mol material Opaque\n");
+	#cat("proc reset_viz {molid} {\n");
+	#cat("## operate only on existing molecules\n");
+	#cat("if {[lsearch [molinfo list] $molid] >= 0} {\n");
+	#cat("    # delete all representations\n");
+	#cat("    set numrep [molinfo $molid get numreps]\n");
+	#cat("    for {set i 0} {$i < $numrep} {incr i} {\n");
+	#cat("      mol delrep $i $molid\n");
+	#cat("    }\n");
+	#cat("    ## add new representations\n");
+	#cat("    ## protein cartoon\n");
+	#cat("    mol color Index\n");
+	#cat("    mol representation NewCartoon\n");
+	#cat("    mol selection all\n");
+	#cat("    mol material Opaque\n");
+
+	cat("## TCL script for VMD to show correlations as lines\n");
+	## load molecule
+	cat(paste("mol new", pdbname, "type pdb first 0 last -1\n"));
+	cat(paste("mol rename top", pdbname, "\n"));
+
+	# basic selections and initial view
+	cat("## add new representations\n");
+	cat("## protein cartoon\n");
+	cat("mol color Index\n");
+	cat("mol representation NewCartoon\n");
+	cat("mol selection all\n");
+	cat("mol material Opaque\n");
 
 	## for all correlations 
 	for (i in 1:dim(corrs)[1]) {
 		## determine colour, skip low correlations
-		col.val = as.integer((corrs[i, "value"] + 0.1) * 4);
+		col.val = as.integer((as.numeric(corrs[i, "corr"]) + 0.1) * 4);
 		if (col.val > 0) {
-			cat(sprintf("    # show correlation %s\n", corrs[i, "id"]));
-			cat(sprintf("    set corrsel0 [atomselect top \"resid %s and name CA and chain %s\"]\n", corrs[i, "resid"], corrs[i, "chain"]));
-			cat(sprintf("    set corrsel1 [atomselect top \"resid %s and name CA and chain %s\"]\n", corrs[i, "resid"], corrs[i, "chain"]));
-			cat("    set pos0 [lindex [$corrsel0 get {x y z}] 0]\n");
-			cat("    set pos1 [lindex [$corrsel1 get {x y z}] 0]\n");
-			cat(paste("    draw color", cols[col.val]));
+			cat(sprintf("## show correlation %s\n", i));
+			## do not print empty chains
+			if (corrs[1, "chain1"] == " ") {
+				cat(sprintf("set corrsel0 [atomselect top \"resid %s and name CA\"]\n", corrs[i, "resid1"]));
+			} else {
+				cat(sprintf("set corrsel0 [atomselect top \"resid %s and name CA and chain %s\"]\n", corrs[i, "resid1"], corrs[i, "chain1"]));
+			}
+			if (corrs[1, "chain1"] == " ") {
+				cat(sprintf("set corrsel1 [atomselect top \"resid %s and name CA\"]\n", corrs[i, "resid2"]));
+			} else {
+				cat(sprintf("set corrsel1 [atomselect top \"resid %s and name CA and chain %s\"]\n", corrs[i, "resid2"], corrs[i, "chain2"]));
+			}
+			cat("set pos0 [lindex [$corrsel0 get {x y z}] 0]\n");
+			cat("set pos1 [lindex [$corrsel1 get {x y z}] 0]\n");
+			cat(paste("draw color", cols[col.val], "\n"));
 			cat("draw line $pos0 $pos1 width 2\n");
 		}
 	}
 
 	## close function
-	cat("  }\n");
-	cat("}\n");
+	#cat("  }\n");
+	#cat("}\n");
 
 	## reset visualisation
-	cat("reset_viz 0");
+	#cat("reset_viz 0");
 
 	## close output file
 	sink();
