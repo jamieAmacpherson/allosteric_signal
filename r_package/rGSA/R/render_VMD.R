@@ -48,19 +48,30 @@ render_VMD = function(corrfile, pdbname) {
 	#cat("    mol material Opaque\n");
 
 	cat("## TCL script for VMD to show correlations as lines\n");
+
+	## basic selections and initial view
 	## load molecule
+	cat("## load molecule\n");
 	cat(paste("mol new", pdbname, "type pdb first 0 last -1\n"));
-	cat(paste("mol rename top", pdbname, "\n"));
 
-	# basic selections and initial view
-	cat("## add new representations\n");
-	cat("## protein cartoon\n");
-	cat("mol color Index\n");
-	cat("mol representation NewCartoon\n");
-	cat("mol selection all\n");
+	## remove default representation
+	cat("## remove default representation\n");
+	cat("mol delrep 0 0\n");
+
+	## selection of protein backbone
+	cat("## selection of protein backbone\n");
+	cat("set allostr [atomselect top \"protein and backbone\"]\n");
+
+	## add new representation
+	cat("## new protein representation\n");
+	cat("mol color Structure\n");
+	cat("mol representation Trace\n");
+	cat("mol selection $allostr\n");
 	cat("mol material Opaque\n");
+    cat("mol addrep 0\n");
 
-	## for all correlations 
+	cat(sprintf("## show all %d correlations\n", dim(corrs)[1]));
+	## show all correlations 
 	for (i in 1:dim(corrs)[1]) {
 		## determine colour, skip low correlations
 		col.val = as.integer((as.numeric(corrs[i, "corr"]) + 0.1) * 4);
