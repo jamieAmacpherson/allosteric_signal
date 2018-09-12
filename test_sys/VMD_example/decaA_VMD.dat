@@ -1,0 +1,4 @@
+# seqResNr0 strResNr0 strAtomName0 strResName0 strChain0 seqResNr1 strResNr1 strAtomName1 strResName1 strChain1 seqDist rmsdCA/A rmsdAA/A corrVal
+0   217  O      MET X   0   221  N      VAL X   4   6.253257    2.948108    -1.851000
+0   217  O      MET X   0   222  N      GLN X   5   8.876335    5.253596    0.590000
+
