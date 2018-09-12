@@ -30,7 +30,7 @@ identify_hubs = function(sector.list, n.hubs = 10){
 	}
 
 	if(n.hubs > ncol(sector.list[[1]])){
-		writelines('WARNING \n Number of hubs selected exceeds total number of protein fragments.
+		writeLines('WARNING \n Number of hubs selected exceeds total number of protein fragments.
 			\n All of the protein fragments will be sorted according to their predicted
 			contribution to the allosteric process. \n This may take a long time for large protein systems.')
 

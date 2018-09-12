@@ -11,50 +11,49 @@
 #' ordering, i.e. point one of the second matrix is mapped to point one of
 #' the reference matrix, point two of the second matrix is mapped to point two 
 #' of the reference matrix, and so on.
-#'   
+#'	 
 #' @param P n x d matrix of reference points.
 #' @param Q n x d matrix of points to align to to \code{pm}
 #' @return Matrix \code{qm} rotated and translated so that the ith point 
-#'  is aligned to the ith point of \code{pm} in the least-squares sense.
+#'	is aligned to the ith point of \code{pm} in the least-squares sense.
 #' @references
 #' \url{https://en.wikipedia.org/wiki/Kabsch_algorithm}
 
 kabsch = function(Q, P){
 
-  ## center objects
-  # center Q
-  Qc = scale(Q, center=T, scale=F)
+	## center objects
+	# center Q
+	Qc = scale(Q, center=T, scale=F)
 
-  # center P
-  Pc = scale(P, center=T, scale=F)
+	# center P
+	Pc = scale(P, center=T, scale=F)
 
-  ## determine the cross-covariance matrix
-  C = crossprod(Pc, Qc)
+	## determine the cross-covariance matrix
+	C = crossprod(Pc, Qc)
 
-  ## compute a single value decomposition of the
-  ## cross-covariance matrix
-  C.svd = svd(C)
+	## compute a single value decomposition of the
+	## cross-covariance matrix
+	C.svd = svd(C)
 
-  ## use the sign of the determinant to ensure a right-hand coordinate system
-  ## (this is only required if the fragments are stereogenic systems, which
-  ## they aren't)
-  d = det(C.svd$u) * det(C.svd$v)
+	## use the sign of the determinant to ensure a right-hand coordinate system
+	## (this is only required if the fragments are stereogenic systems, which
+	## they aren't)
+	d = det(C.svd$u) * det(C.svd$v)
 
-  ## determine the optimal rotation matrix
-  U = tcrossprod(C.svd$u, C.svd$v)
+	## determine the optimal rotation matrix
+	U = tcrossprod(C.svd$u, C.svd$v)
 
-  ## rotate matrix P unto Q
-  Prot = Pc %*% U
+	## rotate matrix P unto Q
+	Prot = Pc %*% U
 
-  ## determine the RMSD between rotated P and Q
-  # squared differences
-  Dsr.sq = (Prot - Qc)**2
+	## determine the RMSD between rotated P and Q
+	# squared differences
+	Dsr.sq = (Prot - Qc)**2
 
-  rmsd = sqrt(sum(apply(Dsr.sq, 1, sum)) / dim(Dsr.sq)[1]);
+	rmsd = sqrt(sum(apply(Dsr.sq, 1, sum)) / dim(Dsr.sq)[1]);
 
-  ## spit out the optimal fit RMSD between Q and P
-  return(rmsd)
-
+	## spit out the optimal fit RMSD between Q and P
+	return(rmsd)
 }
 
 

@@ -1,0 +1,63 @@
+## TCL script for VMD to show correlations as lines
+## load molecule
+mol new decaA.pdb type pdb first 0 last -1
+## remove default representation
+mol delrep 0 0
+## selection of protein backbone
+set allostr [atomselect top "protein and backbone"]
+## new protein representation
+mol color Structure
+mol representation Trace
+mol selection $allostr
+mol material Opaque
+mol addrep 0
+## show all 7 correlations
+## show correlation 1
+set corrsel0 [atomselect top "resid 2 and name CA"]
+set corrsel1 [atomselect top "resid 4 and name CA"]
+set pos0 [lindex [$corrsel0 get {x y z}] 0]
+set pos1 [lindex [$corrsel1 get {x y z}] 0]
+draw color red 
+draw line $pos0 $pos1 width 2
+## show correlation 2
+set corrsel0 [atomselect top "resid 2 and name CA"]
+set corrsel1 [atomselect top "resid 7 and name CA"]
+set pos0 [lindex [$corrsel0 get {x y z}] 0]
+set pos1 [lindex [$corrsel1 get {x y z}] 0]
+draw color red 
+draw line $pos0 $pos1 width 2
+## show correlation 3
+set corrsel0 [atomselect top "resid 3 and name CA"]
+set corrsel1 [atomselect top "resid 6 and name CA"]
+set pos0 [lindex [$corrsel0 get {x y z}] 0]
+set pos1 [lindex [$corrsel1 get {x y z}] 0]
+draw color orange 
+draw line $pos0 $pos1 width 2
+## show correlation 4
+set corrsel0 [atomselect top "resid 3 and name CA"]
+set corrsel1 [atomselect top "resid 9 and name CA"]
+set pos0 [lindex [$corrsel0 get {x y z}] 0]
+set pos1 [lindex [$corrsel1 get {x y z}] 0]
+draw color orange 
+draw line $pos0 $pos1 width 2
+## show correlation 5
+set corrsel0 [atomselect top "resid 5 and name CA"]
+set corrsel1 [atomselect top "resid 9 and name CA"]
+set pos0 [lindex [$corrsel0 get {x y z}] 0]
+set pos1 [lindex [$corrsel1 get {x y z}] 0]
+draw color orange 
+draw line $pos0 $pos1 width 2
+## show correlation 6
+set corrsel0 [atomselect top "resid 6 and name CA"]
+set corrsel1 [atomselect top "resid 8 and name CA"]
+set pos0 [lindex [$corrsel0 get {x y z}] 0]
+set pos1 [lindex [$corrsel1 get {x y z}] 0]
+draw color red 
+draw line $pos0 $pos1 width 2
+## show correlation 7
+set corrsel0 [atomselect top "resid 7 and name CA"]
+set corrsel1 [atomselect top "resid 10 and name CA"]
+set pos0 [lindex [$corrsel0 get {x y z}] 0]
+set pos1 [lindex [$corrsel1 get {x y z}] 0]
+draw color red 
+draw line $pos0 $pos1 width 2

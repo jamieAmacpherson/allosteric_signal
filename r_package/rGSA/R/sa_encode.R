@@ -62,11 +62,11 @@ sa_encode = function(traj.xyz, str.format = "pdb"){
 
 	## create index matrix to fragment-subset coordinate matrix
 	## each matrix column corresponds to a 4-Calpha fragment of the input structure
-     nFs = dim(ca.xyz)[1] - 3;
+    nFs = dim(ca.xyz)[1] - 3;
 	fs.m = matrix(nrow = 4, ncol = nFs);
-	## index list from 1 to (length-3)
+	## index vector from 1 to (length-3)
 	fs.ix = seq(1:(dim(ca.xyz)[1] - 3));
-	## assign index list and the following incremental lists
+	## assign index vectors and the corresponding +1:3 incremental vectors
 	fs.m[1, ] = fs.ix;
 	fs.m[2, ] = fs.ix + 1;
 	fs.m[3, ] = fs.ix + 2;
@@ -136,7 +136,7 @@ encode_dcd_trajectory = function(traj, num.atoms, parallel.calc = 'TRUE'){
                 cluster = parallel::makeCluster(n_cores)
 
                 ## export sa_encode to cluster
-                parallel::clusterEvalQ(cluster, devtools::load_all())
+                parallel::clusterEvalQ(cluster, devtools::load_all('/home/macphej/jm.software/development/allosteric_signal/r_package/rGSA/'))
 
                 ## encode the trajectory with the M32K25 structural alphabet
                 ## in parallel
@@ -249,28 +249,4 @@ split_sa_align = function(sa_traj, nblocks){
 
         return(sa.list);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
