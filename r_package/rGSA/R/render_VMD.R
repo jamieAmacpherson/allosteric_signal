@@ -68,15 +68,17 @@ render_VMD = function(corrfile, pdbname) {
 	cat("mol representation Trace\n");
 	cat("mol selection $allostr\n");
 	cat("mol material Opaque\n");
-    cat("mol addrep 0\n");
+    	cat("mol addrep 0\n");
 
 	cat(sprintf("## show all %d correlations\n", dim(corrs)[1]));
 	## show all correlations 
 	for (i in 1:dim(corrs)[1]) {
+
 		## determine colour, skip low correlations
 		col.val = as.integer((as.numeric(corrs[i, "corr"]) + 0.1) * 4);
 		if (col.val > 0) {
 			cat(sprintf("## show correlation %s\n", i));
+
 			## do not print empty chains
 			if (corrs[1, "chain1"] == " ") {
 				cat(sprintf("set corrsel0 [atomselect top \"resid %s and name CA\"]\n", corrs[i, "resid1"]));
