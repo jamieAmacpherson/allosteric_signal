@@ -1,3 +1,5 @@
+#===============================================================================
+# AlloHubMat
 #' sa_encode.R
 #'
 #' Encode a protein structure with the M32K25 structural alphabet.
@@ -7,12 +9,10 @@
 #' successive four C-alpha residue set. The function returns the string of fitted
 #' structural alphabet fragments as a string
 #'
-#'
 #' @param pdbfile
-#'
 #' @return structural alphabet string
-#'
 #' @export
+#===============================================================================
 
 sa_encode = function(traj.xyz, str.format = "pdb"){
 	## fragment letters
@@ -249,4 +249,6 @@ split_sa_align = function(sa_traj, nblocks){
 
         return(sa.list);
 }
+
+#===============================================================================
 

@@ -1,3 +1,5 @@
+#===============================================================================
+# AlloHubMat
 #' Compute the covariance overlap between two matrices
 #'
 #' This function computes the covariance overlap between two matrices of identical
@@ -16,8 +18,7 @@
 #' @return Return the covariance overlap between the two input eigen-systems
 #'		   for the defined ranges of eigenvalues
 #' @export
-
-
+#===============================================================================
 
 covar_overlap = function(esA, irange, esB, jrange) {
 
@@ -43,3 +44,6 @@ covar_overlap = function(esA, irange, esB, jrange) {
 
 	return(outcomp)
 }
+
+#===============================================================================
+

@@ -1,3 +1,5 @@
+#===============================================================================
+# AlloHubMat
 #' render_VMD.R
 #'
 #' VMD 'Visualization State' coded in a TCL script.
@@ -10,10 +12,9 @@
 #' are shown as lines colour-coded by the correlation strngth.
 #'
 #' @param corrfile pdbname
-#'
 #' @return
-#'
 #' @export
+#===============================================================================
 
 render_VMD = function(corrfile, pdbname) {
 	## read correlation data
@@ -107,4 +108,6 @@ render_VMD = function(corrfile, pdbname) {
 	## close output file
 	sink();
 }
+
+#===============================================================================
 

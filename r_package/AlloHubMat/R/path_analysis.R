@@ -1,13 +1,11 @@
+#===============================================================================
+# AlloHubMat
 #' Determine the allosteric pathway between a user-defined ligand binding fragment and an active-site fragment.
 #' 
 #' This function determines an allosteric pathway between an user-defined ligand binding and active site fragment.
 #' The function takes the ergodic sector mutual information matrices from extract_sectors(), a fragment at the 
 #' allosteric site and a fragment at the active site, and returns a list containing the fragments connecting a 
 #' minimal-distance pathway. 
-#' 
-#' 
-#'
-#' 
 #'
 #' @param sector.list A list of matrices, each is an averaged mutual information matrix for an ergodic sector
 #' @param frag.from Starting fragment in the pathway (a fragment at the allosteric pocket)
@@ -15,8 +13,7 @@
 #' @param pdb Topology of the protein in .pdb format.
 #' @return A vector containing the fragments along the predicted allosteric pathway
 #' @export
-
-
+#===============================================================================
 
 path.trace = function(sector.list, frag.from, frag.to, pdb.file){
 
@@ -120,10 +117,5 @@ path.trace = function(sector.list, frag.from, frag.to, pdb.file){
 
 }
 
-
-
-
-
-
-
+#===============================================================================
 

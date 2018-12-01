@@ -1,7 +1,9 @@
+#===============================================================================
+# AlloHubMat
 #' Kabsch Algorithm
 #' 
-#' 
-#' Aligns two sets of points via rotations and translations.
+#' Aligns two sets of points via rotation and translation after
+#'   solving the superpositioning problem in an Eigenvalue Ansatz.
 #' 
 #' Given two sets of points, with one specified as the reference set,
 #' the other set will be rotated so that the RMSD between the two is minimized.
@@ -18,6 +20,7 @@
 #'	is aligned to the ith point of \code{pm} in the least-squares sense.
 #' @references
 #' \url{https://en.wikipedia.org/wiki/Kabsch_algorithm}
+#===============================================================================
 
 kabsch = function(Q, P){
 
@@ -56,7 +59,5 @@ kabsch = function(Q, P){
 	return(rmsd)
 }
 
-
-
-
+#===============================================================================
 

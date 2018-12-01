@@ -1,14 +1,17 @@
+#===============================================================================
+# AlloHubMat
 #' Read trajectory (XTC or DCD), return it as bio3d trajectory
 #' Read structure (PDB or GRO), return it as bio3d structure
 #'
-#' @param workingdir Path to the input file 
+#' @param workingdir Path to the input file
 #' @param name of the input trajectory and structure template file
 #' @return bio3d structure trajectory
 #' @export
+#===============================================================================
 
 #_______________________________________________________________________________
 ## read trajectory
-## optionally XTC or DCD format, default is DCD 
+## optionally XTC or DCD format, default is DCD
 read_traj_file = function(workingdir, trajectory.name, traj.format = "dcd") {
 	print("READING STRUCTURE TRAJECTORY");
 
@@ -16,7 +19,7 @@ read_traj_file = function(workingdir, trajectory.name, traj.format = "dcd") {
 
 	if (identical(traj.format, "dcd")) {
 		traj.bio3d = bio3d::read.dcd(traj.path);
-	} else if (identical(traj.format, "xtc") {
+	} else if (identical(traj.format, "xtc")) {
 		first_frame = 1;
 		last_frame = 10;
 		traj = streaMD::loadxtc(traj.path, first_frame, last_frame);
@@ -27,7 +30,7 @@ read_traj_file = function(workingdir, trajectory.name, traj.format = "dcd") {
 
 	print("FINISHED READING TRAJECTORY");
 
-	## return trajectory 
+	## return trajectory
 	return(traj.bio3d);
 }
 
@@ -54,28 +57,5 @@ read_pdb_file = function(workingdir, structure.name, str.format = "pdb") {
 	return(str.bio3d);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#===============================================================================
 

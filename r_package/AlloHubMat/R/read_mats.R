@@ -1,3 +1,5 @@
+#===============================================================================
+# AlloHubMat
 #' Load the structural alphabet mutual information matrix trajectory.
 #'
 #' This function loads a series of symmetric matrices into the R environment.
@@ -9,8 +11,7 @@
 #' @param matrix.suffix Suffix for mutual information matrix used as a pattern identifier (eg. "*nMImat.out")
 #' @return A list of mutual information matrices
 #' @export
-
-
+#===============================================================================
 
 read_mats = function(workingdir, matrix.suffix) {
 
@@ -46,4 +47,6 @@ read_mats = function(workingdir, matrix.suffix) {
 	return(listofmats)
 
 }
+
+#===============================================================================
 

@@ -1,14 +1,14 @@
+#==============================================================================
+# AlloHubMat
 #' Compute the covariance overlap between each of the trajectory blocks from an input list
 #' of eigensystems.
-#'
 #'
 #' @param eigensys.list A list of eigen-systems determined from comp_eigensystem()
 #' @param eigfrom First eigenvector considered in computing the covariance overlap
 #' @param eigto Last eigenvector considered in computing the covariance overlap
 #' @return A matrix containing the covariance overlap between each of the trajectory blocks
 #' @export 
-
-
+#==============================================================================
 
 block_overlap = function(eigensys.list, eigfrom = 1, eigto = 10){
 
@@ -49,3 +49,5 @@ block_overlap = function(eigensys.list, eigfrom = 1, eigto = 10){
 	# return matrix containing covarince overlap values
 	return(traj.overlap)
 }
+
+#==============================================================================

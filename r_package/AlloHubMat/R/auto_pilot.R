@@ -1,16 +1,18 @@
-#' Auto-pilot prediction of allosteric hub residues from a molecular dynamics simulation.
+#==============================================================================
+# AlloHubMat
+#' Auto-pilot prediction of allosteric hub residues from a MD simulation.
 #' 
-#' This function reads the output of a molecular dynamics engine (in *.xtc format) and a topology file
-#' (in *.pdb format), and runs through all the analysis functions of rGSA automatically. Where user-defined
-#' parameters are required, default values are used. Output files are stored in an automatically-generated
-#' directory.
+#' This function reads the output of a molecular dynamics engine (in *.xtc format)
+#' and a topology file (in *.pdb format), and runs through all the analysis functions
+#' of AlloHubMat automatically. Where user-defined parameters are required,
+#' default values are used.
+#' Output files are stored in an automatically-generated directory.
 #'
 #' @param workingdir Path to the input file (eg. "~/sirpaulnurse/MD_dir/")
 #' @param traj.length Length of the molecular dynamics simulation (in ns)
 #' @return Predicted allosteric hub residues
 #' @export 
-
-
+#==============================================================================
 
 auto_pilot = function(workingdir, traj.length){
 
@@ -56,21 +58,9 @@ auto_pilot = function(workingdir, traj.length){
 
 	system('sleep -n 5')
 
-
 	return(allosteric.hubs$top.n.hubs)
-
-
-
 
 }
 
-
-
-
-
-
-
-
-
-
+#==============================================================================
 

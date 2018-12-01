@@ -13,7 +13,7 @@ kabsch(Q, P)
 }
 \value{
 Matrix \code{qm} rotated and translated so that the ith point 
- is aligned to the ith point of \code{pm} in the least-squares sense.
+is aligned to the ith point of \code{pm} in the least-squares sense.
 }
 \description{
 Aligns two sets of points via rotations and translations.

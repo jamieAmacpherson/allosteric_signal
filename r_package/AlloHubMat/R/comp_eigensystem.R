@@ -1,3 +1,5 @@
+#===============================================================================
+# AlloHubMat
 #' Compute the eigensystem for the list of mutual information matrices
 #'
 #' This function computes the covariance matrix and eigensystems for each of
@@ -7,8 +9,7 @@
 #' @return A list containing the eigensystems for each of the mutual information matrices
 #' in the input list
 #' @export 
-
-
+#===============================================================================
 
 comp_eigensystem = function(MImatlist){
 
@@ -30,3 +31,5 @@ comp_eigensystem = function(MImatlist){
 
 	return(eigtraj)	
 }
+
+#===============================================================================

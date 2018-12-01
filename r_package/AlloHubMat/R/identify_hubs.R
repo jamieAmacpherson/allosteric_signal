@@ -1,3 +1,5 @@
+#===============================================================================
+# AlloHubMat
 #' Identify the allosteric hubs from the ergodic sector mutual information matrix  
 #' 
 #' This function computes the top n most signficant allosteric hub fragments. The function takes
@@ -18,8 +20,7 @@
 #' between those allosteric hubs
 #'
 #' @export
-
-
+#===============================================================================
 
 identify_hubs = function(sector.list, n.hubs = 10){
 
@@ -177,4 +178,5 @@ identify_hubs = function(sector.list, n.hubs = 10){
 
 }
 
+#===============================================================================
 

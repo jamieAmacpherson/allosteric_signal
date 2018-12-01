@@ -5,7 +5,7 @@
 \title{Read trajectory (XTC or DCD), return it as bio3d trajectory
 Read structure (PDB or GRO), return it as bio3d structure}
 \usage{
-read_traj_file(workingdir, trajectory.name, traj.format = "xtc")
+read_traj_file(workingdir, trajectory.name, traj.format = "dcd")
 }
 \arguments{
 \item{workingdir}{Path to the input file}

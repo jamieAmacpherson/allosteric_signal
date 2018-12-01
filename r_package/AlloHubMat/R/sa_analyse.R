@@ -1,3 +1,5 @@
+#===============================================================================
+# AlloHubMat
 #'  sa_analyse.R
 #'
 #'  [TT]g_sa_analyze[tt] performs advanced analyses on the alignment of structural,
@@ -46,12 +48,10 @@
 #'  of the encoding for each position. The name of the [TT].xpm[tt] file can be specified,
 #'  with the [TT]-xpm[tt] flag.
 #'
-#'
 #' @param sa.mat Alignment of structural alphabet strings
-#'
 #' @return structural alphabet string
-#'
 #' @export
+#===============================================================================
 
 ## test SA alignment matrix
 testmat = function(num.row){
@@ -363,16 +363,5 @@ mi_mat = function(sa.mat){
 	return(norm.mi.mat);
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
+#===============================================================================
 

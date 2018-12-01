@@ -1,3 +1,5 @@
+#===============================================================================
+# AlloHubMat
 #' Superpose an MD trajectory to its starting coordinates, removing the rot-translational
 #' degrees of freedom
 #'
@@ -5,7 +7,7 @@
 #' @param traj Trajectory file (dcd format) 
 #' @return superposed trajectory coordinates
 #' @export
-
+#===============================================================================
 
 #_______________________________________________________________________________
 ## superpose trajectory frames
@@ -32,5 +34,5 @@ superpose_trj = function(topol, traj, traj.format = 'dcd'){
 	}
 } 
 
-
+#===============================================================================
 
