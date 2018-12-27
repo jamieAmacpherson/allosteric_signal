@@ -1,7 +1,7 @@
 #===============================================================================
 # AlloHubMat
-#' Read trajectory (XTC or DCD), return it as bio3d trajectory
-#' Read structure (PDB or GRO), return it as bio3d structure
+#' Read structure (PDB) and return it as bio3d structure
+#' Read trajectory (DCD) and return it as bio3d trajectory
 #'
 #' @param workingdir Path to the input file
 #' @param name of the input trajectory and structure template file
@@ -10,52 +10,46 @@
 #===============================================================================
 
 #_______________________________________________________________________________
-## read trajectory
-## optionally XTC or DCD format, default is DCD
-read_traj_file = function(workingdir, trajectory.name, traj.format = "dcd") {
-	print("READING STRUCTURE TRAJECTORY");
+## read structure
+.get_str = function(input_str_file, str_format = "pdb") {
+	print("Reading input structure\n");
 
-	traj.path = paste(workingdir, trajectory.name, sep = "/");
-
-	if (identical(traj.format, "dcd")) {
-		traj.bio3d = bio3d::read.dcd(traj.path);
-	} else if (identical(traj.format, "xtc")) {
-		first_frame = 1;
-		last_frame = 10;
-		traj = streaMD::loadxtc(traj.path, first_frame, last_frame);
-		traj.bio3d = streaMD::streaMD_to_bio3d(traj);
+	## PDB or error
+	if (identical(str_format, "pdb")) {
+		str_bio3d = bio3d::read.pdb2(input_str_file);
 	} else {
-		stop(paste("trajectory extension", traj.format, "not supported"));
+		stop(paste("structure extension", str_format, "not supported"));
 	}
 
-	print("FINISHED READING TRAJECTORY");
-
-	## return trajectory
-	return(traj.bio3d);
+	## return structure
+	return(str_bio3d);
 }
 
 #_______________________________________________________________________________
-## read structure
-## optionally PDB or GRO format, default is PDB
-read_pdb_file = function(workingdir, structure.name, str.format = "pdb") {
-	print("READING STRUCTURE");
+setMethod(f = "read_str_file", signature = c("character"), definition = function(x, y) {
+  .get_str(x, y);
+})
 
-	## read PDB structure
-	str.path = paste(workingdir, structure.name, sep = "/");
-	if (identical(str.format, "pdb")) {
-		str.bio3d = bio3d::read.pdb2(str.path);
-	} else if (identical(str.format, "gro")) {
-		str = streaMD::loadgro(str.path);
-		str.bio3d = streaMD::gro2pdb(str);
+#_______________________________________________________________________________
+#_______________________________________________________________________________
+## read trajectory
+.get_traj = function(input_traj_file, traj_format = "dcd", first_frame = 1, last_frame = 10) {
+	print("Reading input structure");
+
+  ## DCD or error
+	if (identical(traj_format, "dcd")) {
+		traj_bio3d = bio3d::read.dcd(input_traj_file);
 	} else {
-		stop(paste("structure extension", str.format, "not supported"));
+		stop(paste("trajectory extension", traj_format, "not supported"));
 	}
 
-	print("FINISHED READING STRUCTURE");
-
-	## return structure
-	return(str.bio3d);
+	## return trajectory
+	return(traj_bio3d);
 }
 
-#===============================================================================
+#_______________________________________________________________________________
+setMethod(f = "read_traj_file", signature = c("character", "character", "numeric", "numeric"), definition = function(x, y, a, b) {
+  .get_traj(x, y, a, b);
+})
 
+#===============================================================================

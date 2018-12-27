@@ -1,6 +1,6 @@
 # TODO list
 
-## Validate correspondence betwee structures and ergodic sectors
+## Validate correspondence between structures and ergodic sectors
 
 ## Cross-map MI space and PCA space
 

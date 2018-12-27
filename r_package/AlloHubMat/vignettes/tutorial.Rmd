@@ -16,19 +16,22 @@ knitr::opts_chunk$set(
 )
 ```
 
-The following tutorial will guide you through the various core functions included in the AlloHubMat software, which
-facilitates the prediction of allosteric hub residues from a molecular dynamics simulation. Briefly, the user supplies an
-input molecular dynamics trajectory file and a topology file, the mutual information between distal residues are calculated
-and allosteric hub residues are identified.  
-
+The following tutorial will guide you through the various core functions included 
+in the AlloHubMat software, which facilitates the prediction of allosteric 
+hub residues from a molecular dynamics simulation. Briefly, the user supplies an
+input molecular dynamics trajectory file and a topology file, the mutual 
+information between distal residues are calculated and allosteric hub 
+residues are identified.  
 Lets get started!
 
 ## Encoding molecular dynamics trajectory with the M32K25 structural alphabet
-
-First, we parse a molecular dynamics trajectory file into the R environment so that the xyz Cartesian coordinates can be 
-simplified into a coarse-grained structural alphabet representation. The package currently supports the trajectory file
-format *.dcd, and *.pdb topology file format. We are working to expand the selection of file formats. But for now, you can convert
-most MD file formats into a *.dcd file using MDconvert (http://mdtraj.org/latest/mdconvert.html). 
+First, we parse a molecular dynamics trajectory file into the R environment 
+so that the xyz Cartesian coordinates can be simplified into a coarse-grained 
+structural alphabet representation. The package currently supports the 
+trajectory file format \*.dcd, and \*.pdb topology file format. We are working 
+to expand the selection of file formats. But for now, you can convert
+most MD file formats into a \*.dcd file using MDconvert
+(http://mdtraj.org/latest/mdconvert.html). 
 
 ```
 # read pdb topolgy file
@@ -49,11 +52,11 @@ vis_seq_logo(sa.traj)
 
 ```
 
-
 ## Calculate the mutual information matrix
-Using the M32K25 structural-encoded trajectory we can now measure the mutual information between distal sites in the protein.
-The mutual information matrix will be calculated over blocks of the MD trajectory, so that we can explitly identify sub-states 
-within the simulation.
+Using the M32K25 structural-encoded trajectory we can now measure the mutual 
+information between distal sites in the protein.  The mutual information 
+matrix will be calculated over blocks of the MD trajectory, so that we can 
+explitly identify sub-states within the simulation.
 
 ```
 # split the structural alphabet alignment into regular blocks
@@ -82,24 +85,4 @@ erg.secs = extract_sectors(erg.sec.info, mi.mats)
 allosteric.hubs = identify_hubs(erg.secs) 
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -5,21 +5,26 @@ Title: Allosteric Signalling and Hub Analysis in Protein Structure Dynamics
 Authors@R: c(person("Jamie", "Macpherson", email = "james.macpherson@crick.ac.uk", role = c("aut", "cre")),
 	person("Jens", "Kleinjung", email = "jens@jkleinj.eu", role = c("aut")),
 	person("Franca", "Fraternali", email = "franca.fraternali@kcl.ac.uk", role = c("aut")))	
-Description: The package reads a protein trajectory and analyses local conformational transitions
-  via a Structural Alphabet. The Mutual Information (MI) between those transitions computed for all
-  residue pairs yields a MI matix, which forms the basis of subsequent analyses. MI matrices of
-  trajectory slices are diagonalised and the overlap between their eigenspaces is computed.
-  Using the contrast between different substates, the MI signal can be extracted directly via
-  the subtraction of the corresponding matrices. Residues with high MI signals are annotated as
+Description: The package reads a protein trajectory and analyses local 
+  conformational transitions via a Structural Alphabet. The Mutual 
+  Information (MI) between those transitions computed for all residue pairs 
+  yields a MI matix, which forms the basis of subsequent analyses. MI matrices 
+  of trajectory slices are diagonalised and the overlap between their 
+  eigenspaces is computed.  Using the contrast between different substates, 
+  the MI signal can be extracted directly via the subtraction of the 
+  corresponding matrices. Residues with high MI signals are annotated as
   hub residues if their FDR is below a chosen threshold.
 Depends: R (>= 3.4.0)
-Imports: bio3d (>= 2.3)
+Imports: bio3d (>= 2.3),
+         pbapply (>= 1.3),
+         ggseqlogo (>= 0.1)
 Suggests: knitr,
           rmarkdown
-Collate: generics.R auto_pilot.R block_overlap.R comp_eigensystem.R covar_overlap.R detect_sectors.R
-  extract_sectors.R identify_hubs.R kabsch.R matrix_smooth.R path_analysis.R
+Collate: generics.R auto_pilot.R block_overlap.R comp_eigensystem.R 
+  covar_overlap.R identify_hubs.R MI.R kabsch.R matrix_smooth.R
+  path_analysis.R plot_sectors.R
   read_mats.R read_str_traj.R render_VMD.R sa_analyse.R sa_encode.R
-  sectors_2dplot.R sectors_3dplot.R sectors_MIfreq.R superpose_traj.R
+  sectors.R superpose_traj.R
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
