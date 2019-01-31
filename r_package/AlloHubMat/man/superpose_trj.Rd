@@ -2,20 +2,20 @@
 % Please edit documentation in R/superpose_traj.R
 \name{superpose_trj}
 \alias{superpose_trj}
-\title{Superpose an MD trajectory to its starting coordinates, removing the rot-translational
-degrees of freedom}
+\title{Superpose an MD trajectory to its starting coordinates,
+removing the roto-translational degrees of freedom}
 \usage{
-superpose_trj(topol, traj, traj.format = "dcd")
+superpose_trj(str, traj, traj.format = "dcd")
 }
 \arguments{
-\item{topol}{Topology file (pdb format)}
-
 \item{traj}{Trajectory file (dcd format)}
+
+\item{topol}{Topology file (pdb format)}
 }
 \value{
 superposed trajectory coordinates
 }
 \description{
-Superpose an MD trajectory to its starting coordinates, removing the rot-translational
-degrees of freedom
+Superpose an MD trajectory to its starting coordinates,
+removing the roto-translational degrees of freedom
 }

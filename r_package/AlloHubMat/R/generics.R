@@ -13,7 +13,7 @@ sadata <- setClass(
   "sadata",
 
   slots = c(
-    fragment_leters = "vector",
+    fragment_letters = "vector",
     fragment_coordinates = "list",
     sa_trajectory = "matrix"
   )
@@ -67,25 +67,9 @@ setGeneric("read_str_file", function(x, ...) standardGeneric("read_str_file"));
 #' @param Input file name (including path) and format ("dcd" or "xtc").
 #' @return .
 #' @examples
-#'   trajectory_object = read_traj_file(traj_filename, traj_format, start, end
+#'   trajectory_object = read_traj_file(traj_filename, traj_format, start, end)
 #'
 setGeneric("read_traj_file", function(x, y, a, b, ...) standardGeneric("read_traj_file"));
-
-#_______________________________________________________________________________
-## generic functions from sa_encode.R
-#_______________________________________________________________________________
-#
-#' Encode input trajectory
-#'
-#' \code{sa_encode}
-#'   encodes a trajectory (DCD or XTC format) into a structural string.
-#'
-#' @param Input file name (including path) and format ("dcd" or "xtc").
-#' @return SA trajectory.
-#' @examples
-#'   sa_trajectory = sa_encode(sadata, trajectory, format)
-#'
-setGeneric("sa_encode", function(x, y, z, ...) standardGeneric("sa_encode"));
 
 #_______________________________________________________________________________
 ## generic functions from MI.R

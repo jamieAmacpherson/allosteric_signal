@@ -2,7 +2,7 @@
 % Please edit documentation in R/auto_pilot.R
 \name{auto_pilot}
 \alias{auto_pilot}
-\title{Auto-pilot prediction of allosteric hub residues from a molecular dynamics simulation.}
+\title{Auto-pilot prediction of allosteric hub residues from a MD simulation.}
 \usage{
 auto_pilot(workingdir, traj.length)
 }
@@ -15,8 +15,9 @@ auto_pilot(workingdir, traj.length)
 Predicted allosteric hub residues
 }
 \description{
-This function reads the output of a molecular dynamics engine (in *.xtc format) and a topology file
-(in *.pdb format), and runs through all the analysis functions of rGSA automatically. Where user-defined
-parameters are required, default values are used. Output files are stored in an automatically-generated
-directory.
+This function reads the output of a molecular dynamics engine (in *.xtc format)
+and a topology file (in *.pdb format), and runs through all the analysis functions
+of AlloHubMat automatically. Where user-defined parameters are required,
+default values are used.
+Output files are stored in an automatically-generated directory.
 }

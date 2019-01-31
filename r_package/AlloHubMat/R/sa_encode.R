@@ -46,66 +46,54 @@
     matrix( c( c(  1.199,   3.328, 36.383), c(  1.782,   3.032, 32.641), c(  1.158,   6.286, 30.903), c(  1.656,   8.424, 34.067)), byrow = TRUE, nrow = 4, ncol=3), #X
     matrix( c( c( 33.001,  12.054,  8.400), c( 35.837,  11.159, 10.749), c( 38.009,  10.428,  7.736), c( 35.586,   7.969,  6.163)), byrow = TRUE, nrow = 4, ncol=3) #Y
   )
-  names(sadata_o@fragment_coordinates) = fragment_letters;
+  names(sadata_o@fragment_coordinates) = sadata_o@fragment_letters;
 
   return(sadata_o);
 }
 
 #_______________________________________________________________________________
-.encode = function(traj.xyz, str.format = "pdb"){
-	  if(str.format == 'pdb'){
-	    ## parse pdb file coordinates into matrices of four sequential Calpha coordinates
-	    ## index vector of Calpha atom
-        ca.ix = bio3d::atom.select(pdbfile, "calpha");
-	    ## matrix of x,y,z coordinates of all Calpha atoms
-	    ca.xyz = pdbfile$atom[ca.ix$atom, c("x","y","z")];
-	} else if(str.format == 'dcd'){
-        ca.xyz = traj.xyz
-	} else {
-		stop(paste("structure extension", str.format, "not supported"));
-	}
-
-	## create index matrix to fragment-subset coordinate matrix
+encode = function(traj.xyz, sadata_o) {
+  ## create index matrix to fragment-subset coordinate matrix
 	## each matrix column corresponds to a 4-Calpha fragment of the input structure
-    nFs = dim(ca.xyz)[1] - 3;
-	fs.m = matrix(nrow = 4, ncol = nFs);
+  nFs = dim(traj.xyz)[1] - 3;
+	fs_m = matrix(nrow = 4, ncol = nFs);
 	## index vector from 1 to (length-3)
-	fs.ix = seq(1:(dim(ca.xyz)[1] - 3));
+	fs_ix = seq(1:(dim(traj.xyz)[1] - 3));
 	## assign index vectors and the corresponding +1:3 incremental vectors
-	fs.m[1, ] = fs.ix;
-	fs.m[2, ] = fs.ix + 1;
-	fs.m[3, ] = fs.ix + 2;
-	fs.m[4, ] = fs.ix + 3;
+	fs_m[1, ] = fs_ix;
+	fs_m[2, ] = fs_ix + 1;
+	fs_m[3, ] = fs_ix + 2;
+	fs_m[4, ] = fs_ix + 3;
 
 	## fit all input structure fragments to all alphabet fragments
-	rmsd.m = apply(fs.m, 2, function(x) {
-		sapply(1:length(fragment_coordinates), function(y) {
-			kabsch(ca.xyz[x, ], fragment_coordinates[[y]]);
+	rmsd_m = apply(fs_m, 2, function(x) {
+		sapply(1:length(sadata_o@fragment_coordinates), function(y) {
+			kabsch(traj.xyz[x, ], sadata_o@fragment_coordinates[[y]]);
 		});
 	});
 	## vector of minimal rmsd values
-	rmsd_min.v = apply(rmsd.m, 2, min);
+	rmsd_min.v = apply(rmsd_m, 2, min);
 	## vector of row indices of minimal rmsd values
 	rmsd_min.ix = sapply(1:length(rmsd_min.v), function(z) {
-		which(rmsd.m[ , z] %in% rmsd_min.v[z]);
+		which(rmsd_m[ , z] %in% rmsd_min.v[z]);
 	})
 
 	## fragment string
-	fragstring = fragment_letters[rmsd_min.ix];
+	fragstring = sadata_o@fragment_letters[rmsd_min.ix];
 	# return string of SA fragments
 	return(fragstring);
 }
 
 #_______________________________________________________________________________
 ## encode trajectory with the assigned structural alphabet
-encode_traj = function(sadata_o, str, traj, parallel.calc = TRUE) {
+.encode_traj = function(sadata_o, str, traj, parallel.calc = TRUE) {
   ## length of the trajectory
   n_frames = length(traj[ , 1]);
   ## number of atoms per conformation
   n_atoms = dim(traj)[2] / 3;
 
   ## append xyz coordinates of each frame to an element in a list
-  trajectory = list();
+  traj_xyz = list();
   for (i in seq(from = 1, to = n_frames, by = 1)) {
     prog = (i / n_frames) * 100;
     if (prog %% 10 == 0) {
@@ -116,7 +104,7 @@ encode_traj = function(sadata_o, str, traj, parallel.calc = TRUE) {
     coords = as.data.frame(matrix(traj[i, ], nrow = n_atoms, byrow = TRUE));
     names(coords) = c('x', 'y', 'z');
     ## append the coordinates to a list
-    trajectory[[i]] = coords;
+    traj_xyz[[i]] = coords;
   }
 
   ## sfragment encoding in parallel mode
@@ -129,7 +117,7 @@ encode_traj = function(sadata_o, str, traj, parallel.calc = TRUE) {
       print("WARNING: Parallel encoding using a single core:
             potentially slow for large proteins and/or long trajectories.");
     } else {
-    ## determine the number of cores on the machine
+      ## determine the number of cores on the machine
       n_cores = parallel::detectCores() - 1;
       print(paste("INFO: Parallel encoding using", n_cores, "cores."));
     }
@@ -137,35 +125,39 @@ encode_traj = function(sadata_o, str, traj, parallel.calc = TRUE) {
     ## initiate a cluster to encode in parallel
     cluster = parallel::makeCluster(n_cores);
 
-    ## export sa_encode to cluster
-    parallel::clusterEvalQ(cluster, library(AlloHubMat));
-
+    ## export library to cluster
+    parallel::clusterEvalQ(cluster, devtools::load_all());
+    ## export ".encode" function
+    #parallel::clusterCall(cluster, "encode");
     ## encode the trajectory with the assigned structural alphabet
-    sa_traj = pbapply::pblapply(traj, cl = cluster, sa_encode, "dcd");
+    #sa_traj = pbapply::pblapply(traj_xyz, cl = cluster, function(i, sado = sadata_o) { .encode(i, sado) });
+    sa_traj = pbapply::pblapply(traj_xyz, cl = cluster, encode, sadata_o);
 
   } else {
     ## sfragment encoding in serial mode
-    sa_traj = pbapply::pblapply(traj, sa_encode, "dcd");
+    sa_traj = pbapply::pblapply(traj_xyz, encode, sadata_o);
   }
 
   ## number of fragments in the alignment
-  num_frags = num_atoms - 3;
+  n_frags = n_atoms - 3;
 
   ## format the structural alphabet strings into a matrix
-  sadata_o@sa_trajectory = matrix(unlist(sa_traj), ncol = num_frags, byrow = FALSE);
+  sadata_o@sa_trajectory = matrix(unlist(sa_traj), ncol = n_frags, byrow = FALSE);
 
   ## write the structural alphabet-encoded trajectory to the disk
-  saveRDS(sa_traj_mat, paste0(format(Sys.time(), "%Y%m%d_%H%M%S_"), "_sa_trajectory_matrix.rds", sep = ""));
+  saveRDS(sadata_o, paste0(format(Sys.time(), "%Y%m%d_%H%M%S_"), "_sadata.rds", sep = ""));
 
   ## return the structural alphabet-encoded trajectory
   return(sadata_o);
 }
 
 #_______________________________________________________________________________
-setMethod(f = "sa_encode", signature = c("sadata"), definition = function(x, y, z) {
-  .assign_M32K25(x);
-  .encode_traj(x, y, z);
-})
+sa_encode = function(sadata_o, str, traj) {
+  sadata_o = .assign_M32K25(sadata_o);
+  sadata_o = .encode_traj(sadata_o, str, traj, FALSE);
+
+  return(sadata_o);
+}
 
 #_______________________________________________________________________________
 #_______________________________________________________________________________

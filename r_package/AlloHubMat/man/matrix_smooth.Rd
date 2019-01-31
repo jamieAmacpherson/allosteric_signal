@@ -13,6 +13,7 @@ matrix_smooth(overlap.matrix)
 A matrix containing the covariance overlap between each of the trajectory blocks
 }
 \description{
-This function takes an input matrix and performs a kernal smoothing. The input is a single
+This function takes an input matrix and performs a kernal smoothing.
+The input is a single
 matrix and returns a single matrix with the same dimensions as that of the input matrix.
 }

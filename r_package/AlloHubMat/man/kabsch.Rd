@@ -16,7 +16,8 @@ Matrix \code{qm} rotated and translated so that the ith point
 is aligned to the ith point of \code{pm} in the least-squares sense.
 }
 \description{
-Aligns two sets of points via rotations and translations.
+Aligns two sets of points via rotation and translation after
+  solving the superpositioning problem in an Eigenvalue Ansatz.
 }
 \details{
 Given two sets of points, with one specified as the reference set,
