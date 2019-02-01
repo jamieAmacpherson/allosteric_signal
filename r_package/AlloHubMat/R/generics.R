@@ -6,16 +6,19 @@
 #===============================================================================
 
 #_______________________________________________________________________________
-#' sadata: An S4 class for Structural Alphabet data.
-#' @slot fragment_letters: Letters forming the Structural Alphabet
+#' sadata: An S4 class for Structural Alphabet (SA) data.
+#' @slot fragment_letters: Prototype fragment letters forming SA
 #' @slot fragment_coordinates: Coordinates of prototype fragments
+#' @slot sa_trajectory: Stacked sequences (alignment) of SA encoded trajectory
+#' @slot sa_blocks: Blocks of SA trajectory in a list
 sadata <- setClass(
   "sadata",
 
   slots = c(
     fragment_letters = "vector",
     fragment_coordinates = "list",
-    sa_trajectory = "matrix"
+    sa_trajectory = "matrix",
+    sa_blocks = "list"
   )
 )
 

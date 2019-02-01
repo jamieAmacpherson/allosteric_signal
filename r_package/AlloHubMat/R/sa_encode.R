@@ -152,9 +152,33 @@ encode = function(traj.xyz, sadata_o) {
 }
 
 #_______________________________________________________________________________
-sa_encode = function(sadata_o, str, traj) {
+## split SA trajectory (alignment) into blocks of given size and
+##   store as list elements
+.make_traj_blocks = function(sadata_o, block_size) {
+  ## depth of SA alignment
+  d_ali = dim(sadata_o@sa_trajectory)[1];
+  ## ensure at least two blocks can be created from trajectory
+  stopifnot((2 * block_size) <= d_ali);
+  ## number of blocks to create (will cut off overhanging end of trajectory)
+  n_block = floor(d_ali / block_size);
+  ## index array over all to-be-considered sequences in alignment
+  traj.ix = 1:(block_size * n_block);
+  dim(traj.ix) = c(block_size, n_block);
+
+  ## assign alignment blocks to list elements
+  for (i in 1:n_block) {
+    sadata_o@sa_blocks[[i]] = sadata_o@sa_trajectory[traj.ix[ , i], ];
+  }
+
+  ## return list of trajectory blocks
+  return(sadata_o);
+}
+
+#_______________________________________________________________________________
+sa_encode = function(sadata_o, str, traj, block_size) {
   sadata_o = .assign_M32K25(sadata_o);
   sadata_o = .encode_traj(sadata_o, str, traj, FALSE);
+  sadata_o = .make_traj_blocks(sadata_o, block_size);
 
   return(sadata_o);
 }
